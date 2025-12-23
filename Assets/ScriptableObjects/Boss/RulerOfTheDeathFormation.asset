@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85938da36d6f6614e98ce6ec3516ead9, type: 3}
+  m_Name: RulerOfTheDeathFormation
+  m_EditorClassIdentifier: 
+  formationName: 
+  members:
+  - monster: {fileID: 11400000, guid: 6b80a9c5619425a4c83a4d35aebf7705, type: 2}
+    rank: {fileID: 11400000, guid: 239e71c08b8519042a3e293056f52555, type: 2}
+    race: {fileID: 11400000, guid: 19a3870f88d548945a4cb5b0507da226, type: 2}
+    level: 6
+    position:
+      x: 1
+      y: 1
+  - monster: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+    rank: {fileID: 11400000, guid: 609bbce6ba7ad9546be5a342e4bede25, type: 2}
+    race: {fileID: 11400000, guid: 19a3870f88d548945a4cb5b0507da226, type: 2}
+    level: 3
+    position:
+      x: 0
+      y: 1
+  - monster: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+    rank: {fileID: 11400000, guid: 609bbce6ba7ad9546be5a342e4bede25, type: 2}
+    race: {fileID: 11400000, guid: 19a3870f88d548945a4cb5b0507da226, type: 2}
+    level: 3
+    position:
+      x: 0
+      y: 0
+  - monster: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+    rank: {fileID: 11400000, guid: 609bbce6ba7ad9546be5a342e4bede25, type: 2}
+    race: {fileID: 11400000, guid: 19a3870f88d548945a4cb5b0507da226, type: 2}
+    level: 3
+    position:
+      x: 0
+      y: 2

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ecb48a6cb00044d8c15b44f6192da2, type: 3}
+  m_Name: BoostMoracle
+  m_EditorClassIdentifier: 
+  skillName: Boost Moracle
+  skillDescription: 
+  skillType: 0
+  skillDefinition: 0
+  targetType: 3
+  skillRange: 0
+  isLimitedTimeCast: 0
+  usageTime: 0
+  baseSpCost: 0
+  baseMpCost: 14
+  baseSkillDamage: 0
+  baseHitChance: 100
+  skillElement: 5
+  activeSkillType: 2
+  scalingStatAndMutiply:
+    reorderableList:
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
+      isExpanded: 0
+      label:
+        m_Text: Keys
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 
+    _keys: 
+    _values: []
+  effectsToApply:
+  - effectData: {fileID: 11400000, guid: 387e0cec00db2c144a145afc2aae45f5, type: 2}
+    procChance: 1
+    turnDuration: 3

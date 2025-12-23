@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb871df9c908cf4a9d481bcfe4ad40f, type: 3}
+  m_Name: SteadyFeet
+  m_EditorClassIdentifier: 
+  EffectType: 0
+  Effect: 1
+  Name: SteadyFeet
+  MaxDuration: 3
+  CanBeRemoved: 1
+  Stackable: 0
+  MaxStack: 1
+  AppliesTo: 0
+  isInstantEffect: 0
+  hasLimitedUsage: 0
+  maxUsePerBattle: 0
+  maxUSePerLifeCycle: 0
+  timing: 0
+  requiredHit: 0
+  effectIcon: {fileID: 21300000, guid: 325ee832523ee1f4db0834c919a3ac4e, type: 3}
+  StatToModify: 11
+  RawValue: 3
+  PercentageValue: 0
+  IsRawValue: 1

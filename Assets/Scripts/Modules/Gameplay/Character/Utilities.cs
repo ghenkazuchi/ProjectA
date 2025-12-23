@@ -1,0 +1,528 @@
+using RotaryHeart.Lib;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public enum Trait
+{
+	Strength,
+	Intelligence,
+	Piety,
+	Vitality,
+	Agility,
+	Dexterity,
+	Luck
+}
+public enum SkillDefinition
+{
+	Spell,
+	BattleArt,
+	Almighty
+}
+public enum Stat
+{
+	HP,
+	MP,
+	SP,
+	AttackPower,
+	MagicPower,
+	DivinePower,
+	Accuracy,
+	PhysicalDefense,
+	MagicalDefense,
+	Evasion,
+	Resistance,
+	ActionSpeed,	
+}
+public enum MonsterType
+{
+	HumanNoid,
+	Undead,
+	Dragon,
+	MagicalBeast,
+	Insect,
+	Spirit
+}
+public enum MonsterRank
+{
+	Minion,
+	CultistMage,
+	EliteGuard,
+	Captian,
+	Warlock,
+	Commander,
+	LitchKing,
+	General,
+	Archfiend,
+
+}
+public enum ClassType
+{
+	Fighter,
+	Rogue,
+	Mage,
+	Priest,
+	Knight
+}
+
+public enum RaceType
+{
+	Human,
+	Elf,
+	Beastkin,
+	Dwarf,
+	Dragonoid
+}
+public enum ExpGrowth
+{
+	Slow,
+	Medium,
+	Fast
+}
+//skill stuff
+
+public enum SkillType
+{
+	Active,
+	Passive,
+	Aura
+}
+public enum TargetType
+{
+	Self,
+	Enemy,
+	Ally,
+	SelfOrAllies
+}
+public enum SkillRange
+{
+	SingleTarget,
+	AllTarget,
+	SingleAlly,
+	AllAllies,
+	LineTarget,
+	LineAllies,
+}
+public enum Element
+{
+	None,
+	Fire,
+	Water,
+	Earth,
+	Wind,
+	Light,
+	Dark
+}
+public enum UnitState
+{
+	Dead,
+	Alive
+}
+
+public enum Affiliation
+{
+	PartyMember,
+	Recruitable,
+	Enemy,
+}
+
+[Serializable]
+public struct LearnRequest
+{
+	public EntityBase pc;
+	public ActiveSkillData skillData;
+	public Action<bool> onResolved;
+}
+public enum AuraEffectTarget
+{
+	AllAllies,
+	RowOfOwner
+}
+
+public enum DamageType
+{
+	PhysicalDamage,
+	MagicalDamage,
+	AllMightyDamage
+}
+public enum TargetHPType
+{
+	CurrentHP,
+	MaxHP
+}
+
+public struct DamageInfo
+{
+	public EntityBase source;
+	public EntityBase target;
+	public SkillDefinition damageType;
+	public int amount;
+	public bool isEffectDamage;
+}
+public enum InteracableType
+{
+	Monster,
+	Chest,
+	FairyKing,
+	WellOfFortune,
+	BlackSmith,
+	ShopKeeper,
+	Tarvern,
+	Oil,
+	Pot,
+	FireCamp,
+	Companion
+}
+public enum BattleType
+{
+	Boss,
+	RoamingMoster
+}
+
+public enum PassiveTrigger
+{
+	OnBattleStart,
+	OnTurnStart,
+	OnTurnEnd,
+	OnAttacked,
+	OnAllyAttacked,
+	OnAllyAttacking,
+	OnEnemyDefeated,
+	OnAllyDefeated,
+	OnHealthLow,
+	OnAllyHealthLow,
+	Continuous,
+	OnStatusApplied,
+	OnStatusRemoved,
+	OnSkillUse,
+	OnDealingDamage,
+	OnTakingDamage,
+	OnBeforeTakingDamage
+}
+[System.Serializable]
+public class GrantEffect
+{
+	public EffectData effectToGrant;
+	public int duration;
+}
+public enum PassiveEffectType
+{
+	StatModification,
+	DamageModification,
+	ActionModification,
+	StatusImmunity,
+	StatusApplication,
+	Healing,
+	Shield,
+	Redirect,
+	Interrupt,
+	Counter,
+	ReduceMpCost,
+	ApplyStatusOnHit,
+	ProtectedAlly,
+	SlowEnemyOnAttack
+}
+public enum ActiveSkillType
+{
+	Damage,
+	Heal,
+	Buff,
+	Debuff
+}
+public enum ProtectRangeType
+{
+	All,
+	Horizontal,
+	Vertical,
+	Adjacent
+}
+//Buff,Debuff
+
+
+public enum EffectType
+{
+	Buff,
+	Debuff,
+	Other
+}
+public enum Effect
+{
+	TraitModifier,
+	StatModifier,
+	CrownControl,
+	AdvanceFoward,
+	DamageOverTime,
+	Other
+}
+public enum EffectTriggerPhase
+{
+	StartOfTurn,
+	EndOfTurn,
+}
+public enum EffectActiveTiming
+{
+	OnCast,
+	OnHit,
+	OnDealingDamage
+}
+public enum ControlEffectType
+{
+	None,
+	Stune,
+	Charm,
+	Confuse,
+}
+//item
+
+public enum ModType
+{
+	Flat,
+	Percentage
+}
+
+public enum ItemType
+{
+	Food,
+	Equipment,
+	Scroll,
+
+}
+public enum ItemRarity
+{
+	Common,
+	Rare,
+	Epic,
+	Legendary,
+}
+public enum ItemGrade
+{
+	Normal,
+	Gold,
+	Diamond
+}
+public enum WeaponType
+{
+	Mace,
+	Sword,
+	GreatSword,
+	Staff,
+	Dagger,
+	Bow,
+	Spear,
+
+}
+public enum WeaponRequirement
+{
+	TwoHanded,
+	OneHanded,
+}
+public enum EquipEffectTrigger
+{
+	OnEquip,
+	OnBattleStart,
+	OnTurnStart,
+	OnTurnEnd,
+	OnDealingDamage,
+	OnTakingDamage,
+	OnCriticalHit,
+	OnEnemyKill,
+	OnDeath,
+	OnBeforeDealingDamage,
+	OnBeforeTakingDamage,
+	OnBeforeStatusApplied
+}
+
+[System.Serializable] 
+public struct EquipableStatBonus
+{
+	public Stat Stat;
+	public ModType ModType;
+	public float value;
+
+
+}
+
+[System.Serializable]
+public class ThresholdBonus
+{
+	[Min(1)] public int requiredPieces = 2;
+	public List<EquipEffectBinding> effects = new();
+}
+
+[System.Serializable]
+public struct GradeTunning
+{
+	public float magnitudeMultiplier;
+	public int durationBonus;
+	public EffectData additionalEffect;
+	public float procChanceMultiplier;
+	public int bonusUsagePerBattle;
+	public int bonusUsagePerLifeCycle;
+
+	public float gearFlatMultiplier;	
+	public float gearPercentMultiplier;
+}
+
+[System.Serializable]
+public struct ChestLootEntry
+{
+	public EquipableBaseData data;
+	public ItemGrade grade;
+
+	public ChestLootEntry(EquipableBaseData data, ItemGrade grade)
+	{
+		this.data = data;
+		this.grade = grade;
+	}
+}
+	// gameprogress
+
+	public enum GameDay { Day1, Day2, Day3 }
+public enum TimeOfDay { Morning,Night}
+
+public struct GameTime
+{
+	public GameDay day;
+	public TimeOfDay time;
+	public GameTime(GameDay day, TimeOfDay time)
+	{
+		this.day = day;
+		this.time = time;
+	}
+}
+//Game currency
+public enum CurrencyType
+{
+	Gold,
+	SoulDusk
+}
+
+public struct ShopReplaceSelection
+{
+	public PlayerCharacter target;
+	public EquipableBaseData newEquip;
+	public bool removeWeapon;
+	public List<int> removeItemIndices;
+}
+
+public static class ElementalChart
+{
+	private static readonly Dictionary<(Element attackerElement, Element defenderElement), float> elementalMultiplier = new()
+	{
+		{ (Element.Fire, Element.Wind), 1.5f },
+		{ (Element.Wind, Element.Earth), 1.5f },
+		{ (Element.Water, Element.Fire), 1.5f },
+		{ (Element.Earth, Element.Water), 1.5f },
+		{ (Element.Fire, Element.Water), 0.5f },
+		{ (Element.Wind, Element.Fire), 0.5f },
+		{ (Element.Water, Element.Earth), 0.5f },
+		{ (Element.Earth, Element.Wind), 0.5f },
+		{ (Element.None, Element.None), 1f },
+		{ (Element.Dark, Element.Wind), 1.25f },
+		{ (Element.Dark, Element.Fire), 1.25f },
+		{ (Element.Dark, Element.Water), 1.25f },
+		{ (Element.Dark, Element.Earth), 1.25f },
+		{ (Element.Water, Element.Dark), 1f },
+		{ (Element.Earth, Element.Dark), 1f },
+		{ (Element.Fire, Element.Dark), 1f },
+		{ (Element.Wind, Element.Dark), 1f },
+		{ (Element.Wind, Element.Light), 1f },
+		{ (Element.Fire, Element.Light), 1f },
+		{ (Element.Earth, Element.Light), 1f },
+		{ (Element.Water, Element.Light), 1f },
+		{ (Element.Light, Element.Dark), 1.75f },
+		{ (Element.Dark, Element.Light), 0.75f },
+	};
+	public static float GetMultiplier(Element attackerElement, Element defenderElement)
+	{
+		if (elementalMultiplier.TryGetValue((attackerElement, defenderElement), out float multiplier))
+			return multiplier;
+
+		return 1f; 
+	}
+}
+
+public enum CritFocedType
+{
+	None,
+	Sleep,
+}
+public sealed class DamageContext
+{
+	public EntityBase Source;
+	public EntityBase Target;
+
+	public bool CritDecided;
+	public bool IsCritical;
+	public float CritMultiplier = 1f;
+	public CritFocedType CritForce = CritFocedType.None;
+	public int BaseDamage;
+	public int EffectiveDamage;
+
+	public SkillDefinition Origin;
+	public bool isEffectDamage;
+	public bool CancleApply;
+
+	public int ReflectAmount;
+	public EntityBase RedirectTo;
+
+	public EntityBase SplitRedirectTo;
+	public float SplitPercent;
+
+	public bool BlockFurtherSharing;
+
+	public int HpBefore;
+	public bool FatalPredicted => HpBefore > 0 && EffectiveDamage >= HpBefore;
+
+
+	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, bool isEffect = false)
+	{
+		Source = src;
+		Target = tgt;
+		BaseDamage = damage;
+		EffectiveDamage = damage;
+		this.Origin = origin;
+		isEffectDamage = isEffect;
+		CancleApply = false;
+		ReflectAmount = 0;
+		RedirectTo = null;
+		SplitRedirectTo = null;
+		SplitPercent = 0f;
+		BlockFurtherSharing = false;
+		CritDecided = false;
+		IsCritical = false;
+		CritMultiplier = 1f;
+		CritForce = CritFocedType.None;
+
+	}
+}
+[System.Serializable]
+public class ActiveSkillEffect
+{
+	public EffectData effectData;
+	public float procChance;
+	public int turnDuration;
+
+	public ActiveSkillEffect(EffectData effectData, float procChance,int turnDuration)
+	{
+		this.effectData = effectData;
+		this.procChance = procChance;
+		this.turnDuration = turnDuration;
+	}
+}
+[System.Serializable]
+public struct PendingShopEquipContext
+{
+	public EquipableBaseData equipData;
+}
+
+public readonly struct ProcResult
+{
+	public readonly bool Proc;
+	public ProcResult(bool proc)
+	{
+		Proc = proc;
+	}
+}

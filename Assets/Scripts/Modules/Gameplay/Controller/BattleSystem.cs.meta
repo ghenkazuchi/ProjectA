@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 06a6a93ec816fc14c80a14e2573dfa4b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - vfxLib: {instanceID: 0}
+  - expDistributionController: {instanceID: 0}
+  - currentPlayerCharacterInfo: {instanceID: 0}
+  - battleSystem: {instanceID: 0}
+  - battleDialogBox: {instanceID: 0}
+  - playerParty: {instanceID: 0}
+  - monsterParty: {instanceID: 0}
+  - timelineManager: {instanceID: 0}
+  - timelineUI: {instanceID: 0}
+  - targetSelectionController: {instanceID: 0}
+  - basicAttackSkillData: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

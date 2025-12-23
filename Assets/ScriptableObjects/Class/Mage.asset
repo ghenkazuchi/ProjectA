@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b62cfbe7c53ac14abe58cae7af5e89a, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: 
+  classType: 2
+  description: 
+  expGrowthRate: 0
+  statMultipliers:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 010000000000000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c000000
+    _keys: 010000000000000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c000000
+    _values:
+    - 1.2
+    - 1
+    - 1
+    - 0.75
+    - 1.3
+    - 1.15
+    - 0.85
+    - 0.7
+    - 1.15
+    - 0.8
+    - 1.05
+    - 0.9
+    - 1
+  traitBonuses:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 00000000010000000200000003000000040000000500000006000000
+    _keys: 00000000010000000200000003000000040000000500000006000000
+    _values: 01000000030000000200000001000000010000000100000001000000
+  skillSet:
+  - skill: {fileID: 11400000, guid: f2531d3e43a464446a4320af14034e0e, type: 2}
+    levelRequirements: 1
+  - skill: {fileID: 11400000, guid: d893213bcb9171b4e89f83302cf638d6, type: 2}
+    levelRequirements: 1
+  - skill: {fileID: 11400000, guid: 8cad974bdb3a1ec4ab55a2a1deef129d, type: 2}
+    levelRequirements: 1
+  itemSlotCount: 2
+  usableWeaponTypes: 0000000003000000
+  elementalSkillSets:
+  - element: 1
+    skillList:
+    - skill: {fileID: 11400000, guid: 4c26216a0b89db349a26624ed197fa9b, type: 2}
+      levelRequirements: 1
+  - element: 2
+    skillList:
+    - skill: {fileID: 11400000, guid: 06a3362361258804d85828bbeb88074d, type: 2}
+      levelRequirements: 1
+  - element: 3
+    skillList:
+    - skill: {fileID: 11400000, guid: 5b5acf59fd73485499a3de1b693c3d41, type: 2}
+      levelRequirements: 1
+  - element: 4
+    skillList:
+    - skill: {fileID: 11400000, guid: e3960745287736141b8b401ec1e7175f, type: 2}
+      levelRequirements: 1
+  - element: 5
+    skillList:
+    - skill: {fileID: 11400000, guid: d8311582c171d93499bfea2b810af99b, type: 2}
+      levelRequirements: 1
+  - element: 6
+    skillList:
+    - skill: {fileID: 11400000, guid: 28fa2d597234c05459a34fa38d4d718f, type: 2}
+      levelRequirements: 1
