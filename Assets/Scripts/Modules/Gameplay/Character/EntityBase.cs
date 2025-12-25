@@ -356,7 +356,6 @@ public abstract class EntityBase
 	{
 		yield return effect.ApplyEffect();
 	}
-
 	private IEnumerator RunEffectPhase(List<EffectBase> source,bool isStartPhase)
 	{
 		if (source == null || source.Count == 0) yield break;	

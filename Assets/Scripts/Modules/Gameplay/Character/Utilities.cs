@@ -473,8 +473,6 @@ public sealed class DamageContext
 
 	public bool BlockFurtherSharing;
 
-	public int HpBefore;
-	public bool FatalPredicted => HpBefore > 0 && EffectiveDamage >= HpBefore;
 
 
 	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, bool isEffect = false)
