@@ -31,11 +31,10 @@ public class ActiveSkill
 
 	public IEnumerator ExecuteEffect(SkillContext ctx,EffectActiveTiming timing)
 	{
-		Debug.Log($"Executing skill effect for {SkillData.skillName} at timing {timing}");
-		if (SkillData.effectsToApply == null || SkillData.effectsToApply.Count == 0) yield break;
+		if (SkillData.effectsToApply == null || SkillData.effectsToApply.Count == 0 ) yield break;
 		foreach(var effect in SkillData.effectsToApply)
 		{
-			Debug.Log($"Processing effect {effect.effectData?.name} with timing {effect.activeTiming}");
+			if (effect.activeTiming != EffectActiveTiming.OnCast) continue;
 			if (effect.effectData == null) continue;
 			if(effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance)) continue;
 
@@ -90,9 +89,13 @@ public class ActiveSkill
 			}
 		}
 	}
-	public IEnumerable ExecuteOnDealingDamageEffect(SkillContext skillContext)
+	public IEnumerator ExecuteOnDealingDamageEffect(SkillContext skillContext)
 	{
 		if (skillContext.AllTarget == null && skillContext.HitTarget == null) yield break;
+		foreach(var entity in skillContext.HitTarget)
+		{
+			Debug.Log($"{entity.entityData.EntityName}");
+		}
 		if (SkillData.effectsToApply == null) yield break;
 		foreach (var effect in SkillData.effectsToApply)
 		{
@@ -101,6 +104,11 @@ public class ActiveSkill
 			foreach (var entity in skillContext.HitTarget)
 			{
 				var effectInstance = effect.effectData.CreateRuntimeEffect(skillContext.Owner, entity, effect.turnDuration);
+				if (!effect.effectData.isInstantEffect)
+				{
+					Debug.Log("Adding OnDealingDamage Effect");
+					yield return entity.AddEffect(effectInstance);
+				}
 				if (effectInstance is IOnDealingDamage onDealingDamage)
 				{
 					var damageCtx = new DamageContext()

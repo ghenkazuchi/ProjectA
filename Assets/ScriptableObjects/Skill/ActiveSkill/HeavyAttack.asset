@@ -56,3 +56,5 @@ MonoBehaviour:
     procChance: 1
     turnDuration: 1
     activeTiming: 0
+  modifiers:
+  - {fileID: 11400000, guid: f6f0961148c72a74ea9d5c98579105e2, type: 2}

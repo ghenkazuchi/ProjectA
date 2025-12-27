@@ -930,51 +930,112 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		{
 			return 0;
 		}
+
+		var ctx = new DamageContext();
+		ctx.Source = source;
+		ctx.Target = target;
+		ctx.Origin = skill.SkillData.skillDefinition;
+		ctx.attackIncreasePercentage = 1f;
+		ctx.defenseIgnorePercentage = 0f;
+		ApplySkillModifiersPreview(skill, ref ctx);
+		return CalculateDamageWithContext(source, skill, target, ctx);
+		//int baseDamage = Mathf.CeilToInt(skill.currentSkillDamage);
+		//float scalingDamage = 0f;
+
+		//foreach (var entry in skill.SkillData.scalingStatAndMutiply)
+		//{
+		//	Stat stat = entry.Key;
+		//	float multiplier = entry.Value;
+		//	scalingDamage += source.GetFinalStat(stat) * multiplier;
+		//}
+		//float totalDamage = baseDamage + scalingDamage;
+		//float attackStat = 1f;
+		//float defenseStat = 0f;
+		//float kdef = 1f;
+		//switch (skill.SkillData.skillDefinition)
+		//{
+		//	case SkillDefinition.Spell:
+		//		attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.MagicPower));
+		//		defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.MagicalDefense));
+		//		kdef = 1.2f;
+		//		break;
+		//	case SkillDefinition.BattleArt:
+		//		attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.AttackPower));
+		//		defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.PhysicalDefense));
+		//		kdef = 1.2f;
+		//		break;
+		//	case SkillDefinition.Almighty:
+		//		attackStat = 1f;
+		//		defenseStat = 1f;
+		//		kdef = 1;
+		//		break;
+		//}
+		//float atkDefRatio = attackStat / (defenseStat * kdef);
+		//totalDamage *= atkDefRatio;
+		//float damageMultiplier = ElementalChart.GetMultiplier(skill.element, target.entityData.EntityElement);
+		//Debug.Log($"skill Element: {skill.element}, Target Element: {target.entityData.EntityElement}, Multiplier: {damageMultiplier}");
+		//totalDamage *= damageMultiplier;
+		//float rangePosMul = GetRangePositionMultiplier(source, skill, target);
+		//totalDamage *= rangePosMul;
+		//if (rangePosMul != 1f)
+		//	Debug.Log($"[RangePenalty] {source.entityData.EntityName} -> {target.entityData.EntityName} (back-row): x{rangePosMul}");
+
+
+		//var finalDamage = ApplyDamageModifiers(source, target, Mathf.RoundToInt(totalDamage));
+		//finalDamage = ApplyDefenseReduction(target, finalDamage);
+		//return Mathf.Max(1, Mathf.RoundToInt(finalDamage));
+	}
+
+	private int CalculateDamageWithContext(EntityBase source, ActiveSkill skill, EntityBase target, DamageContext ctx)
+	{
 		int baseDamage = Mathf.CeilToInt(skill.currentSkillDamage);
 		float scalingDamage = 0f;
 
 		foreach (var entry in skill.SkillData.scalingStatAndMutiply)
-		{
-			Stat stat = entry.Key;
-			float multiplier = entry.Value;
-			scalingDamage += source.GetFinalStat(stat) * multiplier;
-		}
+			scalingDamage += source.GetFinalStat(entry.Key) * entry.Value;
+
 		float totalDamage = baseDamage + scalingDamage;
+
 		float attackStat = 1f;
 		float defenseStat = 0f;
 		float kdef = 1f;
+
 		switch (skill.SkillData.skillDefinition)
 		{
 			case SkillDefinition.Spell:
-				attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.MagicPower));
+				attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.MagicPower) * ctx.attackIncreasePercentage);
 				defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.MagicalDefense));
 				kdef = 1.2f;
 				break;
+
 			case SkillDefinition.BattleArt:
-				attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.AttackPower));
+				attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.AttackPower) * ctx.attackIncreasePercentage);
 				defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.PhysicalDefense));
 				kdef = 1.2f;
 				break;
+
 			case SkillDefinition.Almighty:
 				attackStat = 1f;
 				defenseStat = 1f;
-				kdef = 1;
+				kdef = 1f;
 				break;
 		}
-		//float penetration = 0f;
-		float atkDefRatio = attackStat / (defenseStat * kdef);
+
+		float ignore = Mathf.Clamp01(ctx.defenseIgnorePercentage);
+		defenseStat = defenseStat * (1f - ignore);
+
+		float atkDefRatio = attackStat / (Mathf.Max(1f, defenseStat * kdef));
 		totalDamage *= atkDefRatio;
+
 		float damageMultiplier = ElementalChart.GetMultiplier(skill.element, target.entityData.EntityElement);
-		Debug.Log($"skill Element: {skill.element}, Target Element: {target.entityData.EntityElement}, Multiplier: {damageMultiplier}");
 		totalDamage *= damageMultiplier;
+
 		float rangePosMul = GetRangePositionMultiplier(source, skill, target);
 		totalDamage *= rangePosMul;
-		if (rangePosMul != 1f)
-			Debug.Log($"[RangePenalty] {source.entityData.EntityName} -> {target.entityData.EntityName} (back-row): x{rangePosMul}");
-
 
 		var finalDamage = ApplyDamageModifiers(source, target, Mathf.RoundToInt(totalDamage));
 		finalDamage = ApplyDefenseReduction(target, finalDamage);
+
 		return Mathf.Max(1, Mathf.RoundToInt(finalDamage));
 	}
 
@@ -1568,6 +1629,17 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			ctx.CritMultiplier = Mathf.Max(1f, cm);
 		}
 		ctx.CritDecided = true;
+	}
+	private void ApplySkillModifiersPreview(ActiveSkill skill, ref DamageContext ctx)
+	{
+		var mods = skill?.SkillData?.modifiers;
+		if (mods == null) return;
+		for(int i = 0;i< mods.Count; i++)
+		{
+			var m = mods[i];
+			if (m == null) continue;
+			m.ModifyPreview(ref ctx);
+		}
 	}
 		#endregion
 }

@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleArtBanEffectData : MonoBehaviour
+[CreateAssetMenu(fileName = "BattleArtBanEffect", menuName = "Effect/Battle Art Ban")]
+public class BattleArtBanEffectData : EffectData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
+	{
+		return new BattleArtBanEffect(
+			EffectType, Effect, Name, owner, target, duration,
+			effectIcon, CanBeRemoved, Stackable, MaxStack
+		);
+	}
 }

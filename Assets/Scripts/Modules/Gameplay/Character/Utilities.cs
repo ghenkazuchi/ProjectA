@@ -472,7 +472,11 @@ public sealed class DamageContext
 	public float SplitPercent;
 
 	public bool BlockFurtherSharing;
+	//Damage Element
 
+	public float defenseIgnorePercentage;
+	public float attackIncreasePercentage;
+	public float propertyDamagePercentage;
 
 
 	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, bool isEffect = false)
@@ -493,7 +497,8 @@ public sealed class DamageContext
 		IsCritical = false;
 		CritMultiplier = 1f;
 		CritForce = CritFocedType.None;
-
+		defenseIgnorePercentage = 0;
+		attackIncreasePercentage = 1;
 	}
 }
 [System.Serializable]

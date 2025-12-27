@@ -20,4 +20,6 @@ public class ActiveSkillData : BaseSkillData
 	public SerializableDictionaryBase<Stat, float> scalingStatAndMutiply;
 	[Header("Effect Can Apply")]
 	public List<ActiveSkillEffect> effectsToApply = new List<ActiveSkillEffect>();
+
+	public List<SkillModifierData> modifiers;
 }

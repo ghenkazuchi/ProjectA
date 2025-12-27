@@ -17,10 +17,6 @@ public class SpellBanEffect : EffectBase, ITurnStart
 
 	public IEnumerator OnTurnStart()
 	{
-		//Target.TurnControl.MergeBans(ActionBan.SpellSkill);
-		//Target.TurnControl.MergeBannedSkillDefs(skillDefinitions);
-		//Target.TurnControl.SourceEffectName = Name;
-		//Target.TurnControl.SourceEffectRuntimeId = RuntimeId;
 		var d = new TurnDirective { Priority = 50, SourceEffectRuntimeId = RuntimeId, SourceEffectName = Name };
 		d.MergeBans(ActionBan.SpellSkill);
 		d.MergeBannedSkillDefs(new[] { SkillDefinition.Spell });

@@ -87,5 +87,7 @@ MonoBehaviour:
     levelRequirements: 1
   - skill: {fileID: 11400000, guid: 889e04c4d07211f46a63d863835c26b3, type: 2}
     levelRequirements: 1
+  - skill: {fileID: 11400000, guid: 0275cad77e00e8c4bb1cc4dab4048f02, type: 2}
+    levelRequirements: 1
   itemSlotCount: 3
   usableWeaponTypes: 040000000500000001000000
