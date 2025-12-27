@@ -19,10 +19,6 @@ MonoBehaviour:
   CanBeRemoved: 1
   Stackable: 0
   MaxStack: 1
-  AppliesTo: 0
-  isInstantEffect: 1
-  hasLimitedUsage: 0
-  timing: 2
-  requiredHit: 1
+  isInstantEffect: 0
   effectIcon: {fileID: 21300000, guid: 67eaf787a169bd841ad4420e4546423b, type: 3}
   onHitEffectToApply: {fileID: 11400000, guid: 764cd1d452ec27040914f88b578e25a0, type: 2}

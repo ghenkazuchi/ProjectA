@@ -11,12 +11,8 @@ public abstract class EffectData : ScriptableObject
 	public bool CanBeRemoved;
 	public bool Stackable;
 	public int MaxStack;
-	public TargetType AppliesTo;
 	public bool isInstantEffect;
-	public bool hasLimitedUsage;
 
-	public EffectActiveTiming timing = EffectActiveTiming.OnCast;
-	public bool requiredHit = false;
 
 	public Sprite effectIcon;
 

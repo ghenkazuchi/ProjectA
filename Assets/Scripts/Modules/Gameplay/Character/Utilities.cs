@@ -502,25 +502,13 @@ public class ActiveSkillEffect
 	public EffectData effectData;
 	public float procChance;
 	public int turnDuration;
+	public EffectActiveTiming activeTiming;
 
-	public ActiveSkillEffect(EffectData effectData, float procChance,int turnDuration)
+	public ActiveSkillEffect(EffectData effectData, float procChance,int turnDuration, EffectActiveTiming activeTiming, TargetType target)
 	{
 		this.effectData = effectData;
 		this.procChance = procChance;
 		this.turnDuration = turnDuration;
-	}
-}
-[System.Serializable]
-public struct PendingShopEquipContext
-{
-	public EquipableBaseData equipData;
-}
-
-public readonly struct ProcResult
-{
-	public readonly bool Proc;
-	public ProcResult(bool proc)
-	{
-		Proc = proc;
+		this.activeTiming = activeTiming;
 	}
 }

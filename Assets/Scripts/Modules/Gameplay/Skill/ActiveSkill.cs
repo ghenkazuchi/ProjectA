@@ -28,46 +28,92 @@ public class ActiveSkill
 			return SkillData.targetType == TargetType.Ally || SkillData.targetType == TargetType.Enemy;
 		}
 	}
-	public IEnumerator Execute(EntityBase owner, List<EntityBase> targets)
+
+	public IEnumerator ExecuteEffect(SkillContext ctx,EffectActiveTiming timing)
 	{
-		var ctx = new SkillContext
+		Debug.Log($"Executing skill effect for {SkillData.skillName} at timing {timing}");
+		if (SkillData.effectsToApply == null || SkillData.effectsToApply.Count == 0) yield break;
+		foreach(var effect in SkillData.effectsToApply)
 		{
-			Owner = owner,
-			AllTarget = targets,
-			HitTarget = targets,
-		};
-		yield return Execute(ctx);
+			Debug.Log($"Processing effect {effect.effectData?.name} with timing {effect.activeTiming}");
+			if (effect.effectData == null) continue;
+			if(effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance)) continue;
+
+			IEnumerable<EntityBase> recipients = SkillData.targetType switch
+			{
+				TargetType.Self => new[] { ctx.Owner },
+				TargetType.Enemy => (timing == EffectActiveTiming.OnHit ? ctx.HitTarget : ctx.AllTarget),
+				TargetType.Ally => (timing == EffectActiveTiming.OnHit ? ctx.HitTarget : ctx.AllTarget),
+				TargetType.SelfOrAllies => (timing == EffectActiveTiming.OnHit ? ctx.HitTarget : ctx.AllTarget),
+				_ => ctx.AllTarget
+			};
+			foreach (var r in recipients)
+			{
+				if (r == null) continue;
+
+				var runtime = effect.effectData.CreateRuntimeEffect(ctx.Owner, r, effect.turnDuration);
+
+				if (effect.effectData.isInstantEffect) yield return r.TriggerEffectDirectly(runtime);
+				else yield return r.AddEffect(runtime);
+			}
+		}
 	}
 
-	public IEnumerator Execute(SkillContext context)
+	public IEnumerator ExecuteBeforeDealingDamageEffect(SkillContext context)
 	{
-		if (SkillData.effectsToApply == null) yield break;
+		if (context.AllTarget == null && context.HitTarget == null) yield break;
+		if(SkillData.effectsToApply == null) yield break;
 		foreach (var effect in SkillData.effectsToApply)
 		{
-			if (effect.effectData == null) continue;	
-
-			IEnumerable<EntityBase> effectRecipent = effect.effectData.AppliesTo switch
+			if (effect.effectData == null) continue;
+			if (effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance))
 			{
-				TargetType.Self => new [] { context.Owner },
-				TargetType.Ally => (effect.effectData.requiredHit? context.HitTarget : context.AllTarget),
-				TargetType.Enemy => (effect.effectData.requiredHit ? context.HitTarget : context.AllTarget),
-				_ => context.AllTarget
-			};
-			foreach(var entity in effectRecipent)
+				yield return BattleSystem.Instance.ShowDialog($"Failed to active {effect.effectData.name}!");
+				continue;
+			}
+			if (effect.activeTiming == EffectActiveTiming.OnCast)
 			{
-				if (Random.value > Mathf.Clamp01(effect.procChance)) continue;
-				var runtimeEffect = effect.effectData.CreateRuntimeEffect(context.Owner, entity, effect.turnDuration);
-				if (effect.effectData.isInstantEffect)
+				foreach (var entity in context.AllTarget)
 				{
-					yield return entity.TriggerEffectDirectly(runtimeEffect);
-				}
-				else
-				{
-					yield return entity.AddEffect(runtimeEffect);
+					var effectInstance = effect.effectData.CreateRuntimeEffect(context.Owner, entity, effect.turnDuration);
+					if (effectInstance is IBeforeDealingDamage beforeDealingDamage)
+					{
+						Debug.Log("Triggering BeforeDealingDamage Effect");
+						var damageCtx = new DamageContext()
+						{
+							Source = context.Owner,
+							Target = entity,
+						};
+						yield return beforeDealingDamage.OnBeforeDealingDamage(damageCtx);
+					}
 				}
 			}
 		}
-	} 
+	}
+	public IEnumerable ExecuteOnDealingDamageEffect(SkillContext skillContext)
+	{
+		if (skillContext.AllTarget == null && skillContext.HitTarget == null) yield break;
+		if (SkillData.effectsToApply == null) yield break;
+		foreach (var effect in SkillData.effectsToApply)
+		{
+			if (effect.effectData == null) continue;
+			if (effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance)) continue;
+			foreach (var entity in skillContext.HitTarget)
+			{
+				var effectInstance = effect.effectData.CreateRuntimeEffect(skillContext.Owner, entity, effect.turnDuration);
+				if (effectInstance is IOnDealingDamage onDealingDamage)
+				{
+					var damageCtx = new DamageContext()
+					{
+						Source = skillContext.Owner,
+						Target = entity,
+						EffectiveDamage = skillContext.totalDamageDeal,
+					};
+					yield return onDealingDamage.OnDealingDamage(damageCtx);
+				}
+			}
+		}
+	}
 	public void SetSkillElement(Element newElement)
 	{
 		element = newElement;
@@ -90,5 +136,6 @@ public struct SkillContext
 	public EntityBase Owner;
 	public List<EntityBase> AllTarget;
 	public List<EntityBase> HitTarget;
+	public int totalDamageDeal;
 }
 

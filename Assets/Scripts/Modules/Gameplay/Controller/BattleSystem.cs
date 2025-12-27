@@ -833,6 +833,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	}
 	IEnumerator PerformSkillAction(EntityBase sourceEntity, List<EntityBase> targetEntites, ActiveSkill skillToUse)
 	{
+		int totalDamagDeal = 0;
 		targetSelectionController.ClearAllPreviews();
 		currentPlayerCharacterInfo.EnableBattleHud(false);
 		yield return StartCoroutine(battleDialogBox.TypeDialog($"{currentTurnEntity.entityData.EntityName} used {skillToUse.SkillData.skillName}"));
@@ -848,7 +849,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 				AllTarget = targetEntites,
 				HitTarget = targetEntites
 			};
-			yield return StartCoroutine(ExecuteWithTimingFilter(skillToUse, contextCast, EffectActiveTiming.OnCast));
+			yield return skillToUse.ExecuteEffect(contextCast,EffectActiveTiming.OnCast);
 		}
 		// OnHit
 		List<EntityBase> targetsGotHit = new List<EntityBase>();
@@ -871,7 +872,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		else
 		{
 			targetsGotHit.AddRange(targetEntites);
-		}
+		}	
 		//DealingDamagePhase
 		if (skillToUse.SkillData.activeSkillType == ActiveSkillType.Damage)
 		{
@@ -885,6 +886,15 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 				if (anim != null)
 					yield return anim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
 				int damage = CalculateDamage(sourceEntity, skillToUse, target);
+				totalDamagDeal += damage;
+				var skillContext = new SkillContext
+				{
+					Owner = sourceEntity,
+					AllTarget = targetEntites,
+					HitTarget = targetsGotHit,
+					totalDamageDeal = 0,
+				};
+				yield return skillToUse.ExecuteBeforeDealingDamageEffect(skillContext);
 				yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition);
 				yield return new WaitForSeconds(0.2f);
 			}
@@ -895,10 +905,10 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			{
 				Owner = sourceEntity,
 				AllTarget = targetEntites,
-				HitTarget = targetsGotHit
+				HitTarget = targetsGotHit,
+				totalDamageDeal = totalDamagDeal,
 			};
-			yield return StartCoroutine(ExecuteWithTimingFilter(skillToUse, contextHit, EffectActiveTiming.OnHit));
-			yield return StartCoroutine(ExecuteWithTimingFilter(skillToUse, contextHit, EffectActiveTiming.OnDealingDamage));
+			yield return skillToUse.ExecuteOnDealingDamageEffect(contextHit);
 		}
 		if (skillToUse.SkillData.skillDefinition == SkillDefinition.Spell)
 		{
@@ -1274,44 +1284,44 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	}
 
 	#region helper
-	public IEnumerator ExecuteWithTimingFilter(ActiveSkill skill, SkillContext context, EffectActiveTiming timing)
-	{
-		if (skill.SkillData.effectsToApply == null || skill.SkillData.effectsToApply.Count == 0) yield break;
-		var backUp = skill.SkillData.effectsToApply;
-		var filterdEffects = backUp.Where(e => e.effectData != null && e.effectData.timing == timing);
-		if (filterdEffects.Count() == 0) yield break;
+	//public IEnumerator ExecuteWithTimingFilter(ActiveSkill skill, SkillContext context, EffectActiveTiming timing)
+	//{
+	//	if (skill.SkillData.effectsToApply == null || skill.SkillData.effectsToApply.Count == 0) yield break;
+	//	var backUp = skill.SkillData.effectsToApply;
+	//	var filterdEffects = backUp.Where(e => e.effectData != null && e.effectData.timing == timing);
+	//	if (filterdEffects.Count() == 0) yield break;
 
-		foreach (var e in filterdEffects)
-		{
-			IEnumerable<EntityBase> recipients = e.effectData.AppliesTo switch
-			{
-				TargetType.Self => new[] { context.Owner },
-				TargetType.Ally => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
-				TargetType.Enemy => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
-				_ => context.AllTarget
-			};
+	//	foreach (var e in filterdEffects)
+	//	{
+	//		IEnumerable<EntityBase> recipients = e.effectData.AppliesTo switch
+	//		{
+	//			TargetType.Self => new[] { context.Owner },
+	//			TargetType.Ally => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
+	//			TargetType.Enemy => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
+	//			_ => context.AllTarget
+	//		};
 
-			foreach (var entity in recipients)
-			{
-				if (Random.value > Mathf.Clamp01(e.procChance))
-				{
-					Debug.Log("Failed To Apply Effect");
-					continue;
-				}
-				var runtimeEffect = e.effectData.CreateRuntimeEffect(context.Owner, entity, e.turnDuration);
-				if (e.effectData.isInstantEffect)
-				{
-					Debug.Log("Successful Apllying Instant Effect");
-					yield return entity.TriggerEffectDirectly(runtimeEffect);
-				}
-				else
-				{
-					Debug.Log("Successful Apllying Effect");
-					yield return entity.AddEffect(runtimeEffect);
-				}
-			}
-		}
-	}
+	//		foreach (var entity in recipients)
+	//		{
+	//			if (Random.value > Mathf.Clamp01(e.procChance))
+	//			{
+	//				Debug.Log("Failed To Apply Effect");
+	//				continue;
+	//			}
+	//			var runtimeEffect = e.effectData.CreateRuntimeEffect(context.Owner, entity, e.turnDuration);
+	//			if (e.effectData.isInstantEffect)
+	//			{
+	//				Debug.Log("Successful Apllying Instant Effect");
+	//				yield return entity.TriggerEffectDirectly(runtimeEffect);
+	//			}
+	//			else
+	//			{
+	//				Debug.Log("Successful Apllying Effect");
+	//				yield return entity.AddEffect(runtimeEffect);
+	//			}
+	//		}
+	//	}
+	//}
 	private void ResetEffectOnEntities()
 	{
 		if (allEntities == null)

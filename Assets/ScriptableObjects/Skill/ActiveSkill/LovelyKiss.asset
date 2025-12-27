@@ -18,8 +18,6 @@ MonoBehaviour:
   skillDefinition: 0
   targetType: 1
   skillRange: 0
-  isLimitedTimeCast: 0
-  usageTime: 0
   baseSpCost: 0
   baseMpCost: 10
   baseSkillDamage: 0
@@ -56,3 +54,4 @@ MonoBehaviour:
   - effectData: {fileID: 11400000, guid: b2b55d680687fe746a0872979260bf1d, type: 2}
     procChance: 0.65
     turnDuration: 1
+    activeTiming: 0

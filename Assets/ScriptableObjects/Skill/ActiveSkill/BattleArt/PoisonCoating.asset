@@ -12,18 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73ecb48a6cb00044d8c15b44f6192da2, type: 3}
   m_Name: PoisonCoating
   m_EditorClassIdentifier: 
-  skillName: 
-  skillDescription: 
+  skillName: Poison Coating
+  skillDescription: Enhance your weapon with poison on hit effect
   skillType: 0
-  skillDefinition: 0
+  skillDefinition: 1
   targetType: 0
   skillRange: 0
   baseSpCost: 0
-  baseMpCost: 0
+  baseMpCost: 8
   baseSkillDamage: 0
-  baseHitChance: 0
+  baseHitChance: 1
   skillElement: 0
-  activeSkillType: 0
+  activeSkillType: 2
   scalingStatAndMutiply:
     reorderableList:
       canAdd: 0
@@ -50,4 +50,8 @@ MonoBehaviour:
     _keyValues: 
     _keys: 
     _values: []
-  effectsToApply: []
+  effectsToApply:
+  - effectData: {fileID: 11400000, guid: 47bcd22b3aa911140b8290aaae3e28f8, type: 2}
+    procChance: 1
+    turnDuration: 3
+    activeTiming: 0
