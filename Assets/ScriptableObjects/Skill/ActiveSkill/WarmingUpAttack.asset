@@ -18,15 +18,12 @@ MonoBehaviour:
   skillDefinition: 1
   targetType: 1
   skillRange: 0
-  isLimitedTimeCast: 0
-  usageTime: 30
   baseSpCost: 5
   baseMpCost: 0
   baseSkillDamage: 3
   baseHitChance: 100
-  baseCritChange: 10
-  baseCritDamage: 10
   skillElement: 0
+  activeSkillType: 0
   scalingStatAndMutiply:
     reorderableList:
       canAdd: 1
@@ -55,4 +52,8 @@ MonoBehaviour:
     _values:
     - 1.2
   effectsToApply:
-  - {fileID: 11400000, guid: 03ab124c68c2581439380e5e6dc24d3c, type: 2}
+  - effectData: {fileID: 11400000, guid: 1df2248537606514dbca26a532bca23a, type: 2}
+    procChance: 0
+    turnDuration: 0
+    activeTiming: 0
+  modifiers: []

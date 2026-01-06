@@ -78,6 +78,36 @@ public abstract class BaseParty : MonoBehaviour
 			Debug.LogWarning($"Player party is full! Cannot add {characterToAdd.entityData.EntityName}.");
 		}
 	}
+
+	public bool TrySwitchPositions(GridPosition a, GridPosition b)
+	{
+		if (!FixedPositions.Contains(a) || !FixedPositions.Contains(b))
+			return false;
+
+		if (a.Equals(b)) return false;
+
+		var slotA = partySlots.Find(s => s.position.Equals(a));
+		var slotB = partySlots.Find(s => s.position.Equals(b));
+
+		if (slotA == null && slotB == null) return false;
+
+		if (slotA != null && slotB == null)
+		{
+			slotA.position = b;
+			return true;
+		}
+		if (slotA == null && slotB != null)
+		{
+			slotB.position = a;
+			return true;
+		}
+
+		var tmp = slotA.position;
+		slotA.position = slotB.position;
+		slotB.position = tmp;
+		return true;
+	}
+
 }
 
 [System.Serializable]

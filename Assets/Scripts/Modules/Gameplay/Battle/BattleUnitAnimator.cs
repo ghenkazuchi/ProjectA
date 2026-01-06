@@ -46,4 +46,9 @@ public class BattleUnitAnimator : MonoBehaviour
 		unit.HitVfx.SetVFX(parryFrames);
 		yield return unit.HitVfx.PlayOnce(0.5f);
 	}
+	public IEnumerator PlayHealingAnimation(Sprite[] healingFrames)
+	{
+		unit.HitVfx.SetVFX(healingFrames);
+		yield return unit.HitVfx.PlayOnce(0.5f);
+	}
 }

@@ -20,7 +20,7 @@ MonoBehaviour:
   skillRange: 0
   baseSpCost: 10
   baseMpCost: 0
-  baseSkillDamage: 12
+  baseSkillDamage: 1
   baseHitChance: 1
   skillElement: 0
   activeSkillType: 0
@@ -50,11 +50,7 @@ MonoBehaviour:
     _keyValues: 03000000
     _keys: 03000000
     _values:
-    - 1
-  effectsToApply:
-  - effectData: {fileID: 11400000, guid: f2bb174af89b7fd47abee8e7d4fb9570, type: 2}
-    procChance: 1
-    turnDuration: 1
-    activeTiming: 0
+    - 0.1
+  effectsToApply: []
   modifiers:
   - {fileID: 11400000, guid: f6f0961148c72a74ea9d5c98579105e2, type: 2}

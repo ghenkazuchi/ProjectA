@@ -118,7 +118,8 @@ public enum Element
 public enum UnitState
 {
 	Dead,
-	Alive
+	Alive,
+	Empty
 }
 
 public enum Affiliation
@@ -499,6 +500,21 @@ public sealed class DamageContext
 		CritForce = CritFocedType.None;
 		defenseIgnorePercentage = 0;
 		attackIncreasePercentage = 1;
+	}
+}
+public sealed class HealingContext
+{
+	public EntityBase Healer;
+	public EntityBase Target;
+	public int BaseHealing;
+	public int FinalHealing;
+
+	public void Reset(EntityBase healer, EntityBase target, int baseHealing)
+	{
+		Healer = healer;
+		Target = target;
+		BaseHealing = baseHealing;
+		FinalHealing = baseHealing;
 	}
 }
 [System.Serializable]

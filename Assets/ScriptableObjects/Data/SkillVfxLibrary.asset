@@ -140,3 +140,16 @@ MonoBehaviour:
   - {fileID: -1519462169, guid: f0429f0ae58bc6e4eb6c4004a76c6132, type: 3}
   - {fileID: -518905401, guid: f0429f0ae58bc6e4eb6c4004a76c6132, type: 3}
   - {fileID: -27798593, guid: f0429f0ae58bc6e4eb6c4004a76c6132, type: 3}
+  healingFrames:
+  - {fileID: -1733309851, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 379164866, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 986968201, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 1228800066, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 87306285, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: -1661066949, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: -620208540, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: -1526200436, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 219185939, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: -2057577508, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: 860313937, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}
+  - {fileID: -1861678816, guid: db9a7d63d73dc0d428afb4a70b166065, type: 3}

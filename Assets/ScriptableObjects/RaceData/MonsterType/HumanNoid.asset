@@ -40,5 +40,7 @@ MonoBehaviour:
     _values: 02000000020000000200000002000000030000000300000002000000
   type: 0
   skillSet:
+  - skill: {fileID: 11400000, guid: a76f37dc28c9f844d8055f058bc908e5, type: 2}
+    levelRequirements: 1
   - skill: {fileID: 11400000, guid: 3da74fe018c52a142bb0f925638c8a77, type: 2}
     levelRequirements: 1

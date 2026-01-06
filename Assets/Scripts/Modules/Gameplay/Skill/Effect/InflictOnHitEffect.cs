@@ -16,7 +16,7 @@ public class InflictOnHitEffect : EffectBase, IOnDealingDamage
 
 	public IEnumerator OnDealingDamage(DamageContext ctx)
 	{
-		if (ctx.Target == null) yield break;
+		if (ctx.Target == null || ctx.Target == Owner) yield break;
 		Debug.Log("InflictOnHitEffect triggered");
 		Debug.Log($"{Target.entityData.EntityName} {this.Name}");	
 		EffectBase effectToApply = OnHitEffectToApply.CreateRuntimeEffect(Owner, ctx.Target, OnHitEffectToApply.MaxDuration);

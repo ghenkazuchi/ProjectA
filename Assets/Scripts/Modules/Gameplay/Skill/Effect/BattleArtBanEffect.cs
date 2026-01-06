@@ -10,7 +10,7 @@ public class BattleArtBanEffect : EffectBase, ITurnStart
 
 	public override IEnumerator ApplyEffect()
 	{
-		yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} got there battle art and basic attack banned!");
+		yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} got there battle art banned!");
 	}
 	public IEnumerator OnTurnStart()
 	{
@@ -22,7 +22,7 @@ public class BattleArtBanEffect : EffectBase, ITurnStart
 	}
 	public override IEnumerator RemoveEffect()
 	{
-		yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} can use battle art and basic attack again !");
+		yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} can use battle art again!");
 		Target.TurnControl.BannedSkillDefs.Remove(SkillDefinition.BattleArt);
 		Target.TurnControl.Bans &= ~ActionBan.BattleArtSkill;
 	}

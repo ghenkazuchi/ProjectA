@@ -218,9 +218,11 @@ public abstract class EntityBase
 
 	public virtual void Heal(int amount, EntityBase source = null)
 	{
+		if (amount <= 0) return;
 		currentHP += amount;
 		currentHP = Mathf.Min(currentHP, maxHP);
 	}
+
 	public virtual void RestoreMP(int amount)
 	{
 		currentMP += amount;
@@ -296,7 +298,7 @@ public abstract class EntityBase
 	}
 	public void RemoveEffect(EffectBase effect)
 	{
-		Debug.Log(effect.Name);
+		Debug.Log(effect.Name);		
 
 		bool removed = false;
 		if (effect.EffectType == EffectType.Buff)

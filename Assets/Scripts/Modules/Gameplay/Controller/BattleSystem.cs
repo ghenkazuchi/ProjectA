@@ -28,7 +28,7 @@ public enum BattleAction
 {
 	Skill,
 	BasicAttack,
-	Run,
+	Switch,
 	Defend
 }
 public enum DefenseState
@@ -57,6 +57,8 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	private int currentSkill;
 	[SerializeField] GameObject battleSystem;
 	[SerializeField] BattleDialogBox battleDialogBox;
+	[SerializeField] CanvasGroup canvasGroup;
+	[SerializeField] private SwitchPositionController switchPositionController;
 	[SerializeField] PlayerParty playerParty;
 	public MonsterParty monsterParty;
 	public bool battleOver;
@@ -70,6 +72,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	private List<EntityBase> selectedTargets;
 	private Coroutine battleCoroutine;
 	public IMonsterInteracable currentMonsterInteractable;
+	private BattleState cancelTargetReturnState;
 
 	[SerializeField] private ActiveSkillData basicAttackSkillData;
 
@@ -78,8 +81,21 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	private void Awake()
 	{
 		basicAttack = new ActiveSkill(basicAttackSkillData);
-	}
+		Hide();
 
+	}
+	private void Show()
+	{
+		canvasGroup.alpha = 1f;
+		canvasGroup.blocksRaycasts = true;
+		canvasGroup.interactable = true;
+	}
+	private void Hide()
+	{
+		canvasGroup.alpha = 0f;
+		canvasGroup.blocksRaycasts = false;
+		canvasGroup.interactable = false;
+	}
 	private readonly Dictionary<GridPosition, int> positionToBattleUnitIndex = new Dictionary<GridPosition, int>
 	{
 		{ new GridPosition(0, 0), 0 },
@@ -96,8 +112,24 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	private static readonly WaitForSeconds waifHalf = new WaitForSeconds(0.5f);	
 	private static readonly WaitForSeconds waitOne = new WaitForSeconds(1f);
 
+	public BattleState GetBattleState() => battleState;
+	public BattleUnit GetBattleUnitAt(int index) => playerBattleUnits[index];
+
+	private GridPosition GetPositionByUnitIndex(int index)
+	{
+		foreach (var kv in positionToBattleUnitIndex)
+			if (kv.Value == index) return kv.Key;
+
+		return new GridPosition(-999, -999);
+	}
+
+	private GridSlot GetSlotByPosition(GridPosition pos)
+	{
+		return playerParty.partySlots.Find(s => s.position.x == pos.x && s.position.y == pos.y);
+	}
 	public void StartBattle(BattleType batteType)
 	{
+		Show();
 		currentBattleType = batteType;
 		battleOver = false;
 		battleState = BattleState.Start;
@@ -182,46 +214,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		{
 			entityDefenseStates[entity] = DefenseState.None;
 		}
-	}
-	private IEnumerator AttemptToRun()
-	{
-		battleState = BattleState.ShowingDialog;
-		currentPlayerCharacterInfo.EnableBattleHud(false);
-		yield return StartCoroutine(battleDialogBox.TypeDialog($"{currentTurnEntity.entityData.EntityName} is trying to escape!"));
-		yield return new WaitForSeconds(1f);
-
-		float runSuccessChance = 0.5f;
-
-		float playerSpeed = currentTurnEntity.GetFinalStat(Stat.ActionSpeed);
-		float averageEnemySpeed = 0f;
-		var enemies = monsterParty.GetAllEntitiesInParty();
-		foreach (var enemy in enemies)
-		{
-			if (enemy != null && enemy.GetCurrentHP() > 0)
-			{
-				averageEnemySpeed += enemy.GetFinalStat(Stat.ActionSpeed);
-			}
-		}
-		averageEnemySpeed /= enemies.Count;
-
-		if (playerSpeed > averageEnemySpeed)
-		{
-			runSuccessChance += 0.3f;
-		}
-
-		if (Random.Range(0f, 1f) < runSuccessChance)
-		{
-			yield return StartCoroutine(battleDialogBox.TypeDialog("Successfully escaped from battle!"));
-			battleOver = true;
-			battleState = BattleState.BattleOver;
-			MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleOver));
-		}
-		else
-		{
-			yield return StartCoroutine(battleDialogBox.TypeDialog("Couldn't escape!"));
-			battleState = BattleState.Start;
-		}
-		yield return null;
 	}
 	private IEnumerator HandleEntityTakeDamage(
 		EntityBase target, int finalDamage, EntityBase source,
@@ -327,7 +319,21 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		if (UpdateUnitState(_ctx.Target)) yield break;
 	}
 
-
+	private IEnumerator HandleEntityGotHeal(HealingContext healingContext)
+	{
+		yield return TriggerOnHealingReceived(healingContext.Target, healingContext);
+		if(healingContext.FinalHealing >= 0)
+		{
+			healingContext.Target.Heal(healingContext.FinalHealing);
+			UpdateUnitHealth(healingContext.Target);
+			yield return ShowDialog($"{healingContext.Target.entityData.EntityName} recovered {healingContext.FinalHealing} HP!");
+		}
+		else
+		{
+			int damage = Mathf.Abs(healingContext.FinalHealing);
+			yield return HandleEntityTakeDamage(healingContext.Target,damage,healingContext.Healer, SkillDefinition.Almighty, true, "reverse healing");
+		}
+	}
 
 	public IEnumerator ApplyEffectDamage(EntityBase target, int amount, EntityBase source, string reason = null)
 	{
@@ -705,10 +711,64 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 				case BattleAction.BasicAttack:
 					StartCoroutine(HandleBasicAttackSelection());
 					break;
-				case BattleAction.Run:
-					StartCoroutine(AttemptToRun());
+				case BattleAction.Switch:
+					StartCoroutine(HandleSwitchPosition());
 					break;
 			}
+		}
+	}
+
+	private IEnumerator HandleSwitchPosition()
+	{
+		battleState = BattleState.PositionSwitch;
+		currentPlayerCharacterInfo.EnableBattleHud(false);
+		battleDialogBox.EnableActionSelector(false);
+		battleDialogBox.EnableAttackSelector(false);
+		battleDialogBox.EnableDialogText(true);
+		yield return StartCoroutine(battleDialogBox.TypeDialog("Select a party member to switch positions."));
+		yield return waifHalf;
+		switchPositionController.BeginSwitch();
+
+		yield return new WaitUntil(() => battleState == BattleState.RunningTurn || battleState == BattleState.BattleOver);
+		switchPositionController.EndSwitch();
+	}
+
+	public void ExecuteSwitchPosition(int indexA, int indexB)
+	{
+		if (battleState != BattleState.PositionSwitch) return;
+
+		try
+		{
+			var posA = GetPositionByUnitIndex(indexA);
+			var posB = GetPositionByUnitIndex(indexB);
+
+			bool changed = playerParty.TrySwitchPositions(posA, posB);
+			if (!changed) return;
+
+			SyncPlayerBattleUnitsFromPartySlots();
+
+			timelineManager.UpdateEntityTimeline(currentTurnEntity);
+			UpdateTimelineUI();
+		}
+		finally
+		{
+			battleState = BattleState.RunningTurn;
+		}
+	}
+
+	private void SyncPlayerBattleUnitsFromPartySlots()
+	{
+		for (int i = 0; i < playerBattleUnits.Count; i++)
+		{
+			var pos = GetPositionByUnitIndex(i);
+			var entity = playerParty.GetEntityAtPosition(pos);
+
+			var unit = playerBattleUnits[i];
+			unit.character = entity;
+
+			unit.gameObject.SetActive(entity != null);
+
+			unit.SetUp();
 		}
 	}
 	private IEnumerator HandleDefend()
@@ -724,6 +784,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	}
 	private IEnumerator HandleBasicAttackSelection()
 	{
+		cancelTargetReturnState = BattleState.ActionSelection;
 		battleState = BattleState.TargetSelection;
 		yield return StartCoroutine(HandleTargetSelection(basicAttack))	;
 	}
@@ -768,6 +829,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 				StartCoroutine(HandleUnusableSkillConfirm(selectedSkill));
 				return;
 			}
+			cancelTargetReturnState = BattleState.SkillSelection;
 			battleState = BattleState.TargetSelection;
 			StartCoroutine(HandleTargetSelection(selectedSkill));
 		}
@@ -819,11 +881,27 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			else
 			{
 				Debug.Log("Target selection cancelled.");
-				battleState = BattleState.SkillSelection;
-
 				battleDialogBox.EnableDialogText(false);
-				battleDialogBox.EnableAttackSelector(true);
-				battleDialogBox.UpdateSkillSelection(currentSkill);
+				targetSelectionController.gameObject.SetActive(false);
+
+				if (cancelTargetReturnState == BattleState.ActionSelection)
+				{
+					battleState = BattleState.ActionSelection;
+
+					currentPlayerCharacterInfo.EnableBattleHud(true);
+					battleDialogBox.EnableAttackSelector(false);
+					battleDialogBox.EnableActionSelector(true);
+					battleDialogBox.UpdateActionSelection(currentAction);
+				}
+				else 
+				{
+					battleState = BattleState.SkillSelection;
+
+					currentPlayerCharacterInfo.EnableBattleHud(false);
+					battleDialogBox.EnableActionSelector(false);
+					battleDialogBox.EnableAttackSelector(true);
+					battleDialogBox.UpdateSkillSelection(currentSkill);
+				}
 			}
 		}, skillToUse, currentTurnEntity);
 
@@ -898,17 +976,33 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 				yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition);
 				yield return new WaitForSeconds(0.2f);
 			}
-		}
-		if (skillToUse.SkillData.effectsToApply.Count > 0)
-		{
-			var contextHit = new SkillContext
+			if (skillToUse.SkillData.effectsToApply.Count > 0)
 			{
-				Owner = sourceEntity,
-				AllTarget = targetEntites,
-				HitTarget = targetsGotHit,
-				totalDamageDeal = totalDamagDeal,
-			};
-			yield return skillToUse.ExecuteOnDealingDamageEffect(contextHit);
+				var contextHit = new SkillContext
+				{
+					Owner = sourceEntity,
+					AllTarget = targetEntites,
+					HitTarget = targetsGotHit,
+					totalDamageDeal = totalDamagDeal,
+				};
+				yield return skillToUse.ExecuteOnDealingDamageEffect(contextHit);
+			}
+		}
+		else if(skillToUse.SkillData.activeSkillType == ActiveSkillType.Heal)
+		{
+			foreach (var target in targetsGotHit)
+			{
+				var healingVFX = vfxLib.GetHealingVFX();
+				var targetUnit = FindBattleUnitForEntity(target);
+				var animator = targetUnit.GetAnimator();
+				yield return animator.PlayHealingAnimation(healingVFX);
+				int skillHealing = CalculateHealing(sourceEntity, skillToUse, target);
+				var healingContext = new HealingContext();
+				healingContext.Reset(sourceEntity, target, skillHealing);
+				yield return HandleEntityGotHeal(healingContext);
+				yield return waifHalf;
+			}
+
 		}
 		if (skillToUse.SkillData.skillDefinition == SkillDefinition.Spell)
 		{
@@ -939,51 +1033,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		ctx.defenseIgnorePercentage = 0f;
 		ApplySkillModifiersPreview(skill, ref ctx);
 		return CalculateDamageWithContext(source, skill, target, ctx);
-		//int baseDamage = Mathf.CeilToInt(skill.currentSkillDamage);
-		//float scalingDamage = 0f;
-
-		//foreach (var entry in skill.SkillData.scalingStatAndMutiply)
-		//{
-		//	Stat stat = entry.Key;
-		//	float multiplier = entry.Value;
-		//	scalingDamage += source.GetFinalStat(stat) * multiplier;
-		//}
-		//float totalDamage = baseDamage + scalingDamage;
-		//float attackStat = 1f;
-		//float defenseStat = 0f;
-		//float kdef = 1f;
-		//switch (skill.SkillData.skillDefinition)
-		//{
-		//	case SkillDefinition.Spell:
-		//		attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.MagicPower));
-		//		defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.MagicalDefense));
-		//		kdef = 1.2f;
-		//		break;
-		//	case SkillDefinition.BattleArt:
-		//		attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.AttackPower));
-		//		defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.PhysicalDefense));
-		//		kdef = 1.2f;
-		//		break;
-		//	case SkillDefinition.Almighty:
-		//		attackStat = 1f;
-		//		defenseStat = 1f;
-		//		kdef = 1;
-		//		break;
-		//}
-		//float atkDefRatio = attackStat / (defenseStat * kdef);
-		//totalDamage *= atkDefRatio;
-		//float damageMultiplier = ElementalChart.GetMultiplier(skill.element, target.entityData.EntityElement);
-		//Debug.Log($"skill Element: {skill.element}, Target Element: {target.entityData.EntityElement}, Multiplier: {damageMultiplier}");
-		//totalDamage *= damageMultiplier;
-		//float rangePosMul = GetRangePositionMultiplier(source, skill, target);
-		//totalDamage *= rangePosMul;
-		//if (rangePosMul != 1f)
-		//	Debug.Log($"[RangePenalty] {source.entityData.EntityName} -> {target.entityData.EntityName} (back-row): x{rangePosMul}");
-
-
-		//var finalDamage = ApplyDamageModifiers(source, target, Mathf.RoundToInt(totalDamage));
-		//finalDamage = ApplyDefenseReduction(target, finalDamage);
-		//return Mathf.Max(1, Mathf.RoundToInt(finalDamage));
 	}
 
 	private int CalculateDamageWithContext(EntityBase source, ActiveSkill skill, EntityBase target, DamageContext ctx)
@@ -1343,46 +1392,37 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			}
 		}
 	}
+	private IEnumerator TriggerOnHealingReceived(EntityBase target, HealingContext ctx)
+	{
+		var effects = target?.GetAllEffect();
+		if (effects == null) yield break;
+		for(int i = 0;i < effects.Count; i++)
+		{
+			var e = effects[i];
+			if(e is IOnHealingReceived hook)
+			{
+				yield return hook.OnHealingReceived(ctx);
+			}
+		}
+	}
+	public int CalculateHealing(EntityBase healer, ActiveSkill skill, EntityBase target)
+	{
+		if (skill.SkillData.activeSkillType != ActiveSkillType.Heal) return 0;
+		int baseHeal = Mathf.CeilToInt(skill.currentSkillDamage);
+		if (skill.SkillData.scalingStatAndMutiply != null)
+		{
+			foreach (var entry in skill.SkillData.scalingStatAndMutiply)
+			{
+				baseHeal += Mathf.CeilToInt(healer.GetFinalStat(entry.Key) * entry.Value);
+			}
+		}
+		var hctx = new HealingContext();
+		hctx.Reset(healer, target, baseHeal);
+		ApplySkillHealingModifiersPreview(skill, ref hctx);
+		return Mathf.Max(0, hctx.FinalHealing);
 
+	}
 	#region helper
-	//public IEnumerator ExecuteWithTimingFilter(ActiveSkill skill, SkillContext context, EffectActiveTiming timing)
-	//{
-	//	if (skill.SkillData.effectsToApply == null || skill.SkillData.effectsToApply.Count == 0) yield break;
-	//	var backUp = skill.SkillData.effectsToApply;
-	//	var filterdEffects = backUp.Where(e => e.effectData != null && e.effectData.timing == timing);
-	//	if (filterdEffects.Count() == 0) yield break;
-
-	//	foreach (var e in filterdEffects)
-	//	{
-	//		IEnumerable<EntityBase> recipients = e.effectData.AppliesTo switch
-	//		{
-	//			TargetType.Self => new[] { context.Owner },
-	//			TargetType.Ally => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
-	//			TargetType.Enemy => (e.effectData.requiredHit ? context.HitTarget : context.AllTarget),
-	//			_ => context.AllTarget
-	//		};
-
-	//		foreach (var entity in recipients)
-	//		{
-	//			if (Random.value > Mathf.Clamp01(e.procChance))
-	//			{
-	//				Debug.Log("Failed To Apply Effect");
-	//				continue;
-	//			}
-	//			var runtimeEffect = e.effectData.CreateRuntimeEffect(context.Owner, entity, e.turnDuration);
-	//			if (e.effectData.isInstantEffect)
-	//			{
-	//				Debug.Log("Successful Apllying Instant Effect");
-	//				yield return entity.TriggerEffectDirectly(runtimeEffect);
-	//			}
-	//			else
-	//			{
-	//				Debug.Log("Successful Apllying Effect");
-	//				yield return entity.AddEffect(runtimeEffect);
-	//			}
-	//		}
-	//	}
-	//}
 	private void ResetEffectOnEntities()
 	{
 		if (allEntities == null)
@@ -1521,6 +1561,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		currentTurnEntity = null;
 		selectedSkill = null;
 		currentMonsterInteractable = null;
+		Hide();
 		Resources.UnloadUnusedAssets();
 		System.GC.Collect();
 	}
@@ -1557,23 +1598,56 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		if (skill.SkillData.skillRange == SkillRange.AllTarget)
 			return 1f;
-		if (skill.SkillData.skillDefinition == SkillDefinition.Spell || skill.SkillData.skillDefinition == SkillDefinition.Almighty)
-		{
+
+		if (skill.SkillData.skillDefinition == SkillDefinition.Spell ||
+			skill.SkillData.skillDefinition == SkillDefinition.Almighty)
 			return 1f;
-		}
+
 		if (!IsTargetInBackRow(target))
-		{
 			return 1f;
-		}
-		if(GetEntityWeaponType(source, out WeaponType wt))
+
+		if (!HasAliveFrontAlly(target))
+			return 1f;
+
+		if (GetEntityWeaponType(source, out WeaponType wt))
 		{
 			if (wt == WeaponType.Bow || wt == WeaponType.Spear)
-			{
 				return 1f;
-			}
 		}
+
 		return Mathf.Clamp01(backrowDamageReduction);
 	}
+
+
+	private BaseParty GetPartyOf(EntityBase e)
+	{
+		if (e == null) return null;
+
+		if (playerParty.partySlots.Exists(s => s.entity == e))
+			return playerParty;
+
+		if (monsterParty.partySlots.Exists(s => s.entity == e))
+			return monsterParty;
+
+		return null;
+	}
+
+	private bool HasAliveFrontAlly(EntityBase target)
+	{
+		var pos = GetEntityPosition(target);
+		if (pos == null) return false;
+
+		if (pos.x != 1) return false;
+
+		var party = GetPartyOf(target);
+		if (party == null) return false;
+
+		var frontPos = new GridPosition(0, pos.y); 
+		var frontEntity = party.GetEntityAtPosition(frontPos);
+
+		return frontEntity != null && frontEntity.GetCurrentHP() > 0;
+	}
+
 	private bool IsDefending(EntityBase entity)
 	{
 		return entityDefenseStates.TryGetValue(entity, out var state) && state == DefenseState.Defending;
@@ -1589,14 +1663,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		critMul = baseCritMultiplier;
 
 		var attackerEffects = attacker.GetAllEffect();
-		if(attackerEffects != null)
-		{
-			foreach(var e in attackerEffects)
-			{
-				if(e is IModifyCritChance c) chance = Mathf.Clamp01(c.ModifyCritChance(attacker,target, chance));
-				if(e is IModifyCritDamage d) critMul = d.ModifyCritDamage(attacker, target, critMul);
-			}
-		}
 		return Random.value <= chance;
 	}
 
@@ -1639,6 +1705,18 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			var m = mods[i];
 			if (m == null) continue;
 			m.ModifyPreview(ref ctx);
+		}
+	}
+	private void ApplySkillHealingModifiersPreview(ActiveSkill skill, ref HealingContext ctx)
+	{
+		var mods = skill?.SkillData?.modifiers;
+		if (mods == null) return;
+
+		for(int i = 0;i < mods.Count; i++)
+		{
+			var m = mods[i];
+			if (m == null) continue;
+			m.ModifyHealingPreview(ref ctx);
 		}
 	}
 		#endregion

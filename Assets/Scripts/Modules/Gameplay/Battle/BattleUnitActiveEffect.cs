@@ -34,7 +34,7 @@ public class BattleUnitActiveEffect : MonoBehaviour
 			RebuildInitial();
 			return;
 		}
-		Unbind();
+		Unbind(true);
 		entity = e;
 		if (entity == null)
 		{
@@ -48,22 +48,24 @@ public class BattleUnitActiveEffect : MonoBehaviour
 		RebuildInitial();
 	}
 
-	private void OnDestroy() => Unbind();
+	private void OnDestroy() => Unbind(true);
 
-	private void Unbind()
+	private void Unbind(bool clearUI)
 	{
-		if (entity == null) return;
-		entity.OnEffectAdded -= OnEffectAdded;
-		entity.OnEffectRemoved -= OnEffectRemoved;
-		entity.OnEffectChanged -= OnEffectChanged;
-		entity.OnEntityDead -= OnUnitDeath;
-		entity = null;
-		ClearAll();
+		if (entity != null)
+		{
+			entity.OnEffectAdded -= OnEffectAdded;
+			entity.OnEffectRemoved -= OnEffectRemoved;
+			entity.OnEffectChanged -= OnEffectChanged;
+			entity.OnEntityDead -= OnUnitDeath;
+			entity = null;
+		}
+
+		if(clearUI) ClearAll();
 	}
-	private void OnUnitDeath(EntityBase entity) => Unbind();
 	private void OnDisable()
 	{
-		Unbind();
+		UnsubscribeOnly();
 	}
 
 	private void OnEffectAdded(EntityBase ent, EffectBase e)
@@ -214,4 +216,15 @@ public class BattleUnitActiveEffect : MonoBehaviour
 		displayOrder.Clear();
 		evictedStack.Clear();
 	}
+	private void UnsubscribeOnly()
+	{
+		if (entity == null) return;
+
+		entity.OnEffectAdded -= OnEffectAdded;
+		entity.OnEffectRemoved -= OnEffectRemoved;
+		entity.OnEffectChanged -= OnEffectChanged;
+		entity.OnEntityDead -= OnUnitDeath;
+		entity = null;
+	}
+	private void OnUnitDeath(EntityBase entity) => Unbind(clearUI: true);
 }	

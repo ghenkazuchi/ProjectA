@@ -30,24 +30,46 @@ public class BattleUnit : BaseUnit
 	public BattleUnitAnimator GetAnimator() => Animator;
 	public override void SetUp()
 	{
+		if (character == null)
+		{
+			state = UnitState.Empty;
+			highlightOverlay.SetActive(false);
+
+			if (unitImage != null) unitImage.enabled = false;
+			if (healthBar != null) healthBar.SetHP(0f);
+
+			var effectUI = GetComponentInChildren<BattleUnitActiveEffect>(true);
+			if (effectUI != null) effectUI.gameObject.SetActive(false);
+
+			return;
+		}
+
+		state = UnitState.Alive;
+
+		if (unitImage != null) unitImage.enabled = true;
 		unitImage.sprite = character.entityData.EntitySprite;
+
 		level = character.level;
 		highlightOverlay.SetActive(false);
-		Debug.Log(character.GetCurrentHP());
-		Debug.Log(character.MaxHp);
-		healthBar.SetHP((float)character.GetCurrentHP() / character.MaxHp);
-		state = UnitState.Alive;
-		UpdateHP();
 
-		var effectUI = GetComponentInChildren<BattleUnitActiveEffect>(true);
-		if (effectUI != null && character != null) effectUI.Bind(character);
+		if (healthBar != null)
+			healthBar.SetHP((float)character.GetCurrentHP() / character.MaxHp);
+
+		var effectUI2 = GetComponentInChildren<BattleUnitActiveEffect>(true);
+		if (effectUI2 != null)
+		{
+			effectUI2.gameObject.SetActive(true);
+			effectUI2.Bind(character);
+		}
 	}
+
 	public void SetHighLight(bool isTargeted)
 	{
 		highlightOverlay.SetActive(isTargeted);
 	}
 	public void UpdateHP()
 	{
+		if (state == UnitState.Empty || character == null) return;
 
 		if (character.GetCurrentHP() <= 0)
 		{
@@ -60,7 +82,9 @@ public class BattleUnit : BaseUnit
 			state = UnitState.Alive;
 			unitImage.sprite = character.entityData.EntitySprite;
 		}
-		healthBar.SetHP((float)character.GetCurrentHP() / character.MaxHp);
+
+		if (healthBar != null)
+			healthBar.SetHP((float)character.GetCurrentHP() / character.MaxHp);
 	}
 	public bool IsAlive()
 	{
@@ -68,7 +92,17 @@ public class BattleUnit : BaseUnit
 	}
 	public void PreviewDamage(int damage)
 	{
+		if (state == UnitState.Empty || character == null) return;
+
 		float futureHP = Mathf.Max(character.GetCurrentHP() - damage, 0);
+		healthBar.SetHP(futureHP / character.MaxHp);
+	}
+
+	public void PreviewHealing(int healingAmount)
+	{
+		if (state == UnitState.Empty || character == null) return;
+		float futureHP = character.GetCurrentHP() + healingAmount;
+		futureHP = Mathf.Clamp(futureHP,0,character.MaxHp);
 		healthBar.SetHP(futureHP / character.MaxHp);
 	}
 	public void ClearPreview()

@@ -6,11 +6,16 @@ public abstract class SkillModifierData : ScriptableObject
 {
 	public virtual void ModifyPreview(ref DamageContext ctx)
 	{
-
+	}
+	public virtual void ModifyHealingPreview(ref HealingContext healingContext) { }
+	public virtual IEnumerator ModifyHealingRuntime(HealingContext ctx)
+	{
+		yield break;
 	}
 
 	public virtual IEnumerator ModiffyRuntime(DamageContext ctx)
 	{
 		yield break;
 	}
+
 }

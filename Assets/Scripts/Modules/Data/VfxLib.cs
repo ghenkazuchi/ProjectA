@@ -15,6 +15,8 @@ public class VfxLib : ScriptableObject
 
 	[Header("Parry VFX")]	
 	public Sprite[] parryFrames;
+	[Header("Healing VFX")]
+	public Sprite[] healingFrames;
 
 	[Serializable]
 	public class ElementVFX
@@ -45,5 +47,9 @@ public class VfxLib : ScriptableObject
 	public Sprite[] GetParryVFX()
 	{
 		return parryFrames;
+	}
+	public Sprite[] GetHealingVFX()
+	{
+		return healingFrames;
 	}
 }

@@ -21,7 +21,7 @@ MonoBehaviour:
   itemRarity: 1
   effectData:
   - trigger: 1
-    effect: {fileID: 11400000, guid: 37f229700c4340d48a96e2e53ac43780, type: 2}
+    effect: {fileID: 11400000, guid: 383bab6fceb04684793f0bf59bd863a1, type: 2}
     condition: {fileID: 0}
   canDuplicateTrigger: 0
   equipmentSet: {fileID: 0}

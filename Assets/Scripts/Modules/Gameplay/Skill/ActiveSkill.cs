@@ -145,5 +145,6 @@ public struct SkillContext
 	public List<EntityBase> AllTarget;
 	public List<EntityBase> HitTarget;
 	public int totalDamageDeal;
+	public int totalHealing;
 }
 
