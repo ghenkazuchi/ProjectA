@@ -32,15 +32,12 @@ public class PlayerMovement : MonoBehaviour
 		}
 		AdjustSpriteToTileSize();
 		// Spawn
-
-
-		Vector2Int spawnGridPosition = _pathGenerator.GetRandomPathTile();
+		Vector2Int spawnGridPosition = _pathGenerator.GetPlayerSpawnPosition();
 		_currentGridPosition = spawnGridPosition;
 		transform.position = _pathGenerator.GetWorldPosition(spawnGridPosition);
 		_targetWorldPosition = transform.position;
 
 		Debug.Log($"Player spawned at grid: {spawnGridPosition}, world: {transform.position}");
-		_pathGenerator.SetPlayerPosition(spawnGridPosition);
 	}
 
 	void AdjustSpriteToTileSize()

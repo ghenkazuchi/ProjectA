@@ -51,4 +51,5 @@ MonoBehaviour:
     _keys: 
     _values: []
   effectsToApply: []
-  modifiers: []
+  modifiers:
+  - {fileID: 11400000, guid: c69d51b498b2041479964d8131b88621, type: 2}

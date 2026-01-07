@@ -7,5 +7,4 @@ public class EquipEffectBinding
 {
 	public EquipEffectTrigger trigger;
 	public EffectData effect;
-	public ScriptableObject condition;
 }

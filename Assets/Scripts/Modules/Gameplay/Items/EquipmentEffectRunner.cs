@@ -46,10 +46,6 @@ public class EquipmentEffectRunner
 			{
 				if (binding.trigger != triggerType) continue;
 
-
-				var condition = binding.condition as IEffectCondition;
-				if (condition != null && !condition.IsSastisfied(owner, target, battleSystem)) continue;
-
 				EntityBase effectTarget = target ?? owner;
 				EffectBase effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
 				EffectUsageTracker usageTracker = null;
@@ -98,7 +94,6 @@ public class EquipmentEffectRunner
 			{
 				if (binding == null || binding.effect == null) continue;
 				if (binding.trigger != trigger) continue;
-				if (binding.condition is IEffectCondition cond && !cond.IsSastisfied(owner, target, battleSystem)) continue;
 
 				var effectTarget = target ?? owner;
 				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
@@ -167,7 +162,6 @@ public class EquipmentEffectRunner
 			{
 				if (binding == null || binding.effect == null) continue;
 				if (binding.trigger != trigger) continue;
-				if (binding.condition is IEffectCondition cond && !cond.IsSastisfied(owner, target, battleSystem)) continue;
 
 				var effectTarget = target ?? owner;
 				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);

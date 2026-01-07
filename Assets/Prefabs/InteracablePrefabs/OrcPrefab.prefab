@@ -176,10 +176,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visionRange: 4
-  moveSpeed: 10
-  chaseSpeed: 10
-  patrolSpeed: 10
-  stopDistance: 0.1
-  enablePatrol: 1
-  patrolWaitTime: 1
-  maxPatrolDistance: 3
+  patrolTilesPerSecond: 3
+  chaseTilesPerSecond: 3
+  repathInterval: 0.4
