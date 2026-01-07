@@ -24,6 +24,9 @@ public class ExpDistributionController : MonoBehaviour
 	private void Awake()
 	{
 		SetUpListeners();
+		expDistributionCanvasGroup.alpha = 0f;
+		expDistributionCanvasGroup.blocksRaycasts = false;
+		expDistributionCanvasGroup.interactable = false;
 	}
 	private void InitializeUI()
 	{

@@ -67,8 +67,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: ItemsSlotAvailable
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e07d8080cc42b6245ae38136d46ede6e, type: 2}
+  m_sharedMaterial: {fileID: -3896194265356112190, guid: e07d8080cc42b6245ae38136d46ede6e,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -300,6 +301,7 @@ MonoBehaviour:
   characterName: {fileID: 5698050841971576161}
   characterWeapon: {fileID: 4996110953853588876}
   characterItemSlotStatus: {fileID: 4939889168241589445}
+  button: {fileID: 0}
 --- !u!1 &7064987452722584880
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,8 +369,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: Charactername
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e07d8080cc42b6245ae38136d46ede6e, type: 2}
+  m_sharedMaterial: {fileID: -3896194265356112190, guid: e07d8080cc42b6245ae38136d46ede6e,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -501,8 +504,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon Status
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e07d8080cc42b6245ae38136d46ede6e, type: 2}
+  m_sharedMaterial: {fileID: -3896194265356112190, guid: e07d8080cc42b6245ae38136d46ede6e,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -23,25 +23,25 @@ public class RecruitUIController : MonoBehaviour
 	[Header("Button")]
 	[SerializeField] Button closeButton;
 	[SerializeField] Button detailButton;
-	[SerializeField] Button closeDetailButton;
 	[SerializeField] Button showActiveSkillsButton;
 	[SerializeField] Button showPassiveSkillsButton;
 	[SerializeField] Button showAuraSkillsButton;
 	[SerializeField] Button recruitButton;
 	[Header("CanvasGroup")]
 	[SerializeField] CanvasGroup traitsDetailCanvasGroup;
+	private bool isStatsOpen = false;
 
 	private void Start()
 	{
 		recruitButton.onClick.AddListener(OnRecruitButtonClicked);
 		closeButton.onClick.AddListener(() => CloseRecruitUI());
-		detailButton.onClick.AddListener(() => OpenStatsUI());
-		closeDetailButton.onClick.AddListener(() => CloseStatsUI());
+		detailButton.onClick.AddListener(() => ToggleStatsUI());
 		showActiveSkillsButton.onClick.AddListener(() => DisplayCharacterSkills(currentRecruitableCharacterData, SkillType.Active));
 		showPassiveSkillsButton.onClick.AddListener(() => DisplayCharacterSkills(currentRecruitableCharacterData, SkillType.Passive));
 		traitsDetailCanvasGroup.alpha = 0f;
 		traitsDetailCanvasGroup.blocksRaycasts = false;
 		traitsDetailCanvasGroup.interactable = false;
+		SetStatsUI(false);
 	}
 
 	private RecruitableCharacterData currentRecruitableCharacterData;
@@ -62,8 +62,21 @@ public class RecruitUIController : MonoBehaviour
 	}
 	private void CloseRecruitUI()
 	{
-		CloseStatsUI();
+		SetStatsUI(false);
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnRecruitCharacterUIClose));
+	}
+
+	private void ToggleStatsUI()
+	{
+		SetStatsUI(!isStatsOpen);
+	}
+
+	private void SetStatsUI(bool open)
+	{
+		isStatsOpen = open;
+		traitsDetailCanvasGroup.alpha = open ? 1f : 0f;
+		traitsDetailCanvasGroup.interactable = open;
+		traitsDetailCanvasGroup.blocksRaycasts = open;
 	}
 	private void DisplayCharacterInfo(RecruitableCharacterData characterData)
 	{
@@ -73,18 +86,7 @@ public class RecruitUIController : MonoBehaviour
 		raceText.text = $"Race: {characterData.characterTemplate.raceData.raceType.ToString()}";
 		ElementText.text = $"Element: {characterData.characterTemplate.entityData.EntityElement.ToString()}";
 	}
-	private void OpenStatsUI()
-	{
-		traitsDetailCanvasGroup.alpha = 1.0f;
-		traitsDetailCanvasGroup.interactable = true;
-		traitsDetailCanvasGroup.blocksRaycasts = true;
-	}
-	private void CloseStatsUI()
-	{
-		traitsDetailCanvasGroup.alpha = 0f;
-		traitsDetailCanvasGroup.interactable = false;
-		traitsDetailCanvasGroup.blocksRaycasts = false;
-	}
+
 	private void DisplayCharacterSkills(RecruitableCharacterData characterData,SkillType skillType)
 	{
 		ClearContainer(skillsContent);
