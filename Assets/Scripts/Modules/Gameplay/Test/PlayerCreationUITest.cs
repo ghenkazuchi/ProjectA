@@ -84,7 +84,7 @@ public class PlayerCreationUITest : MonoBehaviour
 			int currentValue = currentTraitValues[trait];
 			if (currentValue > baseValue)
 			{
-				traitTexts[i].color = Color.green;
+				traitTexts[i].color = Color.red;
 			}
 			else
 			{
