@@ -51,9 +51,5 @@ MonoBehaviour:
     _keys: 0b000000
     _values:
     - 1.2
-  effectsToApply:
-  - effectData: {fileID: 11400000, guid: 1df2248537606514dbca26a532bca23a, type: 2}
-    procChance: 0
-    turnDuration: 0
-    activeTiming: 0
+  effectsToApply: []
   modifiers: []

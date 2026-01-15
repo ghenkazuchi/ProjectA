@@ -166,15 +166,20 @@ public enum InteracableType
 {
 	Monster,
 	Chest,
-	FairyKing,
 	WellOfFortune,
 	BlackSmith,
 	ShopKeeper,
-	Tarvern,
-	Oil,
-	Pot,
 	FireCamp,
-	Companion
+	Companion,
+	UniqueBoss
+}
+public enum InteracableGroup
+{
+	Combat,
+	Consumeable,
+	Service,
+	Event,
+	UniqueBoss,
 }
 public enum BattleType
 {

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerCharacter
   m_EditorClassIdentifier: 
   entityName: PlayerCharacter
-  entitySprite: {fileID: 21300000, guid: 116a66fbadb491e42875692076f21a17, type: 3}
+  entitySprite: {fileID: 21300000, guid: e15aa097999a0314ab7c869d87e1425e, type: 3}
   entityPortrait: {fileID: 0}
   entityElement: 0
   baseTraits:

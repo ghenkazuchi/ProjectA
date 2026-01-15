@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b06ec2c4d70e0940942e5149a5eb9eb, type: 3}
   m_Name: Chest
   m_EditorClassIdentifier: 
+  group: 1
   interacableType: 1
   ingameSprite: {fileID: 1453327035, guid: 3777e3bca58eada41a318eddadb3a3b2, type: 3}
   prefab: {fileID: 671993994658027252, guid: 831efc8b3672f9144826bb2822ac29bd, type: 3}
+  uniquePerMap: 0
+  uniqueKey: 

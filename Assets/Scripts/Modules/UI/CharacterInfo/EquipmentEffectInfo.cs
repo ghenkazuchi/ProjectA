@@ -9,6 +9,7 @@ public class EquipmentEffectInfo : MonoBehaviour
 	[SerializeField] CanvasGroup canvasGroup;
 	[SerializeField] TextMeshProUGUI equipmentNameText;
 	[SerializeField] TextMeshProUGUI equipmentEffectDescriptionText;
+	[SerializeField] private List<TextMeshProUGUI> equipmentStatBonusesText;
 
 	private void Awake()
 	{
@@ -25,23 +26,6 @@ public class EquipmentEffectInfo : MonoBehaviour
 		equipmentEffectDescriptionText.text = "";
 
 	}
-	public void Open(EquipableBaseData equipment)
-	{
-		canvasGroup.alpha = 1;
-		canvasGroup.blocksRaycasts = true;	
-		canvasGroup.interactable = true;
-		equipmentData = equipment;
-		if (equipmentData != null)
-		{
-			equipmentNameText.text = equipmentData.itemName;
-			equipmentEffectDescriptionText.text = equipmentData.description;
-		}
-		else
-		{
-			equipmentNameText.text = "";
-			equipmentEffectDescriptionText.text = "";
-		}
-	}
 	public void Open(EquipableBaseData equipment, string overrideDescription, Color titleTint)
 	{
 		canvasGroup.alpha = 1;
@@ -52,7 +36,22 @@ public class EquipmentEffectInfo : MonoBehaviour
 		if (equipmentData != null)
 		{
 			equipmentNameText.text = equipmentData.itemName;
-			equipmentEffectDescriptionText.text = string.IsNullOrEmpty(overrideDescription)
+
+			for (int i = 0; i < equipmentStatBonusesText.Count; i++)
+			{
+				if (equipment.EquipableStatBonus != null && i < equipment.EquipableStatBonus.Count)
+				{
+					var b = equipment.EquipableStatBonus[i];
+					var sign = b.ModType == ModType.Percentage ? "%" : "";
+					equipmentStatBonusesText[i].text = $"{b.Stat}: {b.value}{sign}";
+					equipmentStatBonusesText[i].gameObject.SetActive(true);
+				}
+				else
+				{
+					equipmentStatBonusesText[i].gameObject.SetActive(false);
+				}
+			}
+				equipmentEffectDescriptionText.text = string.IsNullOrEmpty(overrideDescription)
 				? equipmentData.description
 				: overrideDescription;
 		}

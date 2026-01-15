@@ -15,14 +15,10 @@ MonoBehaviour:
   EffectType: 0
   Effect: 5
   Name: Instant Kill
-  MaxDuration: 3
+  MaxDuration: -1
   CanBeRemoved: 1
   Stackable: 0
   MaxStack: 1
-  AppliesTo: 0
   isInstantEffect: 1
-  hasLimitedUsage: 0
-  timing: 2
-  requiredHit: 0
-  effectIcon: {fileID: 0}
-  thresholdPercentage: 0.25
+  effectIcon: {fileID: 21300000, guid: af7be96878fce6142ba8a81c4861752f, type: 3}
+  thresholdPercentage: 0.15

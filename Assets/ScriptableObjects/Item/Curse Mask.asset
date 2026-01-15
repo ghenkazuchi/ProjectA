@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: Curse Mask
   m_EditorClassIdentifier: 
-  EquipableStatBonus: []
+  EquipableStatBonus:
+  - Stat: 3
+    ModType: 0
+    value: 30
   itemName: Curse Mask
   description: Grant owner inflict bleed on hit effect at the start of battle
   icon: {fileID: 21300000, guid: 3b7c2e4e531b6454781a0b3e242c8623, type: 3}
@@ -22,7 +25,6 @@ MonoBehaviour:
   effectData:
   - trigger: 1
     effect: {fileID: 11400000, guid: 383bab6fceb04684793f0bf59bd863a1, type: 2}
-    condition: {fileID: 0}
   canDuplicateTrigger: 0
   equipmentSet: {fileID: 0}
   pieceWeight: 1

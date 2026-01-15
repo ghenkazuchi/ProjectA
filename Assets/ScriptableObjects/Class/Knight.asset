@@ -83,19 +83,9 @@ MonoBehaviour:
   skillSet:
   - skill: {fileID: 11400000, guid: 2c71a8ab9d79a2649995eec383607fc8, type: 2}
     levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 960c268ba0be6bb43b1dd0d2edbe0200, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 8cad974bdb3a1ec4ab55a2a1deef129d, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 23c408b708db68445859098d07b21038, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 0ec6572ba39d8ff45ad2e29e71debe36, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 48e410c3e526ad34ab03be055fea85df, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 5b5acf59fd73485499a3de1b693c3d41, type: 2}
-    levelRequirements: 1
   - skill: {fileID: 11400000, guid: d8311582c171d93499bfea2b810af99b, type: 2}
     levelRequirements: 2
+  - skill: {fileID: 11400000, guid: a7c3842448f4c1a4f98ff0a765da0741, type: 2}
+    levelRequirements: 1
   itemSlotCount: 2
   usableWeaponTypes: 0200000001000000

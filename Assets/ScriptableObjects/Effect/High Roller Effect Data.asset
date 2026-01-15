@@ -9,20 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 327d2c9bf828c2e439b2898c76b5fbb1, type: 3}
-  m_Name: Resolve
+  m_Script: {fileID: 11500000, guid: 72d4ecdb2e49cac4c82674b1f56120e3, type: 3}
+  m_Name: High Roller Effect Data
   m_EditorClassIdentifier: 
   EffectType: 0
   Effect: 5
-  Name: Resolve
-  MaxDuration: 0
+  Name: HighRoller
+  MaxDuration: -1
   CanBeRemoved: 0
   Stackable: 0
   MaxStack: 1
-  AppliesTo: 0
-  isInstantEffect: 1
-  hasLimitedUsage: 1
-  timing: 0
-  requiredHit: 0
-  effectIcon: {fileID: 21300000, guid: a99de681943af964e8ced78f357b863a, type: 3}
-  recoveryPercentage: 0.8
+  isInstantEffect: 0
+  effectIcon: {fileID: 21300000, guid: 000d55a3d71236c4fa5cb3af0cff23d1, type: 3}
+  increasedProcChance: 0.15

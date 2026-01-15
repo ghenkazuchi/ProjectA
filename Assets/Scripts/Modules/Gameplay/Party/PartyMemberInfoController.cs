@@ -13,6 +13,7 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 	[SerializeField] TextMeshProUGUI characterLevelText;
 	[SerializeField] TextMeshProUGUI raceText;
 	[SerializeField] TextMeshProUGUI classText;
+	[SerializeField] TextMeshProUGUI elementText;
 	[SerializeField] TextMeshProUGUI expText;
 	[SerializeField] CanvasGroup canvasGroup;
 	[Header("Skills Display")]
@@ -22,7 +23,6 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 	[Header("Buttons")]	
 	[SerializeField] Button showActiveSkillButton;
 	[SerializeField] Button showPassiveSkillButton;
-	[SerializeField] Button showAuraSkillButton;
 	[SerializeField] Button showEquipmentButton;
 	[SerializeField] Button showStatsButton;
 	[SerializeField] Button closeButton;
@@ -46,7 +46,7 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnPartyMemberInfoClose));
 		});
 		showEquipmentButton.onClick.AddListener(() => DisplayCharacterEquipment(currentCharacter));
-		showStatsButton.onClick.AddListener(() => DisplayCharacterStats());
+		showStatsButton.onClick.AddListener(() => ToggleCharacterStats());
 	}
 
 	private void DisplayCharacterEquipment(PlayerCharacter character)
@@ -54,9 +54,9 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 		equipmentInfo.Show(character);
 	}
 
-	private void DisplayCharacterStats()
+	private void ToggleCharacterStats()
 	{
-		statsInfo.Show(currentCharacter);
+		statsInfo.Toggle(currentCharacter);
 	}
 	private void DisplayCharacterSkills(PlayerCharacter character, SkillType skillType)
 	{
@@ -127,6 +127,7 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 			characterLevelText.text = $"Level: {currentCharacter.level}";
 			raceText.text =  $"Race: {currentCharacter.RaceDataName}";	
 			classText.text = $"Class: {currentCharacter.GetClassData.classType}";
+			elementText.text = $"Element: {currentCharacter.entityData.EntityElement}";
 			expText.text = $"EXP: {currentCharacter.CurrentExp} / {currentCharacter.GetExpNeededForNextLevel()}";
 		}
 	}

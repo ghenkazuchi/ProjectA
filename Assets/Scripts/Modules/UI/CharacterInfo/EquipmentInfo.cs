@@ -12,6 +12,7 @@ public class EquipmentInfo : MonoBehaviour
 	[SerializeField] Button closeButton;
 	[SerializeField] EquipmentInfoUIComponent equipmentInfoPrefab;
 	[SerializeField] EquipmentEffectInfo equipmentEffectInfo;
+	
 
 	private void Awake()
 	{

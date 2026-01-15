@@ -33,6 +33,10 @@ public class VoronoiPathGenerator : MonoBehaviour
 	public int safeRing = 3;
 	public int minSpacing = 3;
 
+	[Header("Spawn Rules")]
+	public List<SpawnRule> spawnRules = new List<SpawnRule>();
+
+
 	private void Awake()
 	{
 		GenerateMap();
@@ -256,43 +260,25 @@ public class VoronoiPathGenerator : MonoBehaviour
 
 	private void SpawnInteractableObjects()
 	{
-		if (allPathTiles.Count == 0) return;
+		if (allPathTiles == null || allPathTiles.Count == 0) return;
 
 		Vector2Int spawn = GetPlayerSpawnPosition();
 		var depth = ComputeDepth(spawn);
 
-		int budget = numberOfSpawnable;
+		int maxDepth = 0;
+		foreach (var kv in depth)
+			if (kv.Value > maxDepth) maxDepth = kv.Value;
 
-		var chests = new List<SpawnableObject>();
-		var monsters = new List<SpawnableObject>();
-		var shops = new List<SpawnableObject>();
-		var camps = new List<SpawnableObject>();
-		var recruits = new List<SpawnableObject>();
-		var others = new List<SpawnableObject>();
-
-		foreach (var so in spawnableObjects)
-		{
-			if (so == null || so.prefab == null) continue;
-
-			if (PrefabHas<ChestInteracableObject>(so)) chests.Add(so);
-			else if (PrefabHas<MonsterInteracableObject>(so)) monsters.Add(so);
-			else if (PrefabHas<ShopKeeperInteractableObject>(so)) shops.Add(so);
-			else if (PrefabHas<CampInteracableObject>(so)) camps.Add(so);
-			else if (PrefabHas<RecruitableCharacterInteracable>(so)) recruits.Add(so);
-			else if (PrefabHas<Interacable>(so)) others.Add(so);
-		}
-
+		// 1) Build candidate tiles (dead-end / junction / corridor), đã lọc safeRing
 		var deadEnds = new List<Vector2Int>();
 		var junctions = new List<Vector2Int>();
 		var corridors = new List<Vector2Int>();
 
-		int maxDepth = 0;
-		foreach (var kv in depth) if (kv.Value > maxDepth) maxDepth = kv.Value;
-
 		foreach (var p in allPathTiles)
 		{
 			if (p == spawn) continue;
-			int d = depth.TryGetValue(p, out var dd) ? dd : 999999;
+
+			int d = depth.TryGetValue(p, out var dd) ? dd : int.MaxValue;
 			if (d <= safeRing) continue;
 
 			int deg = Degree4(p);
@@ -300,6 +286,25 @@ public class VoronoiPathGenerator : MonoBehaviour
 			else if (deg >= 3) junctions.Add(p);
 			else corridors.Add(p);
 		}
+
+		// 2) Group spawnables by group (data-driven)
+		var byGroup = new Dictionary<InteracableGroup, List<SpawnableObject>>();
+		foreach (var so in spawnableObjects)
+		{
+			if (so == null || so.prefab == null) continue;
+
+			if (!byGroup.TryGetValue(so.group, out var list))
+			{
+				list = new List<SpawnableObject>(8);
+				byGroup[so.group] = list;
+			}
+			list.Add(so);
+		}
+
+		if (byGroup.Count == 0) return;
+
+		int budget = numberOfSpawnable;
+		Vector2 mapCenter = new Vector2((Mathf.CeilToInt(mapRegionSize.x) - 1) * 0.5f, (Mathf.CeilToInt(mapRegionSize.y) - 1) * 0.5f);
 
 		bool FarEnough(Vector2Int p, int minManhattan)
 		{
@@ -317,7 +322,7 @@ public class VoronoiPathGenerator : MonoBehaviour
 			if (so == null || so.prefab == null) return false;
 			if (spawnedObjectInMap.ContainsKey(p)) return false;
 
-			int spacing = Mathf.Max(this.minSpacing, localSpacing);
+			int spacing = Mathf.Max(minSpacing, localSpacing);
 			if (!FarEnough(p, spacing)) return false;
 
 			Vector3 pos = GetWorldPosition(p);
@@ -330,114 +335,198 @@ public class VoronoiPathGenerator : MonoBehaviour
 			return true;
 		}
 
-		if (budget > 0 && shops.Count > 0 && junctions.Count > 0)
+		// candidate picker by SpawnTileMask
+		Vector2Int PickCandidateByMask(SpawnTileMask mask)
 		{
-			int targetMin = Mathf.RoundToInt(maxDepth * 0.35f);
-			int targetMax = Mathf.RoundToInt(maxDepth * 0.55f);
+			int a = (mask & SpawnTileMask.DeadEnd) != 0 ? deadEnds.Count : 0;
+			int b = (mask & SpawnTileMask.Junction) != 0 ? junctions.Count : 0;
+			int c = (mask & SpawnTileMask.Corridor) != 0 ? corridors.Count : 0;
 
-			Vector2Int best = junctions[0];
+			int total = a + b + c;
+			if (total <= 0) return spawn;
+
+			int r = Random.Range(0, total);
+			if (a > 0)
+			{
+				if (r < a) return deadEnds[r];
+				r -= a;
+			}
+			if (b > 0)
+			{
+				if (r < b) return junctions[r];
+				r -= b;
+			}
+			return corridors[Mathf.Clamp(r, 0, Mathf.Max(0, corridors.Count - 1))];
+		}
+
+		bool PassDepthFilters(Vector2Int p, SpawnRule rule)
+		{
+			if (!depth.TryGetValue(p, out int d)) return false;
+			if (d <= Mathf.Max(safeRing, rule.minDistanceFromSpawn)) return false;
+
+			int minD = rule.minDepth;
+			int maxD = rule.maxDepth;
+
+			if (rule.useDepthPercent)
+			{
+				int pMin = Mathf.RoundToInt(maxDepth * Mathf.Clamp01(rule.minDepthPercent));
+				int pMax = Mathf.RoundToInt(maxDepth * Mathf.Clamp01(rule.maxDepthPercent));
+				minD = Mathf.Max(minD, pMin);
+				maxD = Mathf.Min(maxD, pMax);
+			}
+
+			return d >= minD && d <= maxD;
+		}
+
+		float Score(Vector2Int p, SpawnRule rule)
+		{
+			float s = 0f;
+
+			int d = depth.TryGetValue(p, out var dd) ? dd : 999999;
+			if (rule.preferDeeper) s -= d * 10f;
+
+			if (rule.preferCentered)
+			{
+				float dx = p.x - mapCenter.x;
+				float dy = p.y - mapCenter.y;
+				s += (dx * dx + dy * dy);
+			}
+
+			return s;
+		}
+
+		SpawnableObject PickFromRuleGroups(SpawnRule rule)
+		{
+			// rule.matchTypes là list InteracableGroup :contentReference[oaicite:1]{index=1}
+			var avail = new List<InteracableGroup>(rule.matchTypes.Count);
+			for (int i = 0; i < rule.matchTypes.Count; i++)
+			{
+				var g = rule.matchTypes[i];
+				if (byGroup.TryGetValue(g, out var pool) && pool.Count > 0) avail.Add(g);
+			}
+			if (avail.Count == 0) return null;
+
+			var chosenGroup = avail[Random.Range(0, avail.Count)];
+			var list = byGroup[chosenGroup];
+			return list[Random.Range(0, list.Count)];
+		}
+
+		bool TrySpawnByRule(SpawnRule rule)
+		{
+			if (rule == null || rule.matchTypes == null || rule.matchTypes.Count == 0) return false;
+
+			var so = PickFromRuleGroups(rule);
+			if (so == null) return false;
+
+			int tries = Mathf.Max(1, rule.maxTriesPerObject);
+			int bestOf = Mathf.Clamp(rule.bestOf, 1, 200);
+
+			Vector2Int bestPos = default;
 			float bestScore = float.PositiveInfinity;
-			Vector2 center = new Vector2((Mathf.CeilToInt(mapRegionSize.x) - 1) * 0.5f, (Mathf.CeilToInt(mapRegionSize.y) - 1) * 0.5f);
+			bool found = false;
 
-			foreach (var p in junctions)
+			// best-of-k sampling
+			int samples = Mathf.Min(bestOf, tries);
+			for (int i = 0; i < samples; i++)
 			{
-				int d = depth[p];
-				if (d < targetMin || d > targetMax) continue;
+				var p = PickCandidateByMask(rule.tileMask);
+				if (p == spawn) continue;
+				if (spawnedObjectInMap.ContainsKey(p)) continue;
+				if (!PassDepthFilters(p, rule)) continue;
+				if (!FarEnough(p, Mathf.Max(minSpacing, rule.minSpacing))) continue;
 
-				float dx = p.x - center.x;
-				float dy = p.y - center.y;
-				float dist2 = dx * dx + dy * dy;
-
-				float score = dist2 + Mathf.Max(0, 6 - d) * 200f;
-				if (score < bestScore) { bestScore = score; best = p; }
+				float s = Score(p, rule);
+				if (s < bestScore)
+				{
+					bestScore = s;
+					bestPos = p;
+					found = true;
+				}
 			}
 
-			if (budget > 0 && TryPlace(shops[Random.Range(0, shops.Count)], best, localSpacing: 8)) budget--;
+			if (!found)
+			{
+				for (int t = 0; t < tries; t++)
+				{
+					var p = PickCandidateByMask(rule.tileMask);
+					if (p == spawn) continue;
+					if (spawnedObjectInMap.ContainsKey(p)) continue;
+					if (!PassDepthFilters(p, rule)) continue;
+
+					if (TryPlace(so, p, rule.minSpacing))
+						return true;
+				}
+				return false;
+			}
+
+			return TryPlace(so, bestPos, rule.minSpacing);
 		}
 
-		int campCount = Mathf.Min(2, camps.Count);
-		campCount = Mathf.Min(campCount, budget);
-		if (campCount > 0 && corridors.Count > 0)
+		// 3) Apply rules
+		bool hasRules = spawnRules != null && spawnRules.Count > 0;
+
+		if (hasRules)
 		{
-			corridors.Sort((a, b) => depth[a].CompareTo(depth[b]));
-			int startIdx = Mathf.RoundToInt(corridors.Count * 0.45f);
-			int endIdx = Mathf.RoundToInt(corridors.Count * 0.75f);
-
-			for (int i = 0; i < campCount; i++)
+			foreach (var rule in spawnRules)
 			{
-				for (int t = 0; t < 200; t++)
+				if (rule == null) continue;
+
+				int target = rule.autoCountByPathTiles
+					? Mathf.Clamp(Mathf.RoundToInt(allPathTiles.Count * rule.ratioOnPath), rule.minCount, rule.maxCount)
+					: Mathf.Clamp(rule.maxCount, rule.minCount, rule.maxCount);
+
+				if (rule.ensureAtLeastOne && target <= 0) target = 1;
+
+				for (int i = 0; i < target; i++)
 				{
-					if (budget <= 0) break;
+					if (rule.useGlobalBudget && budget <= 0) break;
 
-					int idx = Random.Range(startIdx, Mathf.Max(startIdx + 1, endIdx));
-					var p = corridors[idx];
+					bool ok = TrySpawnByRule(rule);
+					if (!ok) break;
 
-					if (budget > 0 && TryPlace(camps[Random.Range(0, camps.Count)], p, localSpacing: 10)) { budget--; break; }
+					if (rule.useGlobalBudget) budget--;
 				}
 			}
 		}
 
-		int recruitCount = Mathf.Min(3, recruits.Count);
-		recruitCount = Mathf.Min(recruitCount, budget);
-		if (recruitCount > 0)
+		// 4) Fallback: nếu thiếu rule hoặc rule fail, vẫn spawn nhẹ để không bị "trống"
+		if (budget > 0)
 		{
-			var recCandidates = new List<Vector2Int>();
-			recCandidates.AddRange(deadEnds);
-			recCandidates.AddRange(corridors);
+			var allCandidates = new List<Vector2Int>(corridors.Count + junctions.Count + deadEnds.Count);
+			allCandidates.AddRange(corridors);
+			allCandidates.AddRange(junctions);
+			allCandidates.AddRange(deadEnds);
 
-			for (int i = 0; i < recruitCount; i++)
+			if (allCandidates.Count > 0)
 			{
-				for (int t = 0; t < 300; t++)
+				int fallbackCount = Mathf.Clamp(Mathf.RoundToInt(allPathTiles.Count * 0.03f), 1, Mathf.Min(50, budget));
+				var groups = byGroup.Keys.ToList();
+
+				for (int i = 0; i < fallbackCount && budget > 0; i++)
 				{
-					if (budget <= 0) break;
+					var g = groups[Random.Range(0, groups.Count)];
+					var pool = byGroup[g];
+					if (pool == null || pool.Count == 0) continue;
 
-					var p = recCandidates[Random.Range(0, recCandidates.Count)];
-					int d = depth[p];
-					if (d < 6 || d > Mathf.RoundToInt(maxDepth * 0.7f)) continue;
+					var so = pool[Random.Range(0, pool.Count)];
 
-					if (budget > 0 && TryPlace(recruits[Random.Range(0, recruits.Count)], p, localSpacing: 8)) { budget--; break; }
-				}
-			}
-		}
+					for (int t = 0; t < 200; t++)
+					{
+						var p = allCandidates[Random.Range(0, allCandidates.Count)];
+						int d = depth.TryGetValue(p, out var dd) ? dd : int.MaxValue;
+						if (d <= safeRing) continue;
 
-		if (chests.Count > 0 && deadEnds.Count > 0 && budget > 0)
-		{
-			deadEnds.Sort((a, b) => depth[b].CompareTo(depth[a]));
-			int chestCount = Mathf.Min(deadEnds.Count, Mathf.Max(5, Mathf.RoundToInt(numberOfSpawnable * 0.12f)));
-			chestCount = Mathf.Min(chestCount, budget);
-
-			for (int i = 0; i < chestCount && budget > 0; i++)
-			{
-				var p = deadEnds[i];
-				if (budget > 0 && TryPlace(chests[Random.Range(0, chests.Count)], p, localSpacing: 4)) budget--;
-			}
-		}
-		if (monsters.Count > 0 && budget > 0)
-		{
-			int monsterCount = Mathf.Max(8, Mathf.RoundToInt(numberOfSpawnable * 0.18f));
-			monsterCount = Mathf.Min(monsterCount, budget);
-
-			var monsterCandidates = new List<Vector2Int>();
-			junctions.Sort((a, b) => depth[b].CompareTo(depth[a]));
-			corridors.Sort((a, b) => depth[b].CompareTo(depth[a]));
-			monsterCandidates.AddRange(junctions);
-			monsterCandidates.AddRange(corridors);
-
-			int placed = 0;
-			for (int i = 0; i < monsterCandidates.Count && placed < monsterCount && budget > 0; i++)
-			{
-				var p = monsterCandidates[i];
-				int d = depth[p];
-				if (d <= 5) continue;
-
-				if (TryPlace(monsters[Random.Range(0, monsters.Count)], p, localSpacing: 6))
-				{
-					placed++;
-					budget--;
+						if (TryPlace(so, p, localSpacing: 3))
+						{
+							budget--;
+							break;
+						}
+					}
 				}
 			}
 		}
 	}
+
 	public Vector2Int GetRandomPathTile()
 	{
 		if (allPathTiles == null || allPathTiles.Count == 0)

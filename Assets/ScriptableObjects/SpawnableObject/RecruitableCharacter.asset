@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b06ec2c4d70e0940942e5149a5eb9eb, type: 3}
   m_Name: RecruitableCharacter
   m_EditorClassIdentifier: 
-  interacableType: 0
+  group: 3
+  interacableType: 6
   ingameSprite: {fileID: -1512737287, guid: 5679f8828f9d1c74b9920037eecd97a5, type: 3}
   prefab: {fileID: 671993994658027252, guid: c52687a88f44c7344b449705e857a95d, type: 3}
+  uniquePerMap: 0
+  uniqueKey: 

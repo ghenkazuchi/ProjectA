@@ -19,10 +19,6 @@ MonoBehaviour:
   CanBeRemoved: 0
   Stackable: 0
   MaxStack: 1
-  AppliesTo: 0
   isInstantEffect: 1
-  hasLimitedUsage: 1
-  timing: 0
-  requiredHit: 0
-  effectIcon: {fileID: 21300000, guid: a99de681943af964e8ced78f357b863a, type: 3}
+  effectIcon: {fileID: 21300000, guid: 90848b7ae14ffcd499db54aa33cc4d83, type: 3}
   reviveRestorationPercentage: 0.25

@@ -8,13 +8,11 @@ public class StatsInfo : MonoBehaviour
 {
 	[SerializeField] TextMeshProUGUI[] StatsTexts;
 	[SerializeField] CanvasGroup canvasGroup;
-	[SerializeField] Button closeButton;
 	[SerializeField] PlayerCharacter currentCharacter;
-
+	private bool isOpened = false;
 	public void Awake()
 	{
 		Close();
-		closeButton.onClick.AddListener(() => Close());
 	}
 
 	public void SetUp(PlayerCharacter currentCharacter)
@@ -28,17 +26,25 @@ public class StatsInfo : MonoBehaviour
 			StatsTexts[i].text = $"{stat}: {statValue}";
 		}
 	}
-	public void Show(PlayerCharacter character)
+	public void Toggle(PlayerCharacter character)
 	{
-		currentCharacter = character;
-		SetUp(currentCharacter);
-		Open();
+		if (isOpened)
+		{
+			Close();
+		}
+		else
+		{
+			currentCharacter = character;
+			SetUp(currentCharacter);
+			Open();
+		}
 	}
 	public void Open()
 	{
 		canvasGroup.alpha = 1f;
 		canvasGroup.interactable = true;
 		canvasGroup.blocksRaycasts = true;
+		isOpened = true;
 	}
 	public void Close()
 	{
@@ -46,5 +52,6 @@ public class StatsInfo : MonoBehaviour
 		canvasGroup.interactable = false;
 		canvasGroup.blocksRaycasts = false;
 		currentCharacter = null;
+		isOpened = false;
 	}
 }

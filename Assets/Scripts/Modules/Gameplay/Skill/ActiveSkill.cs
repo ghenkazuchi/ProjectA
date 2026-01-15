@@ -36,7 +36,15 @@ public class ActiveSkill
 		{
 			if (effect.activeTiming != EffectActiveTiming.OnCast) continue;
 			if (effect.effectData == null) continue;
-			if(effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance)) continue;
+			float procChance = effect.procChance;
+			foreach(var e in ctx.Owner.GetAllEffect())
+			{
+				if(e is IProcChanceModifier m)
+				{
+					procChance = m.ModifyProcChance(procChance);
+				}
+			}
+			if(procChance < 1f && Random.value > procChance) continue;
 
 			IEnumerable<EntityBase> recipients = SkillData.targetType switch
 			{
@@ -65,7 +73,16 @@ public class ActiveSkill
 		foreach (var effect in SkillData.effectsToApply)
 		{
 			if (effect.effectData == null) continue;
-			if (effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance))
+
+			float procChance = effect.procChance;
+			foreach (var e in context.Owner.GetAllEffect())
+			{
+				if (e is IProcChanceModifier m)
+				{
+					procChance = m.ModifyProcChance(procChance);
+				}
+			}
+			if (procChance < 1f && Random.value > procChance)
 			{
 				yield return BattleSystem.Instance.ShowDialog($"Failed to active {effect.effectData.name}!");
 				continue;
@@ -100,7 +117,15 @@ public class ActiveSkill
 		foreach (var effect in SkillData.effectsToApply)
 		{
 			if (effect.effectData == null) continue;
-			if (effect.procChance < 1f && Random.value > Mathf.Clamp01(effect.procChance)) continue;
+			float procChance = effect.procChance;
+			foreach (var e in skillContext.Owner.GetAllEffect())
+			{
+				if (e is IProcChanceModifier m)
+				{
+					procChance = m.ModifyProcChance(procChance);
+				}
+			}
+			if (procChance < 1f && Random.value > procChance) continue;
 			foreach (var entity in skillContext.HitTarget)
 			{
 				var effectInstance = effect.effectData.CreateRuntimeEffect(skillContext.Owner, entity, effect.turnDuration);

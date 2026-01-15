@@ -7,4 +7,5 @@ public class EquipEffectBinding
 {
 	public EquipEffectTrigger trigger;
 	public EffectData effect;
+	public float procChance = 1f;	
 }

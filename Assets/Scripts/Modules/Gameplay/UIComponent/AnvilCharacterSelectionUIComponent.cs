@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class AnvilCharacterSelectionUIComponent : MonoBehaviour
 {
-	[SerializeField] private TextMeshProUGUI characterName;
+	[SerializeField] private Image characterSprite;
 	[SerializeField] private Button selectButton;
 	private PlayerCharacter pc;
 	private Action<PlayerCharacter> onSelectCharacter;
@@ -24,7 +24,7 @@ public class AnvilCharacterSelectionUIComponent : MonoBehaviour
 			Debug.Log("pc is null");
 		}
 		this.onSelectCharacter = onSelectCharacter;
-		characterName.text = pc.entityData.EntityName;
+		characterSprite.sprite = pc.entityData.EntitySprite;
 		selectButton.onClick.RemoveAllListeners();
 		selectButton.onClick.AddListener(() => onSelectCharacter?.Invoke(pc));
 	}

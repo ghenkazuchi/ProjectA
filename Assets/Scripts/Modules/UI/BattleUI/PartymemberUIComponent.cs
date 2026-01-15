@@ -10,7 +10,7 @@ public class PartymemberUIComponent : MonoBehaviour
 {
 
 	[SerializeField] private BattleUnit battleUnit;
-	[SerializeField] private TextMeshProUGUI partymemberNameText;
+	[SerializeField] private Image characterSprite;
 	[SerializeField] private Button button;
 	private int index;
 	private Action<int, BattleUnit> onClick;
@@ -46,10 +46,11 @@ public class PartymemberUIComponent : MonoBehaviour
 	{
 		if(battleUnit == null || battleUnit.character == null)
 		{
-			partymemberNameText.text = "Empty";
+			//characterSprite.enabled = false;
 			return;
 		}
-		partymemberNameText.text = battleUnit.character.entityData.EntityName;
+		//characterSprite.enabled = true;
+		characterSprite.sprite = battleUnit.character.entityData.EntitySprite;
 	}
 
 	public void SetSelected(bool value)

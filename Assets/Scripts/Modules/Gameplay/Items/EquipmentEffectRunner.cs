@@ -45,7 +45,24 @@ public class EquipmentEffectRunner
 			foreach (var binding in bindings)
 			{
 				if (binding.trigger != triggerType) continue;
-
+				float chance = Mathf.Clamp01(binding.procChance);
+				if (source is Item)
+				{
+					var item = source as Item;
+					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
+					chance += tune.procChanceMultiplier;
+				}
+				foreach (var e in owner.GetAllEffect())
+				{
+					if (e is IProcChanceModifier modProc)
+					{
+						chance = modProc.ModifyProcChance(chance);
+					}
+				}
+				if(chance < 1f && Random.value > chance)
+				{
+					continue;
+				}
 				EntityBase effectTarget = target ?? owner;
 				EffectBase effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
 				EffectUsageTracker usageTracker = null;
@@ -94,6 +111,25 @@ public class EquipmentEffectRunner
 			{
 				if (binding == null || binding.effect == null) continue;
 				if (binding.trigger != trigger) continue;
+
+				float chance = Mathf.Clamp01(binding.procChance);
+				if (source is Item)
+				{
+					var item = source as Item;
+					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
+					chance += tune.procChanceMultiplier;
+				}
+				foreach (var e in owner.GetAllEffect())
+				{
+					if (e is IProcChanceModifier modProc)
+					{
+						chance = modProc.ModifyProcChance(chance);
+					}
+				}
+				if (chance < 1f && Random.value > chance)
+				{
+					continue;
+				}
 
 				var effectTarget = target ?? owner;
 				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
@@ -162,6 +198,25 @@ public class EquipmentEffectRunner
 			{
 				if (binding == null || binding.effect == null) continue;
 				if (binding.trigger != trigger) continue;
+
+				float chance = Mathf.Clamp01(binding.procChance);
+				if (source is Item)
+				{
+					var item = source as Item;
+					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
+					chance += tune.procChanceMultiplier;
+				}
+				foreach (var e in owner.GetAllEffect())
+				{
+					if (e is IProcChanceModifier modProc)
+					{
+						chance = modProc.ModifyProcChance(chance);
+					}
+				}
+				if (chance < 1f && Random.value > chance)
+				{
+					continue;
+				}
 
 				var effectTarget = target ?? owner;
 				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);

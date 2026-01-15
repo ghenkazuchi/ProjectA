@@ -13,7 +13,7 @@ public class AnvilCharacterItem : MonoBehaviour
 	[SerializeField] private PlayerCharacter currentCharacter;
 	[SerializeField] private Transform characterEquipmentContainer;
 	[SerializeField] private AnvilItemUIComponent anvilItemPrefab;
-	[SerializeField] private TextMeshProUGUI characterNameText;
+	[SerializeField] private Image characterSprite;
 	[SerializeField] private Button returnButton;
 	private Action<int, Item, bool> onToggleSelect;
 
@@ -29,7 +29,7 @@ public class AnvilCharacterItem : MonoBehaviour
 	{
 		currentCharacter = character;
 		onToggleSelect = onItemToggle;
-		characterNameText.text = character.entityData.EntityName;
+		characterSprite.sprite = character.entityData.EntitySprite;
 		canvasGroup.alpha = 1f;
 		canvasGroup.interactable = true;
 		canvasGroup.blocksRaycasts = true;

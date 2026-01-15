@@ -29,7 +29,7 @@ MonoBehaviour:
   effectData:
   - trigger: 4
     effect: {fileID: 11400000, guid: e77f47a9a02444641b7abbb6516d3615, type: 2}
-    condition: {fileID: 0}
+    procChance: 0.6
   canDuplicateTrigger: 0
   equipmentSet: {fileID: 0}
   pieceWeight: 1
