@@ -17,8 +17,10 @@ public enum GameState
 public class GameController : Singleton<GameController>,IMessageHandle
 {
 	[SerializeField] private BattleSystem battleSystem;
+	[SerializeField] private DayNightCycleController dayNightCycleController;
 	[SerializeField] private RecruitUIController recruitUIController;
 	[SerializeField] private PartyMenuController partyMenuController;
+	[SerializeField] private OverWorldUI overworldUIController;
 	[SerializeField] CanvasGroup characterCreationCanvasGroup;
 	[SerializeField] CanvasGroup battleCanvasGroup;
 	[SerializeField] CanvasGroup recruitCharacterCanvasGroup;
@@ -79,6 +81,9 @@ public class GameController : Singleton<GameController>,IMessageHandle
 	{
 		switch (message.type)
 		{
+			case MessageType.OnGameStart:
+				overworldUIController.Show();
+				break;
 			case MessageType.OnBattleStart:
 				currentState = GameState.Battle;
 				battleCanvasGroup.alpha = 1f;

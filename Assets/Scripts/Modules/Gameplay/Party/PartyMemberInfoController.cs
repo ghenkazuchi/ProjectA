@@ -38,12 +38,7 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 		showPassiveSkillButton.onClick.AddListener(() => DisplayCharacterSkills(currentCharacter, SkillType.Passive));
 		closeButton.onClick.AddListener(() =>
 		{
-			canvasGroup.alpha = 0f;
-			canvasGroup.interactable = false;
-			canvasGroup.blocksRaycasts = false;
-			currentCharacter = null;
-			ClearContainer(skillsContent);
-			MessageManager.Instance.SendMessage(new Message(MessageType.OnPartyMemberInfoClose));
+			OnExitButtonClose();
 		});
 		showEquipmentButton.onClick.AddListener(() => DisplayCharacterEquipment(currentCharacter));
 		showStatsButton.onClick.AddListener(() => ToggleCharacterStats());
@@ -130,6 +125,16 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 			elementText.text = $"Element: {currentCharacter.entityData.EntityElement}";
 			expText.text = $"EXP: {currentCharacter.CurrentExp} / {currentCharacter.GetExpNeededForNextLevel()}";
 		}
+	}
+	private void OnExitButtonClose()
+	{
+		Debug.Log("Character info Closed");
+		canvasGroup.alpha = 0f;
+		canvasGroup.interactable = false;
+		canvasGroup.blocksRaycasts = false;
+		currentCharacter = null;
+		ClearContainer(skillsContent);
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnPartyMemberInfoClose));
 	}
 
 }

@@ -61,6 +61,10 @@ namespace HaKien
         OnShopCharacterSelected,
 		OnShopCharacterReplaceSelectionConfirmed,
         OnSelectedEquipableConclude,
+        //Hero spirit 
+        OnHeroSpiritInteractionPopupOpen,
+		OnHeroSpiritInteractionPopupClose,
+
 	}
     public class Message
     {

@@ -40,22 +40,36 @@ public enum MonsterType
 {
 	HumanNoid,
 	Undead,
-	Dragon,
 	MagicalBeast,
 	Insect,
 	Spirit
 }
+public enum MonsterTypeName
+{
+	Orc,
+	Goblin,
+	Skeleton,
+	Dragon,
+	Chimera,
+	HollowSpririt,
+	Demon,
+	ScorpionLike,
+	KillerBee,
+	Slime,
+	Werewolf,
+	Cyclop,
+	DragonFly,
+	HeadlessHorseman,
+}
 public enum MonsterRank
 {
-	Minion,
-	CultistMage,
-	EliteGuard,
-	Captian,
-	Warlock,
-	Commander,
-	LitchKing,
-	General,
-	Archfiend,
+	RankD,
+	RankC,
+	RankB,
+	RankA,
+	RankAPlus,
+	RankS,
+	CatastropheRank
 
 }
 public enum ClassType
@@ -87,7 +101,6 @@ public enum SkillType
 {
 	Active,
 	Passive,
-	Aura
 }
 public enum TargetType
 {

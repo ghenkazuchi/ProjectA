@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
 	{
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		_pathGenerator = FindObjectOfType<VoronoiPathGenerator>();
+		if (dayNight == null)
+			dayNight = FindAnyObjectByType<DayNightCycleController>();
 		while (!_pathGenerator.IsMapGenerated())
 		{
 			yield return null;

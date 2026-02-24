@@ -69,17 +69,38 @@ public class BossManager : MonoBehaviour, IMessageHandle
 
 	private float ComputeSegment01(float t, float nightStart, float nightEnd)
 	{
-		bool night = (t > nightStart) || (t <= nightEnd);
+		bool night;
+		if (nightStart <= nightEnd)
+		{
+			night = (t >= nightStart) && (t < nightEnd);
+		}
+		else
+		{
+			night = (t > nightStart) || (t <= nightEnd);
+		}
+
 		if (night)
 		{
-			float nightLen = (1f - nightStart) + nightEnd;
-			float elapsed = (t >= nightStart) ? (t - nightStart) : (t + 1f - nightStart);
+			float nightLen = (nightStart <= nightEnd)
+				? (nightEnd - nightStart)
+				: ((1f - nightStart) + nightEnd);
+
+			float elapsed = (nightStart <= nightEnd)
+				? (t - nightStart)
+				: ((t >= nightStart) ? (t - nightStart) : (t + 1f - nightStart));
+
 			return Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, nightLen));
 		}
 		else
 		{
-			float dayLen = (nightStart - nightEnd);
-			float elapsed = t - nightEnd;
+			float dayLen = (nightStart <= nightEnd)
+				? (1f - (nightEnd - nightStart))
+				: (nightStart - nightEnd);
+
+			float elapsed = (nightStart <= nightEnd)
+				? (t < nightStart ? (t + 1f - nightEnd) : (t - nightEnd))
+				: (t - nightEnd);
+
 			return Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, dayLen));
 		}
 	}

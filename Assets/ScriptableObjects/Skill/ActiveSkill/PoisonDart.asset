@@ -13,13 +13,11 @@ MonoBehaviour:
   m_Name: PoisonDart
   m_EditorClassIdentifier: 
   skillName: Poison Dart
-  skillDescription: 
+  skillDescription: On cast 100% apply poison to target
   skillType: 0
   skillDefinition: 1
   targetType: 1
   skillRange: 0
-  isLimitedTimeCast: 0
-  usageTime: 0
   baseSpCost: 8
   baseMpCost: 0
   baseSkillDamage: 0
@@ -69,3 +67,5 @@ MonoBehaviour:
   - effectData: {fileID: 11400000, guid: 764cd1d452ec27040914f88b578e25a0, type: 2}
     procChance: 1
     turnDuration: 3
+    activeTiming: 0
+  modifiers: []
