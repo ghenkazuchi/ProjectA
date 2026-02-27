@@ -8,7 +8,7 @@ public class ParryEffectData : EffectData
 	public float successParryPercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new ParryEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new ParryEffect(this, owner, target, duration)
 		{
 			successfulParryPercentage = successParryPercentage
 		};

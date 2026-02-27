@@ -8,7 +8,7 @@ public class InstantKillEffectData : EffectData
 	public float thresholdPercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new InstantKillEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack,thresholdPercentage);
+		return new InstantKillEffect(this, owner, target, duration, thresholdPercentage);
 	}
 
 }

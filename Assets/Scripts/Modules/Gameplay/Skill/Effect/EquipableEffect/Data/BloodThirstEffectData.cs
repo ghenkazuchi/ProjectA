@@ -8,7 +8,7 @@ public class BloodThirstEffectData : EffectData
 	public float lifeStealPercentage;	
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new BloodThirstEffectBase(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new BloodThirstEffectBase(this, owner, target, duration)
 		{
 			lifeStealPercentage = lifeStealPercentage
 		};

@@ -7,6 +7,6 @@ public class SleepEffectData : EffectData
 {
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new SleepEffect(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack);
+		return new SleepEffect(this, owner, target, duration);
 	}
 }

@@ -8,18 +8,7 @@ public class ActionValueModifiEffectData : EffectData
 	public float ActionAdvantageValue;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new ActionValueModifiEffect(
-			EffectType,
-			Effect,
-			Name,
-			owner,
-			target,
-			duration,
-			effectIcon,
-			CanBeRemoved,
-			Stackable,
-			MaxStack
-		)
+		return new ActionValueModifiEffect(this, owner, target, duration)
 		{
 			ActionAdvantageValue = ActionAdvantageValue
 		};

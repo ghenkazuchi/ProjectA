@@ -10,7 +10,7 @@ public class BurnEffectData : EffectData
 	public float reducedStatPercent;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new BurnEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new BurnEffect(this, owner, target, duration)
 		{
 			BurnDamage = burnDamage,
 			ReducedStats = reducedStats,

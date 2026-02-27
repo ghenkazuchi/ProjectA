@@ -11,18 +11,7 @@ public class StatModifiEffectData : EffectData
 	public bool IsRawValue;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new StatModifiEffect(
-			EffectType,
-			Effect,
-			Name,
-			owner,
-			target,
-			duration,
-			effectIcon,
-			CanBeRemoved,
-			Stackable,
-			MaxStack,
-			StatToModify,
+		return new StatModifiEffect(this, owner, target, duration, StatToModify,
 			IsRawValue,
 			RawValue,
 			PercentageValue

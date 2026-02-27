@@ -5,7 +5,7 @@ using UnityEngine;
 public class DrainTouchEffect : RestoreHPEffect
 {
 	public float OnHitRestorePercentage { get; set; }
-	public DrainTouchEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1, float amount = 0, float onHitRestorePercentage = 0f) : base(effectType, effect, name, owner, target, duration, icon, canBeRemoved, stackable, maxStack, amount)
+	public DrainTouchEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float amount = 0, float onHitRestorePercentage = 0f) : base(data, owner, target, duration)
 	{
 		OnHitRestorePercentage = onHitRestorePercentage;
 	}

@@ -16,18 +16,11 @@ MonoBehaviour:
   tileMask: 7
   minDepth: 0
   maxDepth: 999999
-  useDepthPercent: 0
-  minDepthPercent: 0.263
-  maxDepthPercent: 0.821
-  autoCountByPathTiles: 1
-  ratioOnPath: 0.05
   minCount: 0
   maxCount: 10
-  useGlobalBudget: 0
+  scaleWithMapSize: 1
+  mapRatio: 0.05
+  strategy: 1
   minDistanceFromSpawn: 3
   minSpacing: 3
-  maxTriesPerObject: 12
-  bestOf: 15
-  preferDeeper: 0
-  preferCentered: 0
-  ensureAtLeastOne: 1
+  isGuaranteed: 0

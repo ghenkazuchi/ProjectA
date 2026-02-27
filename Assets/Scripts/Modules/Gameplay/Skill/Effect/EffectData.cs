@@ -12,6 +12,7 @@ public abstract class EffectData : ScriptableObject
 	public bool Stackable;
 	public int MaxStack;
 	public bool isInstantEffect;
+	public EffectTag tags;
 
 
 	public Sprite effectIcon;

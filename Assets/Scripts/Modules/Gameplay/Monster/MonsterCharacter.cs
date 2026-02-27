@@ -7,6 +7,8 @@ public class MonsterCharacter : EntityBase
 {
 	[SerializeField] private MonsterRankData rankData;
 	[SerializeField] private MonsterRaceData raceData;
+	public MonsterRankData RankData => rankData;
+	public MonsterRaceData RaceData => raceData;
 	[SerializeField] private float expDropWhenDie;
 	public float TotalExpToAward
 	{
@@ -47,8 +49,11 @@ public class MonsterCharacter : EntityBase
 	}
 
 
+	public RPGProgressionSystem progressionSystem;
 	public MonsterCharacter(MonsterRankData rankData,MonsterRaceData monsterRaceData,int level, MonsterData monster)
 	{
+		this.statCalculator = new MonsterStatCalculator();
+		this.progressionSystem = new MonsterProgressionSystem(this);
 		this.rankData = rankData;
 		this.raceData = monsterRaceData;
 		this.level = level;
@@ -69,59 +74,7 @@ public class MonsterCharacter : EntityBase
 
 	public override float CalculateSingleStat(Stat statToCalculate, Dictionary<Trait, int> effTraits)
 	{
-		int str = effTraits.GetValueOrDefault(Trait.Strength, 0);
-		int inte = effTraits.GetValueOrDefault(Trait.Intelligence, 0);
-		int pie = effTraits.GetValueOrDefault(Trait.Piety, 0);
-		int vit = effTraits.GetValueOrDefault(Trait.Vitality, 0);
-		int agi = effTraits.GetValueOrDefault(Trait.Agility, 0);
-		int luk = effTraits.GetValueOrDefault(Trait.Luck, 0);
-		int dex = effTraits.GetValueOrDefault(Trait.Dexterity, 0);
-
-		float rankMultiplier = rankData.statMultipliers.ContainsKey(statToCalculate) ? rankData.statMultipliers[statToCalculate] : 1.0f;
-		float baseValue = 0;
-		switch (statToCalculate)
-		{
-			case Stat.HP:
-				baseValue = (20 + (vit * 2f)) * rankMultiplier;
-				break;
-			case Stat.MP:
-				baseValue = 5 + ((inte + pie) * rankMultiplier * 0.5f);
-				break;
-			case Stat.SP:
-				baseValue = 5 + ((str + dex) * rankMultiplier * 0.5f);
-				break;
-			case Stat.AttackPower:
-				baseValue = str * rankMultiplier;
-				break;
-			case Stat.MagicPower:
-				baseValue = inte * rankMultiplier;
-				break;
-			case Stat.DivinePower:
-				baseValue = pie * rankMultiplier;
-				break;
-			case Stat.PhysicalDefense:
-				baseValue = vit * rankMultiplier;
-				break;
-			case Stat.MagicalDefense:
-				baseValue = 0.5f * pie * rankMultiplier + 0.5f * inte * rankMultiplier;
-				break;
-			case Stat.ActionSpeed:
-				baseValue = agi * rankMultiplier;
-				break;
-			case Stat.Evasion:
-				baseValue = agi * rankMultiplier * 0.6f + luk * 0.4f * rankMultiplier;
-				break;
-			case Stat.Accuracy:
-				baseValue = rankMultiplier * ((dex * 0.7f) + (luk * 0.3f));
-				break;
-			case Stat.Resistance:
-				baseValue = rankMultiplier * ((pie * 0.5f + vit * 0.5f));
-				break;
-			default:
-				baseValue = 0;
-				break;
-		}
-		return Mathf.Round(baseValue);
+		return statCalculator.CalculateSingleStat(statToCalculate, effTraits, this);
 	}
 
 	public override void CheckAndLearnSkill(int currentLevel)
@@ -157,38 +110,7 @@ public class MonsterCharacter : EntityBase
 
 	public override void DistributeTraitPoints(int pointsToDistribute)
 	{
-		MonsterData monsterData = entityData as MonsterData;
-		string gainedTraits = "";
-		Trait dominant = monsterData.DominantTrait;
-		float preferenceWeight = monsterData.DominantTraitPreferenceWeight;
-
-		for (int p = 0; p < pointsToDistribute; p++)
-		{
-			if (_traitListCache.Count == 0) break;
-
-			List<float> weights = new List<float>();
-			foreach (Trait t in _traitListCache)
-			{
-				weights.Add(t == dominant ? preferenceWeight : 1.0f);
-			}
-
-			Trait chosenTrait = GetWeightedRandomTrait(_traitListCache, weights);
-
-			if (currentTraits.ContainsKey(chosenTrait))
-			{
-				currentTraits[chosenTrait]++;
-			}
-			else
-			{
-				currentTraits.Add(chosenTrait, 1);
-			}
-			gainedTraits += $"{chosenTrait}+1 ";
-		}
-
-		if (!string.IsNullOrEmpty(gainedTraits))
-		{
-			Debug.Log($"Monster {monsterData.EntityName} (Level {level}) gained Trait points: {gainedTraits}");
-		}
+		progressionSystem.DistributeTraitPoints(pointsToDistribute);
 	}
 
 	public override void InitializeEntity(int initialLevel)
@@ -235,33 +157,6 @@ public class MonsterCharacter : EntityBase
 	}
 	public override void SetLevel(int targetLevel)
 	{
-		int oldLevel = (this.level > 0 ? this.level : 1);
-		this.level = Mathf.Max(1, targetLevel);
-
-		if (this.level > oldLevel)
-		{
-			int pointsForNewLevels = (this.level - oldLevel) * base.bonusTraitPointPerLevel;
-			DistributeTraitPoints(pointsForNewLevels);
-		}
-		CalculateAllStats();
-		AddExclusiveSkill();
-		CheckAndLearnSkill(this.level);
-	}
-
-
-	private Trait GetWeightedRandomTrait(List<Trait> traits, List<float> weights)
-	{
-		float totalWeight = weights.Sum();
-		float randomNumber = (float)_random.NextDouble() * totalWeight;
-
-		for (int i = 0; i < traits.Count; i++)
-		{
-			if (randomNumber < weights[i])
-			{
-				return traits[i];
-			}
-			randomNumber -= weights[i];
-		}
-		return traits[traits.Count - 1];
+		progressionSystem.SetLevel(targetLevel);
 	}
 }

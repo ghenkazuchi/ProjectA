@@ -8,7 +8,7 @@ public class ProtectAllyEffectData : EffectData
 	public float reducedDamagePercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new ProtectAllyEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new ProtectAllyEffect(this, owner, target, duration)
 		{
 			ProtectRange = protectRange,
 			ReducedPercentage = reducedDamagePercentage,

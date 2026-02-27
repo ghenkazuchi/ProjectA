@@ -132,8 +132,9 @@ public class DayNightCycleController : MonoBehaviour
 
 	public void AdvanceToNextMorning(bool fireEvent = true)
 	{
-		// Reset thẳng về morning, không cộng thêm steps ảo
-		currentStep = 0;
+		// Advance to the start of the next day cycle (morning)
+		int completedDays = (currentStep / Mathf.Max(1, stepsPerDay)) + 1;
+		currentStep = completedDays * stepsPerDay;
 		SetTime01(0f, fireEvent);
 		OnStepsAdvanced?.Invoke(0, currentStep);
 	}

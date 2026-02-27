@@ -18,30 +18,14 @@ public class GameController : Singleton<GameController>,IMessageHandle
 {
 	[SerializeField] private BattleSystem battleSystem;
 	[SerializeField] private DayNightCycleController dayNightCycleController;
-	[SerializeField] private RecruitUIController recruitUIController;
-	[SerializeField] private PartyMenuController partyMenuController;
-	[SerializeField] private OverWorldUI overworldUIController;
-	[SerializeField] CanvasGroup characterCreationCanvasGroup;
-	[SerializeField] CanvasGroup battleCanvasGroup;
-	[SerializeField] CanvasGroup recruitCharacterCanvasGroup;
 	[SerializeField] PlayerParty playerParty;
-	[SerializeField] CanvasGroup gameLoseUICanvasGroup;
+	
 	public GameState currentState;
-	[SerializeField] CanvasGroup partyMenuCanvasGroup;
 	public GameDay currentGameDay;
 	public Time currentTime;
 	private void Awake()
 	{
-		characterCreationCanvasGroup.alpha = 1f;
-		characterCreationCanvasGroup.interactable = true;
-		characterCreationCanvasGroup.blocksRaycasts = true;
-		battleCanvasGroup.alpha = 0f;
-		recruitCharacterCanvasGroup.alpha = 0f;
-		recruitCharacterCanvasGroup.interactable = false;
-		recruitCharacterCanvasGroup.blocksRaycasts = false;
-		partyMenuCanvasGroup.alpha = 0f;
-		partyMenuCanvasGroup.blocksRaycasts = false;
-		partyMenuCanvasGroup.interactable = false;
+
 	}
 	private void OnEnable()
 	{
@@ -82,11 +66,9 @@ public class GameController : Singleton<GameController>,IMessageHandle
 		switch (message.type)
 		{
 			case MessageType.OnGameStart:
-				overworldUIController.Show();
 				break;
 			case MessageType.OnBattleStart:
 				currentState = GameState.Battle;
-				battleCanvasGroup.alpha = 1f;
 				var context = message.data?[0] as BattleContext;
 				var monsterInteracable = message.data?[1] as IMonsterInteracable;
 				battleSystem.currentMonsterInteractable = monsterInteracable;
@@ -95,15 +77,6 @@ public class GameController : Singleton<GameController>,IMessageHandle
 			break;
 			case MessageType.OnRecruitEnter:
 				currentState = GameState.RecruitMenu;
-				recruitCharacterCanvasGroup.alpha = 1f;
-				recruitCharacterCanvasGroup.interactable = true;
-				recruitCharacterCanvasGroup.blocksRaycasts = true;
-				RecruitableCharacterData data = message.data?[0] as RecruitableCharacterData;
-				IRecruitableCharacter interactive = message.data?[1] as IRecruitableCharacter;
-				if (data != null && interactive != null && recruitUIController != null)
-				{
-					recruitUIController.ShowRecruitUI(data, interactive);
-				}
 			break;
 			case MessageType.OnRecruitCharacter:
 				RecruitableCharacterData recruitedCharData = message.data?[0] as RecruitableCharacterData;
@@ -112,40 +85,21 @@ public class GameController : Singleton<GameController>,IMessageHandle
 				playerParty.AddCharacter(newCharacter);
 				recruitedInteractive?.Recruit();
 				currentState = GameState.FreeRoam;
-				recruitCharacterCanvasGroup.alpha = 0f;
-				recruitCharacterCanvasGroup.interactable = false;
-				recruitCharacterCanvasGroup.blocksRaycasts = false;
 			break;
 			case MessageType.OnRecruitCharacterUIClose:
-				recruitCharacterCanvasGroup.alpha = 0f;	
-				recruitCharacterCanvasGroup.blocksRaycasts = false;
-				recruitCharacterCanvasGroup.interactable = false;
 				currentState = GameState.FreeRoam;
 			break;
 
 			case MessageType.OnPartyMenuOpen:
-				partyMenuCanvasGroup.alpha = 1f;
-				partyMenuCanvasGroup.blocksRaycasts = true;
-				partyMenuCanvasGroup.interactable = true;
 				currentState = GameState.PartyMenu;
-				partyMenuController.RefreshPartyDisplay();
 			break;
 			case MessageType.OnPartyMenuClose:
-				partyMenuCanvasGroup.alpha = 0f;
-				partyMenuCanvasGroup.blocksRaycasts = false;
-				partyMenuCanvasGroup.interactable = false;
 				currentState = GameState.FreeRoam;
 			break;
 			case MessageType.OnGameLose:
-				gameLoseUICanvasGroup.alpha = 1f;
-				gameLoseUICanvasGroup.interactable = true;
-				gameLoseUICanvasGroup.blocksRaycasts = true;
 				Debug.Log("Game Over");
 			break;
 			case MessageType.OnBattleOver:
-				battleCanvasGroup.alpha = 0f;
-				battleCanvasGroup.interactable = false;
-				battleCanvasGroup.blocksRaycasts = false;
 				battleSystem.currentMonsterInteractable = null;
 				currentState = GameState.FreeRoam;
 			break;

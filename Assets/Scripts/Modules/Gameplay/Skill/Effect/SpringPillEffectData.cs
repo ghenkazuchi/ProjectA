@@ -8,7 +8,7 @@ public class SpringPillEffectData : EffectData
 	public float restoreAmount;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new SpringPillEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack, restoreAmount)
+		return new SpringPillEffect(this, owner, target, duration, restoreAmount)
 		{
 			RestoreAmount = restoreAmount
 		};

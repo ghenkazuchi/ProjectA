@@ -49,6 +49,7 @@ public abstract class EntityBase
 	public List<ActiveSkill> usableSkills = new List<ActiveSkill>();
 	public List<PassiveSkill> activePassiveSkills = new List<PassiveSkill>();
 
+	protected IStatCalculator statCalculator;
 	protected System.Random _random = new System.Random();
 	protected float growthModifier;
 	public PassiveSkillRunner PassiveSkillRunner { get; private set; }
@@ -197,6 +198,18 @@ public abstract class EntityBase
 		return value;
 	}
 	public int Level => level;
+	public int BonusTraitPointPerLevel => bonusTraitPointPerLevel;
+	public float GrowthModifier => growthModifier;
+	public IReadOnlyList<Trait> TraitListCache => _traitListCache;
+	public void SetLevelInternal(int target) => this.level = target;
+	public void IncrementTrait(Trait traitType, int amount)
+	{
+		if (currentTraits.ContainsKey(traitType))
+			currentTraits[traitType] += amount;
+		else
+			currentTraits[traitType] = amount;
+	}
+
 	public virtual void TakeDamage(int amount, EntityBase source = null)
 	{
 		int originalAmount = amount;
@@ -423,5 +436,35 @@ public abstract class EntityBase
 		allEffects.AddRange(currentActiveBuffs);
 		allEffects.AddRange(currentActiveDebuffs);
 		return allEffects;
+	}
+
+	// ── Tag-based effect queries ───────────────────────────────────
+	public bool HasEffectWithTag(EffectTag tag)
+	{
+		foreach (var e in currentActiveBuffs)
+			if (e.HasTag(tag)) return true;
+		foreach (var e in currentActiveDebuffs)
+			if (e.HasTag(tag)) return true;
+		return false;
+	}
+
+	public List<EffectBase> GetEffectsWithTag(EffectTag tag)
+	{
+		var result = new List<EffectBase>();
+		foreach (var e in currentActiveBuffs)
+			if (e.HasTag(tag)) result.Add(e);
+		foreach (var e in currentActiveDebuffs)
+			if (e.HasTag(tag)) result.Add(e);
+		return result;
+	}
+
+	public int CountEffectsWithTag(EffectTag tag)
+	{
+		int count = 0;
+		foreach (var e in currentActiveBuffs)
+			if (e.HasTag(tag)) count++;
+		foreach (var e in currentActiveDebuffs)
+			if (e.HasTag(tag)) count++;
+		return count;
 	}
 }

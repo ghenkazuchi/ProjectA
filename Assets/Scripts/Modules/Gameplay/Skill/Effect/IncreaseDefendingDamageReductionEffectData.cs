@@ -8,7 +8,7 @@ public class IncreaseDefendingDamageReductionEffectData : EffectData
 	public float increasePercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new IncreaseDefendingDamageReductionEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new IncreaseDefendingDamageReductionEffect(this, owner, target, duration)
 		{
 			IncreasePercentage = increasePercentage
 		};

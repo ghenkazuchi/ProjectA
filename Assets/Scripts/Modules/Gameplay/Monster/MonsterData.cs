@@ -11,4 +11,9 @@ public class MonsterData : BaseEntityData
 	public Trait DominantTrait => dominantTrait;
 	public float DominantTraitPreferenceWeight => dominantWeight;
 	public int baseExp;
+
+	[Header("AI Behavior")]
+	public AIStrategyType aiStrategy = AIStrategyType.Random;
+	[Tooltip("Rule configuration (only used when aiStrategy = RuleBased)")]
+	public AIBehaviorConfig aiBehavior = new AIBehaviorConfig();
 }

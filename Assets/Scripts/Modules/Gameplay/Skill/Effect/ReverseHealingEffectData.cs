@@ -8,7 +8,7 @@ public class ReverseHealingEffectData : EffectData
 	public float healingToDamgeRation;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new ReverseHealingEffect(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new ReverseHealingEffect(this, owner, target, duration)
 		{
 			HealingToDamgeRatio = healingToDamgeRation
 		};

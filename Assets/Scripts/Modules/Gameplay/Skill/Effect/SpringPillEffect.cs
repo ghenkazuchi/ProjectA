@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpringPillEffect : RestoreHPEffect, ILimitedUsageTime
 {
 	private EffectUsageTracker usageTracker;
-	public SpringPillEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1, float amount = 0) : base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack, amount)
+	public SpringPillEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float amount = 0) : base(data, owner, target, duration)
 	{
 	}
 

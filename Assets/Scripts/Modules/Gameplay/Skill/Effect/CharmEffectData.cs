@@ -6,6 +6,6 @@ public class CharmEffectData : EffectData
 {
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new CharmEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack);
+		return new CharmEffect(this, owner, target, duration);
 	}
 }

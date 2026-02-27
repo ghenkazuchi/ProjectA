@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class StunEffect : EffectBase,ITurnStart
 {
-	public StunEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1)
-		: base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+	public StunEffect(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
 	{
 		TriggerPhase = EffectTriggerPhase.StartOfTurn;
 	}

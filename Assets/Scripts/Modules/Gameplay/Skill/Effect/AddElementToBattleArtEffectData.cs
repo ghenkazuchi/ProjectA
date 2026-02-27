@@ -9,9 +9,7 @@ public class AddElementToBattleArtEffectData : EffectData
 
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new AddElementToBattleArtEffect(
-			EffectType, Effect, Name, owner, target, duration,effectIcon,
-			CanBeRemoved, Stackable, MaxStack, elementToAdd
+		return new AddElementToBattleArtEffect(this, owner, target, duration, elementToAdd
 		);
 	}
 }

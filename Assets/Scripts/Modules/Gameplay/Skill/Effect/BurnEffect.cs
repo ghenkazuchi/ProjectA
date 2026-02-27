@@ -7,7 +7,7 @@ public class BurnEffect : EffectBase, IStatModify, ITurnEnd
 	public float BurnDamage;
 	public Stat ReducedStats;
 	public float ReducedStatPercent;
-	public BurnEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1) : base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+	public BurnEffect(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
 	{
 		TriggerPhase = EffectTriggerPhase.EndOfTurn;
 	}

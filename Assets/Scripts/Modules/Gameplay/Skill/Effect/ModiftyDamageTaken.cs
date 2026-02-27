@@ -6,9 +6,8 @@ public class ModiftyDamageTaken : EffectBase, IModifiIncomingDamage
 {
 	private readonly float percent; 
 
-	public ModiftyDamageTaken(EntityBase owner, EntityBase target, int duration,Sprite icon, float percent)
-		: base(EffectType.Debuff, Effect.Other, "Increased Damage Taken", owner, target, duration,icon,
-			   /*isInstant*/ false, /*Stackable?*/ false, /*maxStack*/ 1)
+	public ModiftyDamageTaken(EffectData data, EntityBase owner, EntityBase target, int duration, float percent)
+		: base(data, owner, target, duration)
 	{
 		this.percent = Mathf.Max(0f, percent);
 	}

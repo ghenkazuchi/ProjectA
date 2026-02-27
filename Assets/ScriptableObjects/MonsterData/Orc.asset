@@ -47,3 +47,12 @@ MonoBehaviour:
   dominantTrait: 0
   dominantWeight: 8
   baseExp: 20
+  aiStrategy: 1
+  aiBehavior:
+    finishKill: 1
+    healCriticalAlly: 1
+    exploitElement: 1
+    randomTarget: 1
+    focusBeforeEnemyHeals: 1
+    buffBeforeAllyTurn: 1
+    healThreshold: 0.25

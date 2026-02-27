@@ -4,7 +4,7 @@ using UnityEngine;
 public class FleetingStepEffect : EffectBase, IBeforeTakingDamage
 {
 	public float evasionPercentage;
-	public FleetingStepEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1) : base(effectType, effect, name, owner, target, duration, icon, canBeRemoved, stackable, maxStack)
+	public FleetingStepEffect(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
 	{
 	}
 

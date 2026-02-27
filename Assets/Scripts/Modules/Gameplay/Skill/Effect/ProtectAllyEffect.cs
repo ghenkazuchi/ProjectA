@@ -9,7 +9,7 @@ public class ProtectAllyEffect : EffectBase, IBeforeTakingDamage
 
 	public float SharePercentage { get; set; }
 
-	public ProtectAllyEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1, ProtectRangeType protectRangeType = ProtectRangeType.All, float reducedPercentage = 0) : base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+	public ProtectAllyEffect(EffectData data, EntityBase owner, EntityBase target, int duration, ProtectRangeType protectRangeType = ProtectRangeType.All, float reducedPercentage = 0) : base(data, owner, target, duration)
 	{
 		ProtectRange = protectRangeType;
 		ReducedPercentage = reducedPercentage;
@@ -28,7 +28,7 @@ public class ProtectAllyEffect : EffectBase, IBeforeTakingDamage
 
 	public bool CanProtect(EntityBase protector, EntityBase target, BattleSystem battleSystem)
 	{
-		return battleSystem.IsWithinProtectRange(protector, target, ProtectRange);
+		return BattleGridUtils.IsWithinProtectRange(protector, target, ProtectRange, battleSystem.playerParty, battleSystem.monsterParty);
 	}
 
 	public IEnumerator OnBeforeTakingDamage(DamageContext ctx)

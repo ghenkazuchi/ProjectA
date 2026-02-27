@@ -18,14 +18,10 @@ MonoBehaviour:
   skillDefinition: 2
   targetType: 1
   skillRange: 0
-  isLimitedTimeCast: 0
-  usageTime: 0
-  baseSpCost: 10
-  baseMpCost: 10
+  baseSpCost: 1
+  baseMpCost: 1
   baseSkillDamage: 100
   baseHitChance: 1
-  baseCritChange: 0
-  baseCritDamage: 0
   skillElement: 0
   activeSkillType: 0
   scalingStatAndMutiply:
@@ -55,3 +51,4 @@ MonoBehaviour:
     _keys: 
     _values: []
   effectsToApply: []
+  modifiers: []

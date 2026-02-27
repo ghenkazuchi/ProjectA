@@ -8,7 +8,7 @@ public class ResolveSkillEffectData : EffectData
 	public float reviveRestorationPercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new ResolveSkillEffect(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new ResolveSkillEffect(this, owner, target, duration)
 		{
 			restorationPercentage = reviveRestorationPercentage,
 		};

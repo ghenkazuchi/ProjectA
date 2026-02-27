@@ -8,7 +8,7 @@ public class DispelBuffEffectData : EffectData
 
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new DispelBuffEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new DispelBuffEffect(this, owner, target, duration)
 		{
 			DispelAmount = dispelAmount
 		};

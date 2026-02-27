@@ -5,7 +5,7 @@ using UnityEngine;
 public class AddElementToBattleArtEffect : EffectBase
 {
 	public Element ElementToAdd { get; set; }
-	public AddElementToBattleArtEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1, Element elementToAdd = default) : base(effectType, effect, name, owner, target, duration, icon, canBeRemoved, stackable, maxStack)
+	public AddElementToBattleArtEffect(EffectData data, EntityBase owner, EntityBase target, int duration, Element elementToAdd = default) : base(data, owner, target, duration)
 	{
 		ElementToAdd = elementToAdd;
 	}

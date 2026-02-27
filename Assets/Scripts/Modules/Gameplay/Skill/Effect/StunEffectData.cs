@@ -7,6 +7,6 @@ public class StunEffectData : EffectData
 {
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new StunEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack);
+		return new StunEffect(this, owner, target, duration);
 	}
 }

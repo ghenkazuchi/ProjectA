@@ -7,7 +7,7 @@ public class PoisonEffectData : EffectData
 	public float basePoisonDamage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new PoisonEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new PoisonEffect(this, owner, target, duration)
 		{
 			BasePoisonDamage = basePoisonDamage,
 		};

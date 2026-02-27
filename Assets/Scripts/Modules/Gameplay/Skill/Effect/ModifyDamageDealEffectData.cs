@@ -6,5 +6,5 @@ using UnityEngine;
 public class ModifyDamageDealEffectData : EffectData
 {
 	public float increasePercent; 
-	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration) => new ModifyDamageDealEffect(owner, target, duration,effectIcon, increasePercent);
+	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration) => new ModifyDamageDealEffect(this, owner, target, duration, increasePercent);
 }

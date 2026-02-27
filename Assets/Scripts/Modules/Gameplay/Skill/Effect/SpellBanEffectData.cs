@@ -7,6 +7,6 @@ public class SpellBanEffectData : EffectData
 {
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new SpellBanEffect(EffectType, Effect, Name, owner, target, duration,effectIcon, CanBeRemoved, Stackable, MaxStack);
+		return new SpellBanEffect(this, owner, target, duration);
 	}
 }

@@ -8,7 +8,7 @@ public class InflictOnHitEffectData : EffectData
 	public EffectData onHitEffectToApply;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return  new InflictOnHitEffect(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack){
+		return  new InflictOnHitEffect(this, owner, target, duration){
 			OnHitEffectToApply = onHitEffectToApply
 		};
 	}

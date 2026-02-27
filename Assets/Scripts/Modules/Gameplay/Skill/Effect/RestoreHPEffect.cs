@@ -7,7 +7,7 @@ public class RestoreHPEffect : EffectBase, IScaleableEffect, ILimitedUsageTime
 	public float RestoreAmount { get; set; }
 
 	private EffectUsageTracker usageTracker;
-	public RestoreHPEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1,float amount = 0) : base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+	public RestoreHPEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float amount = 0) : base(data, owner, target, duration)
 	{
 		RestoreAmount = amount;
 	}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class BattleArtBanEffect : EffectBase, ITurnStart
 {
-	public BattleArtBanEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1) : base(effectType, effect, name, owner, target, duration, icon, canBeRemoved, stackable, maxStack)
+	public BattleArtBanEffect(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
 	{
 		TriggerPhase = EffectTriggerPhase.StartOfTurn;
 	}

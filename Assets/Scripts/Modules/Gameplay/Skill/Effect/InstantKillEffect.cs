@@ -5,7 +5,7 @@ using UnityEngine;
 public class InstantKillEffect : EffectBase, IOnDealingDamage
 {
 	public float InstantKillThresholdPercentage { get; set; }
-	public InstantKillEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1, float threshold = 0) : base(effectType, effect, name, owner, target, duration, icon, canBeRemoved, stackable, maxStack)
+	public InstantKillEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float threshold = 0) : base(data, owner, target, duration)
 	{
 		InstantKillThresholdPercentage = threshold;
 	}

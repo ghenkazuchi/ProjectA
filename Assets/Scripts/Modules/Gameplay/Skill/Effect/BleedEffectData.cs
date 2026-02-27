@@ -8,16 +8,7 @@ public class BleedEffectData : EffectData
 	public float bleedMaxHealthPercentagePerTurn;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new BleedEffect(EffectType,
-			Effect,
-			Name,
-			owner,
-			target,
-			duration,
-			effectIcon,
-			CanBeRemoved,
-			Stackable,
-			MaxStack)
+		return new BleedEffect(this, owner, target, duration)
 		{
 			bleedMaxHealthPercentagePerTurn = bleedMaxHealthPercentagePerTurn
 		};

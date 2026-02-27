@@ -7,7 +7,7 @@ public class FleetingStepEffectData : EffectData
 	public float evasionCurrentHpThreshold;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new FleetingStepEffect(EffectType, Effect, Name, owner, target, duration, effectIcon, CanBeRemoved, Stackable, MaxStack)
+		return new FleetingStepEffect(this, owner, target, duration)
 		{
 			evasionPercentage = evasionCurrentHpThreshold,
 		};

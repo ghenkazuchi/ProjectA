@@ -9,10 +9,9 @@ public class StatModifiEffect : EffectBase, IScaleableEffect
 	public float PercentageValue { get; private set; }
 	public bool IsRawValue { get; private set; }
 
-	public StatModifiEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon,
-								bool canBeRemoved, bool stackable, int maxStack,
+	public StatModifiEffect(EffectData data, EntityBase owner, EntityBase target, int duration,
 								Stat statToModify, bool isRawValue, int rawValue, float percentageValue)
-			: base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+			: base(data, owner, target, duration)
 	{
 		StatToModify = statToModify;
 		IsRawValue = isRawValue;

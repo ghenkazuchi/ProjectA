@@ -36,224 +36,163 @@ public class EquipmentEffectRunner
 			sourceToBindings.Remove(source);
 		}
 	}
-	public IEnumerator Trigger(EquipEffectTrigger triggerType, EntityBase target = null)
-	{
-		foreach (var kv in sourceToBindings)
-		{
-			object source = kv.Key;
-			List<EquipEffectBinding> bindings = kv.Value;
-			foreach (var binding in bindings)
-			{
-				if (binding.trigger != triggerType) continue;
-				float chance = Mathf.Clamp01(binding.procChance);
-				if (source is Item)
-				{
-					var item = source as Item;
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					chance += tune.procChanceMultiplier;
-				}
-				foreach (var e in owner.GetAllEffect())
-				{
-					if (e is IProcChanceModifier modProc)
-					{
-						chance = modProc.ModifyProcChance(chance);
-					}
-				}
-				if(chance < 1f && Random.value > chance)
-				{
-					continue;
-				}
-				EntityBase effectTarget = target ?? owner;
-				EffectBase effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
-				EffectUsageTracker usageTracker = null;
+	// ── Public overloads (thin wrappers) ──────────────────────────────
 
-				if (source is Weapon weapon)
-				{
-					usageTracker = weapon.GetEffectTracker(binding.effect.Name);
-				}
-				else if (source is Item item)
-				{
+	public IEnumerator Trigger(EquipEffectTrigger trigger, EntityBase target = null)
+		=> TriggerCore(trigger, target, ApplyDefault);
 
-					usageTracker = item.GetEffectTracker(binding.effect.Name);
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					usageTracker?.SetGradeBonus(tune.bonusUsagePerBattle, tune.bonusUsagePerLifeCycle);
-				}
-				ILimitedUsageTime limitedUsageTime = effect as ILimitedUsageTime;
-				if (limitedUsageTime != null && usageTracker != null)
-				{
-					limitedUsageTime.SetUsageTracker(usageTracker);
-					if (!usageTracker.CanUse())
-					{
-						continue;
-					}
-				}
-
-				if (binding.effect.isInstantEffect)
-				{
-					yield return effectTarget.TriggerEffectDirectly(effect);
-					usageTracker?.RecordUse();
-				}
-				else
-				{
-					yield return effectTarget.AddEffect(effect);
-				}
-			}
-		}
-	}
-	public IEnumerator Trigger(EquipEffectTrigger trigger, EntityBase target, DamageContext ctx = null)
-	{
-		foreach (var kv in sourceToBindings) 
-		{
-			object source = kv.Key;
-			List<EquipEffectBinding> bindings = kv.Value;
-
-			foreach (var binding in bindings)
-			{
-				if (binding == null || binding.effect == null) continue;
-				if (binding.trigger != trigger) continue;
-
-				float chance = Mathf.Clamp01(binding.procChance);
-				if (source is Item)
-				{
-					var item = source as Item;
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					chance += tune.procChanceMultiplier;
-				}
-				foreach (var e in owner.GetAllEffect())
-				{
-					if (e is IProcChanceModifier modProc)
-					{
-						chance = modProc.ModifyProcChance(chance);
-					}
-				}
-				if (chance < 1f && Random.value > chance)
-				{
-					continue;
-				}
-
-				var effectTarget = target ?? owner;
-				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
-				EffectUsageTracker usageTracker = null;
-				if (source is Weapon weapon) usageTracker = weapon.GetEffectTracker(binding.effect.Name);
-				else if (source is Item item)
-				{
-					usageTracker = item.GetEffectTracker(binding.effect.Name);
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					usageTracker?.SetGradeBonus(tune.bonusUsagePerBattle, tune.bonusUsagePerLifeCycle);
-				}
-				ILimitedUsageTime limitedUsageTime = effect as ILimitedUsageTime;
-
-				if (limitedUsageTime != null && usageTracker != null)
-				{
-					limitedUsageTime.SetUsageTracker(usageTracker);
-					if (!usageTracker.CanUse())
-					{
-						continue;
-					}
-				}
-				if (binding.effect.isInstantEffect && ctx != null)
-				{
-					bool hooked = false;
-					if(trigger == EquipEffectTrigger.OnDealingDamage && effect is IOnDealingDamage dealingDamage)
-					{
-						hooked = true;
-						yield return dealingDamage.OnDealingDamage(ctx);
-					}
-					else if (trigger == EquipEffectTrigger.OnBeforeDealingDamage && effect is IBeforeDealingDamage atkHook)
-					{
-						hooked = true;
-						yield return atkHook.OnBeforeDealingDamage(ctx);
-					}
-					else if (trigger == EquipEffectTrigger.OnBeforeTakingDamage && effect is IBeforeTakingDamage defHook)
-					{
-						hooked = true;
-						yield return defHook.OnBeforeTakingDamage(ctx);
-					}
-					else if(trigger == EquipEffectTrigger.OnTakingDamage && effect is IOnTakingDamage takingDamage)
-					{
-						hooked = true;
-						yield return takingDamage.OnTakingDamage(ctx);
-					}
-					if (!hooked)
-					{
-							yield return effectTarget.TriggerEffectDirectly(effect);
-					}
-				}
-				else
-				{
-					yield return effectTarget.AddEffect(effect);
-				}
-			}
-		}
-	}
+	public IEnumerator Trigger(EquipEffectTrigger trigger, EntityBase target, DamageContext ctx)
+		=> TriggerCore(trigger, target, (binding, effect, tracker, effectTarget)
+			=> ApplyWithDamageContext(binding, effect, tracker, effectTarget, trigger, ctx));
 
 	public IEnumerator Trigger(EquipEffectTrigger trigger, EntityBase target, StatusApplyContext ctx)
+		=> TriggerCore(trigger, target, (binding, effect, tracker, effectTarget)
+			=> ApplyWithStatusContext(binding, effect, tracker, effectTarget, ctx));
+
+	// ── Shared core ────────────────────────────────────────────────────
+
+	private IEnumerator TriggerCore(
+		EquipEffectTrigger trigger,
+		EntityBase target,
+		System.Func<EquipEffectBinding, EffectBase, EffectUsageTracker, EntityBase, IEnumerator> applyEffect)
 	{
 		foreach (var kv in sourceToBindings)
 		{
 			object source = kv.Key;
-			var bindings = kv.Value;
+			List<EquipEffectBinding> bindings = kv.Value;
 
 			foreach (var binding in bindings)
 			{
 				if (binding == null || binding.effect == null) continue;
 				if (binding.trigger != trigger) continue;
 
-				float chance = Mathf.Clamp01(binding.procChance);
-				if (source is Item)
-				{
-					var item = source as Item;
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					chance += tune.procChanceMultiplier;
-				}
-				foreach (var e in owner.GetAllEffect())
-				{
-					if (e is IProcChanceModifier modProc)
-					{
-						chance = modProc.ModifyProcChance(chance);
-					}
-				}
-				if (chance < 1f && Random.value > chance)
-				{
+				if (!ProcessEffectBinding(source, binding, target,
+					out EffectBase effect, out EffectUsageTracker usageTracker, out EntityBase effectTarget))
 					continue;
-				}
 
-				var effectTarget = target ?? owner;
-				var effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
-
-				// tracker
-				EffectUsageTracker usageTracker = null;
-				if (source is Weapon w) usageTracker = w.GetEffectTracker(binding.effect.Name);
-				else if (source is Item item)
-				{
-					usageTracker = item.GetEffectTracker(binding.effect.Name);
-					var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
-					usageTracker?.SetGradeBonus(tune.bonusUsagePerBattle, tune.bonusUsagePerLifeCycle);
-				}
-
-				if (effect is ILimitedUsageTime limited && usageTracker != null)
-				{
-					limited.SetUsageTracker(usageTracker);
-					if (!usageTracker.CanUse()) continue;
-				}
-
-				// hook status
-				bool hooked = false;
-				if (binding.effect.isInstantEffect && effect is IBeforeStatusApplied statusHook)
-				{
-					hooked = true;
-					yield return statusHook.OnBeforeStatusApplied(ctx);
-
-					if (ctx != null && ctx.Cancle)
-						usageTracker?.RecordUse();
-				}
-
-				if (!hooked)
-				{
-					yield return effectTarget.TriggerEffectDirectly(effect);
-				}
+				yield return applyEffect(binding, effect, usageTracker, effectTarget);
 			}
 		}
+	}
+
+	// ── Apply strategies ───────────────────────────────────────────────
+
+	private IEnumerator ApplyDefault(EquipEffectBinding binding, EffectBase effect, EffectUsageTracker usageTracker, EntityBase effectTarget)
+	{
+		if (binding.effect.isInstantEffect)
+		{
+			yield return effectTarget.TriggerEffectDirectly(effect);
+			usageTracker?.RecordUse();
+		}
+		else
+		{
+			yield return effectTarget.AddEffect(effect);
+		}
+	}
+
+	private IEnumerator ApplyWithDamageContext(EquipEffectBinding binding, EffectBase effect, EffectUsageTracker usageTracker, EntityBase effectTarget,
+		EquipEffectTrigger trigger, DamageContext ctx)
+	{
+		if (binding.effect.isInstantEffect && ctx != null)
+		{
+			bool hooked = false;
+			if (trigger == EquipEffectTrigger.OnDealingDamage && effect is IOnDealingDamage dealingDamage)
+			{
+				hooked = true;
+				yield return dealingDamage.OnDealingDamage(ctx);
+			}
+			else if (trigger == EquipEffectTrigger.OnBeforeDealingDamage && effect is IBeforeDealingDamage atkHook)
+			{
+				hooked = true;
+				yield return atkHook.OnBeforeDealingDamage(ctx);
+			}
+			else if (trigger == EquipEffectTrigger.OnBeforeTakingDamage && effect is IBeforeTakingDamage defHook)
+			{
+				hooked = true;
+				yield return defHook.OnBeforeTakingDamage(ctx);
+			}
+			else if (trigger == EquipEffectTrigger.OnTakingDamage && effect is IOnTakingDamage takingDamage)
+			{
+				hooked = true;
+				yield return takingDamage.OnTakingDamage(ctx);
+			}
+			if (!hooked)
+			{
+				yield return effectTarget.TriggerEffectDirectly(effect);
+			}
+		}
+		else
+		{
+			yield return effectTarget.AddEffect(effect);
+		}
+	}
+
+	private IEnumerator ApplyWithStatusContext(EquipEffectBinding binding, EffectBase effect, EffectUsageTracker usageTracker, EntityBase effectTarget,
+		StatusApplyContext ctx)
+	{
+		bool hooked = false;
+		if (binding.effect.isInstantEffect && effect is IBeforeStatusApplied statusHook)
+		{
+			hooked = true;
+			yield return statusHook.OnBeforeStatusApplied(ctx);
+
+			if (ctx != null && ctx.Cancle)
+				usageTracker?.RecordUse();
+		}
+
+		if (!hooked)
+		{
+			yield return effectTarget.TriggerEffectDirectly(effect);
+		}
+	}
+
+	private bool ProcessEffectBinding(object source, EquipEffectBinding binding, EntityBase overrideTarget, out EffectBase effect, out EffectUsageTracker usageTracker, out EntityBase effectTarget)
+	{
+		effect = null;
+		usageTracker = null;
+		effectTarget = overrideTarget ?? owner;
+		
+		float chance = Mathf.Clamp01(binding.procChance);
+		if (source is Item item)
+		{
+			var tune = item.itemBaseData.GetTuning(item.currentItemGrade);
+			chance += tune.procChanceMultiplier;
+		}
+		foreach (var e in owner.GetAllEffect())
+		{
+			if (e is IProcChanceModifier modProc)
+			{
+				chance = modProc.ModifyProcChance(chance);
+			}
+		}
+		if (chance < 1f && Random.value > chance)
+		{
+			return false; 
+		}
+
+		effect = binding.effect.CreateRuntimeEffect(owner, effectTarget, binding.effect.MaxDuration);
+
+		if (source is Weapon weapon)
+		{
+			usageTracker = weapon.GetEffectTracker(binding.effect.Name);
+		}
+		else if (source is Item i)
+		{
+			usageTracker = i.GetEffectTracker(binding.effect.Name);
+			var tune = i.itemBaseData.GetTuning(i.currentItemGrade);
+			usageTracker?.SetGradeBonus(tune.bonusUsagePerBattle, tune.bonusUsagePerLifeCycle);
+		}
+
+		if (effect is ILimitedUsageTime limited && usageTracker != null)
+		{
+			limited.SetUsageTracker(usageTracker);
+			if (!usageTracker.CanUse())
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

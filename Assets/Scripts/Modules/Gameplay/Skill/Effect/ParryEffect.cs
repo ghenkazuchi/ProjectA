@@ -6,7 +6,7 @@ public class ParryEffect : EffectBase, IBeforeTakingDamage
 {
 	public float successfulParryPercentage;
 
-	public ParryEffect(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration,Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1,float successParryPercentage  = 0) : base(effectType, effect, name, owner, target, duration,icon, canBeRemoved, stackable, maxStack)
+	public ParryEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float successParryPercentage  = 0) : base(data, owner, target, duration)
 	{
 		successfulParryPercentage = successParryPercentage;
 	}

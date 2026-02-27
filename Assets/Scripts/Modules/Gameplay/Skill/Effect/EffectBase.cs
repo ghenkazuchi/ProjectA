@@ -26,11 +26,33 @@ public abstract class EffectBase
 	public bool HasDuration => InitialDuration > 0;
 
 	public Sprite EffectIcon { get; protected set; }
+	public EffectTag Tags { get; protected set; }
+
+	public bool HasTag(EffectTag tag) => (Tags & tag) != 0;
 
 	public event System.Action<EffectBase> OnChanged;
 
 	private void NotifyChanged() => OnChanged?.Invoke(this);
 
+	/// <summary>New simplified constructor — pulls config from EffectData SO.</summary>
+	public EffectBase(EffectData data, EntityBase owner, EntityBase target, int duration)
+	{
+		EffectType = data.EffectType;
+		Effect = data.Effect;
+		Name = data.Name;
+		Owner = owner;
+		Target = target;
+		InitialDuration = duration;
+		CurrentDuration = InitialDuration;
+		CanBeRemoved = data.CanBeRemoved;
+		Stackable = data.Stackable;
+		MaxStack = data.MaxStack;
+		CurrentStack = 1;
+		EffectIcon = data.effectIcon;
+		Tags = data.tags;
+	}
+
+	[System.Obsolete("Use EffectBase(EffectData, owner, target, duration) instead.")]
 	public EffectBase(EffectType effectType, Effect effect, string name, EntityBase owner, EntityBase target, int duration, Sprite icon, bool canBeRemoved = true, bool stackable = false, int maxStack = 1)
 	{
 		EffectType = effectType;

@@ -17,13 +17,13 @@ public class RedirectDamageEffect : PassiveEffectBase
 	{
 		if (args.Length >= 3 && args[0] is EntityBase originalTarget && args[1] is EntityBase attacker && args[2] is int damage)
 		{
-			bool inRange = battleSystem.IsWithinProtectRange(owner, originalTarget, protectRange);
+			bool inRange = BattleGridUtils.IsWithinProtectRange(owner, originalTarget, protectRange, battleSystem.playerParty, battleSystem.monsterParty);
 			if (!inRange) yield break;
 		}
 	}
 	public bool CanRedirect(EntityBase protector, EntityBase target, BattleSystem battleSystem)
 	{
-		return battleSystem.IsWithinProtectRange(protector, target, protectRange);
+		return BattleGridUtils.IsWithinProtectRange(protector, target, protectRange, battleSystem.playerParty, battleSystem.monsterParty);
 	}
 }
 
