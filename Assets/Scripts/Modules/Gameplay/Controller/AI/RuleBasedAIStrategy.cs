@@ -53,14 +53,9 @@ public class RuleBasedAIStrategy : IAIStrategy
 			if (decision.IsValid) return decision;
 		}
 
-		// --- Priority 5: Buff Before Ally Turn ---
-		if (config.buffBeforeAllyTurn)
-		{
-			decision = TryBuffBeforeAllyTurn(monster, sys);
-			if (decision.IsValid) return decision;
-		}
+		// --- Priority 5: Removed (Buffing is now handled by Priority 6 via smart timeline targeting) ---
 
-		// --- Priority 6: Random Target ---
+		// --- Priority 6: Random Target (Attack or Buff) ---
 		if (config.randomTarget)
 		{
 			decision = TryRandomTarget(monster, sys);
@@ -87,7 +82,7 @@ public class RuleBasedAIStrategy : IAIStrategy
 			if (!CanAfford(monster, skill)) continue;
 
 			var enemies = GetAliveEnemies(monster, sys);
-			foreach (var enemy in enemies)
+			foreach (var enemy in enemies.Where(e => IsValidTargetForSkill(e, skill, sys)))
 			{
 				int estimatedDmg = BattleAIController.EstimateDamage(monster, skill, enemy, sys);
 				if (estimatedDmg >= enemy.GetCurrentHP())
@@ -163,7 +158,7 @@ public class RuleBasedAIStrategy : IAIStrategy
 			float hpRatio = (float)target.GetCurrentHP() / Mathf.Max(1, target.MaxHp);
 			if (hpRatio > 0.5f) continue; // only focus targets below 50% HP
 
-			var bestSkill = GetOffensiveSkills(monster).Where(s => CanAfford(monster, s)).FirstOrDefault();
+			var bestSkill = GetOffensiveSkills(monster).Where(s => CanAfford(monster, s) && IsValidTargetForSkill(target, s, sys)).FirstOrDefault();
 			if (bestSkill != null)
 				return MakeDecision(bestSkill, target, monster, sys);
 		}
@@ -175,34 +170,7 @@ public class RuleBasedAIStrategy : IAIStrategy
 	/// Rule 4 (element) is unchanged below.
 	/// </summary>
 
-	/// <summary>
-	/// Rule 5: If an ally monster acts soon after this monster, use a buff/support
-	/// skill on that ally to maximize the buff's value.
-	/// </summary>
-	private AIDecision TryBuffBeforeAllyTurn(EntityBase monster, BattleSystem sys)
-	{
-		var supportSkills = monster.usableSkills
-			.Where(s => s.SkillData.activeSkillType == ActiveSkillType.Buff && CanAfford(monster, s))
-			.ToList();
-
-		if (supportSkills.Count == 0) return default;
-
-		var upcoming = sys.timelineManager.PeekNextEntities(5);
-		var allies = GetAliveAllies(monster, sys);
-
-		// Find the first ally who acts soonest in the timeline
-		foreach (var entity in upcoming)
-		{
-			if (entity != monster && allies.Contains(entity))
-			{
-				// Buff this ally — they act next!
-				var skill = supportSkills[Random.Range(0, supportSkills.Count)];
-				return MakeDecision(skill, entity, monster, sys);
-			}
-		}
-
-		return default;
-	}
+	// TryBuffBeforeAllyTurn has been removed in favor of smart random buffing.
 
 	/// <summary>
 	/// Exploit Element: Pick a skill with element advantage.
@@ -215,7 +183,7 @@ public class RuleBasedAIStrategy : IAIStrategy
 		{
 			if (!CanAfford(monster, skill)) continue;
 
-			foreach (var enemy in enemies)
+			foreach (var enemy in enemies.Where(e => IsValidTargetForSkill(e, skill, sys)))
 			{
 				float mult = ElementalChart.GetMultiplier(skill.element, enemy.entityData.EntityElement);
 				if (mult > 1f)
@@ -228,21 +196,31 @@ public class RuleBasedAIStrategy : IAIStrategy
 	}
 
 	/// <summary>
-	/// Rule 4: Pick a random offensive skill and a random alive enemy.
+	/// Rule 4: Pick a random offensive OR buff skill and a valid target.
 	/// Avoids unfairly focus-firing the lowest HP target when no kill is available.
 	/// </summary>
 	private AIDecision TryRandomTarget(EntityBase monster, BattleSystem sys)
 	{
-		var offensiveSkills = GetOffensiveSkills(monster).Where(s => CanAfford(monster, s)).ToList();
-		if (offensiveSkills.Count == 0) return default;
+		var randomSkills = GetOffensiveAndBuffSkills(monster).Where(s => CanAfford(monster, s)).ToList();
+		if (randomSkills.Count == 0) return default;
 
 		var enemies = GetAliveEnemies(monster, sys);
 		if (enemies.Count == 0) return default;
 
-		var skill = offensiveSkills[Random.Range(0, offensiveSkills.Count)];
-		var target = enemies[Random.Range(0, enemies.Count)];
+		var validOptions = new List<(ActiveSkill skill, EntityBase target)>();
+		foreach (var s in randomSkills)
+		{
+			var targetPool = s.SkillData.targetType == TargetType.Ally ? GetAliveAllies(monster, sys) : enemies;
+			
+			foreach (var t in targetPool)
+			{
+				if (IsValidTargetForSkill(t, s, sys)) validOptions.Add((s, t));
+			}
+		}
 
-		return MakeDecision(skill, target, monster, sys);
+		if (validOptions.Count == 0) return default;
+		var pick = validOptions[Random.Range(0, validOptions.Count)];
+		return MakeDecision(pick.skill, pick.target, monster, sys);
 	}
 
 	/// <summary>
@@ -290,6 +268,16 @@ public class RuleBasedAIStrategy : IAIStrategy
 			.ToList();
 	}
 
+	/// <summary>
+	/// Gets a list of Damage and Buff skills the monster can use for its random action phase.
+	/// </summary>
+	private List<ActiveSkill> GetOffensiveAndBuffSkills(EntityBase monster)
+	{
+		return monster.usableSkills
+			.Where(s => s.SkillData.activeSkillType == ActiveSkillType.Damage || s.SkillData.activeSkillType == ActiveSkillType.Buff)
+			.ToList();
+	}
+
 	private List<EntityBase> GetAliveEnemies(EntityBase monster, BattleSystem sys)
 	{
 		return sys.playerParty.GetAllEntitiesInParty()
@@ -302,6 +290,15 @@ public class RuleBasedAIStrategy : IAIStrategy
 		return sys.monsterParty.GetAllEntitiesInParty()
 			.Where(e => e != null && e.GetCurrentHP() > 0)
 			.ToList();
+	}
+
+	private bool IsValidTargetForSkill(EntityBase target, ActiveSkill skill, BattleSystem sys)
+	{
+		if (skill.SkillData.targetType == TargetType.Enemy && skill.SkillData.skillRange == SkillRange.SingleTarget && skill.SkillData.activeSkillType == ActiveSkillType.Damage)
+		{
+			return BattleGridUtils.IsTargetable(target, sys.playerParty, sys.monsterParty);
+		}
+		return true;
 	}
 
 	private bool CanAfford(EntityBase monster, ActiveSkill skill)

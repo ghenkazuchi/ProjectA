@@ -222,7 +222,7 @@ public class BattleInputHandler : MonoBehaviour
         sys.uiController.battleDialogBox.EnableAttackSelector(false);
         sys.uiController.battleDialogBox.EnableDialogText(true);
         yield return StartCoroutine(sys.uiController.TypeDialog("Select a party member to switch positions."));
-        yield return BattleSystem.waifHalf;
+        yield return BattleSystem.waitHalf;
         sys.switchPositionController.BeginSwitch();
 
         yield return new WaitUntil(() => sys.battleState == BattleState.RunningTurn || sys.battleState == BattleState.BattleOver);
@@ -293,7 +293,7 @@ public class BattleInputHandler : MonoBehaviour
         sys.uiController.battleDialogBox.EnableDialogText(true);
         sys.uiController.battleDialogBox.EnableActionSelector(false);
         yield return StartCoroutine(sys.uiController.battleDialogBox.TypeDialog("Select a target!"));
-        yield return BattleSystem.waifHalf;
+        yield return BattleSystem.waitHalf;
 
         sys.targetSelectionController.gameObject.SetActive(true);
         sys.targetSelectionController.StartSelection((targets) =>

@@ -87,5 +87,31 @@ MonoBehaviour:
     levelRequirements: 2
   - skill: {fileID: 11400000, guid: a7c3842448f4c1a4f98ff0a765da0741, type: 2}
     levelRequirements: 1
+  traitGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 00000000010000000200000003000000040000000500000006000000
+    _keys: 00000000010000000200000003000000040000000500000006000000
+    _values: 3c0000001e0000003c0000005a000000280000001e00000028000000
   itemSlotCount: 2
   usableWeaponTypes: 0200000001000000

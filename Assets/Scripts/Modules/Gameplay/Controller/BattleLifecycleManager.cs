@@ -137,7 +137,7 @@ public class BattleLifecycleManager
 	/// <summary>
 	/// Calculates and distributes EXP to surviving party members.
 	/// </summary>
-	public void HandlePlayerWin(List<EntityBase> allEntities = null, ExpDistributionController expDistributionController = null)
+	public void HandlePlayerWin(List<EntityBase> allEntities = null)
 	{
 		if (allEntities != null)
 			BattleEventManager.ResetEffectOnEntities(allEntities);
@@ -167,8 +167,8 @@ public class BattleLifecycleManager
 			}
 		}
 
-		if (expDistributionController != null)
-			expDistributionController.ShowExpDistribution(expGainedPerMember);
+		if (sys.ExpDistribution != null)
+			sys.ExpDistribution.ShowExpDistribution(expGainedPerMember);
 	}
 
 	/// <summary>

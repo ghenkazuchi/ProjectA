@@ -22,13 +22,13 @@ public class PlayerStatCalculator : IStatCalculator
         switch (statToCalculate)
         {
             case Stat.HP:
-                baseValue = (20 + (vit * 2f)) * classMultiplier;
+                baseValue = 50 + (vit * 2f * classMultiplier);
                 break;
             case Stat.MP:
-                baseValue = 5 + ((inte + pie) * classMultiplier * 0.5f);
+                baseValue = 20 + ((inte + pie)  * classMultiplier);
                 break;
             case Stat.SP:
-                baseValue = 5 + ((str + dex) * classMultiplier * 0.5f);
+                baseValue = 20 + ((str + dex)  * classMultiplier);
                 break;
             case Stat.AttackPower:
                 baseValue = str * classMultiplier * 0.7f + dex * 0.3f * classMultiplier;
@@ -40,22 +40,22 @@ public class PlayerStatCalculator : IStatCalculator
                 baseValue = pie * classMultiplier;
                 break;
             case Stat.PhysicalDefense:
-                baseValue = vit * classMultiplier;
+                baseValue = 5 + (vit * 0.6f * classMultiplier + str * 0.1f * classMultiplier);
                 break;
             case Stat.MagicalDefense:
-                baseValue = 0.5f * pie * classMultiplier + 0.5f * inte * classMultiplier;
+                baseValue = 5 + ((pie + inte) * 0.3f * classMultiplier);
                 break;
             case Stat.ActionSpeed:
-                baseValue = agi * classMultiplier;
+                baseValue = 20 + (agi * 1.5f * classMultiplier);
                 break;
             case Stat.Evasion:
-                baseValue = agi * classMultiplier * 0.6f + luk * 0.4f * classMultiplier;
+                baseValue = (agi * 1.5f * classMultiplier) + (luk * 0.8f * classMultiplier);
                 break;
             case Stat.Accuracy:
-                baseValue = classMultiplier * ((dex * 0.7f) + (luk * 0.3f));
+                baseValue = (dex * 1.5f * classMultiplier);
                 break;
             case Stat.Resistance:
-                baseValue = classMultiplier * ((pie * 0.5f + vit * 0.5f));
+                baseValue = (pie * 0.6f * classMultiplier) + (luk * 0.7f * classMultiplier);
                 break;
             default:
                 baseValue = 0;

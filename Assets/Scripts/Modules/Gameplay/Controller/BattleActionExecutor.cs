@@ -21,7 +21,7 @@ public class BattleActionExecutor : MonoBehaviour
         sys.targetSelectionController.ClearAllPreviews();
         sys.uiController.currentPlayerCharacterInfo.EnableBattleHud(false);
         yield return StartCoroutine(sys.uiController.battleDialogBox.TypeDialog($"{sys.currentTurnEntity.entityData.EntityName} used {skillToUse.SkillData.skillName}"));
-        yield return BattleSystem.waifHalf;
+        yield return BattleSystem.waitHalf;
         BattleUnit attacker = sys.FindBattleUnitForEntityPublic(sourceEntity);
         attacker?.GetAnimator().PlayAttackAnimation(attacker.GetOffSet());
         
@@ -109,7 +109,7 @@ public class BattleActionExecutor : MonoBehaviour
                 var healingContext = new HealingContext();
                 healingContext.Reset(sourceEntity, target, skillHealing);
                 yield return HandleEntityGotHeal(healingContext);
-                yield return BattleSystem.waifHalf;
+                yield return BattleSystem.waitHalf;
             }
         }
 
@@ -292,6 +292,12 @@ public class BattleActionExecutor : MonoBehaviour
                 baseHeal += Mathf.CeilToInt(healer.GetFinalStat(entry.Key) * entry.Value);
             }
         }
+
+        // Apply global DivinePower multiplier
+        float divinePower = healer.GetFinalStat(Stat.DivinePower);
+        float divineMultiplier = 1f + (divinePower / 100f);
+        baseHeal = Mathf.CeilToInt(baseHeal * divineMultiplier);
+
         var hctx = new HealingContext();
         hctx.Reset(healer, target, baseHeal);
         sys.ApplySkillHealingModifiersPreview(skill, ref hctx);

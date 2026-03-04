@@ -17,6 +17,8 @@ public class ClassData : ScriptableObject
 	public SerializableDictionaryBase<Trait,int> traitBonuses = new SerializableDictionaryBase<Trait, int> { };
 	[Header("Learnable SkillSet by level")]
 	public List<SkillEntry> skillSet = new List<SkillEntry>();
+	[Header("Trait Growth Rates (%)")]
+	public SerializableDictionaryBase<Trait, int> traitGrowthRates = new SerializableDictionaryBase<Trait, int>();
 	[Header("Item slot")]
 	public int itemSlotCount;
 	[Header("Weapon Type can use")]

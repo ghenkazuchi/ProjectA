@@ -52,13 +52,32 @@ public static class BattleGridUtils
 
     public static bool IsBackRow(GridPosition pos)
     {
-        return pos != null && pos.x == 1;
+        return pos != null && pos.x == 0;
     }
 
     public static bool IsTargetInBackRow(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty)
     {
         var pos = GetEntityPosition(target, playerParty, monsterParty);
         return IsBackRow(pos);
+    }
+
+    /// <summary>
+    /// Returns true if a unit can be single-targeted by the given attacker.
+    /// Back-row units with an alive front-row column mate are protected,
+    /// unless the attacker's weapon can pierce back-row (e.g. bows).
+    /// </summary>
+    public static bool IsTargetable(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty, EntityBase attacker = null)
+    {
+        if (!HasAliveFrontAlly(target, playerParty, monsterParty))
+            return true;
+
+        // Attacker's weapon bypasses row protection
+        if (attacker != null && attacker.weapon != null
+            && attacker.weapon.WeaponBaseData != null
+            && attacker.weapon.WeaponBaseData.canPierceBackRow)
+            return true;
+
+        return false;
     }
 
     public static BaseParty GetPartyOf(EntityBase e, PlayerParty playerParty, MonsterParty monsterParty)
@@ -72,12 +91,12 @@ public static class BattleGridUtils
     public static bool HasAliveFrontAlly(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty)
     {
         var pos = GetEntityPosition(target, playerParty, monsterParty);
-        if (pos == null || pos.x != 1) return false;
+        if (pos == null || pos.x != 0) return false;
 
         var party = GetPartyOf(target, playerParty, monsterParty);
         if (party == null) return false;
 
-        var frontPos = new GridPosition(0, pos.y);
+        var frontPos = new GridPosition(1, pos.y);
         var frontEntity = party.GetEntityAtPosition(frontPos);
 
         return frontEntity != null && frontEntity.GetCurrentHP() > 0;

@@ -18,9 +18,18 @@ public class BattleUnitAnimator : MonoBehaviour
 	public void PlayAttackAnimation(Vector2 direction)
 	{
 		Sequence sequence = DOTween.Sequence();
-		sequence.Append(rect.DOAnchorPos(originalPos + direction, 0.25f).SetEase(Ease.OutQuad));
-		sequence.Append(rect.DOAnchorPos(originalPos, 0.25f).SetEase(Ease.InQuad));
+		
+		// 1. ANTICIPATION: Pull back slightly and squish down
+		sequence.Append(rect.DOAnchorPos(originalPos - (direction * 0.2f), 0.2f).SetEase(Ease.OutSine));
+		sequence.Join(rect.DOScale(new Vector3(1.1f, 0.9f, 1f), 0.2f));
 
+		// 2. THE STRIKE: Snap forward super fast, stretch out
+		sequence.Append(rect.DOAnchorPos(originalPos + direction, 0.1f).SetEase(Ease.OutBack, 2f));
+		sequence.Join(rect.DOScale(new Vector3(0.9f, 1.1f, 1f), 0.1f));
+
+		// 3. RECOVERY: Settle back
+		sequence.Append(rect.DOAnchorPos(originalPos, 0.3f).SetEase(Ease.InOutQuad));
+		sequence.Join(rect.DOScale(Vector3.one, 0.3f));
 	}
 	public IEnumerator PlayHitAnimation(bool playDefaultVfx = true, Sprite[] overrideFrames = null,float overideFps = 0)
 	{
@@ -30,16 +39,35 @@ public class BattleUnitAnimator : MonoBehaviour
 				unit.HitVfx.SetVFX(overrideFrames, overideFps > 0 ? overideFps : (float?)null);
 			yield return unit.HitVfx.PlayOnce(0.5f);
 		}
+		
 		Sequence sequence = DOTween.Sequence();
-		sequence.Append(rect.DOShakeAnchorPos(0.5f, strength: 10f, vibrato: 15, randomness: 45, snapping: false, fadeOut: true));
-		sequence.Join(unitSprite.DOColor(Color.black, 0.35f).SetLoops(2, LoopType.Yoyo));
+		
+		// FLINCH: Get pushed back slightly
+		sequence.Append(rect.DOAnchorPos(originalPos + new Vector2(-15f, 0f), 0.1f).SetEase(Ease.OutBounce));
+		
+		// SHAKE & FLASH
+		sequence.Join(rect.DOShakeAnchorPos(0.4f, strength: 15f, vibrato: 20, randomness: 90, snapping: false, fadeOut: true));
+		sequence.Join(unitSprite.DOColor(Color.red, 0.15f).SetLoops(2, LoopType.Yoyo));
+		
+		// SLIDE BACK
+		sequence.Append(rect.DOAnchorPos(originalPos, 0.2f).SetEase(Ease.InOutQuad));
+		
 		yield return sequence.WaitForCompletion();
-		unitSprite.color = originalColor	;
-
+		unitSprite.color = originalColor;
 	}
 	public void PlayBuffPulse()
 	{
-		rect.DOPunchScale(Vector3.one * 0.2f, 0.4f, 5, 0.5f);
+		Sequence sequence = DOTween.Sequence();
+		
+		// Jump up, swell up, and flash positive color
+		sequence.Append(rect.DOAnchorPos(originalPos + new Vector2(0f, 15f), 0.2f).SetEase(Ease.OutQuad));
+		sequence.Join(rect.DOPunchScale(Vector3.one * 0.2f, 0.4f, 5, 0.5f));
+		sequence.Join(unitSprite.DOColor(new Color(0.8f, 1f, 0.8f), 0.2f).SetLoops(2, LoopType.Yoyo));
+		
+		// Float down
+		sequence.Append(rect.DOAnchorPos(originalPos, 0.3f).SetEase(Ease.InQuad));
+		
+		sequence.OnComplete(() => unitSprite.color = originalColor);
 	}
 	public IEnumerator PlayParryAnimation(Sprite[] parryFrames)
 	{

@@ -2,12 +2,7 @@ using HaKien;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
-using static Unity.VisualScripting.Member;
-using static UnityEngine.EventSystems.EventTrigger;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.Image;
 using UnityEngine.Pool;
 public enum BattleState
 {
@@ -43,13 +38,14 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public const float MIN_HIT = 0.85f;
 	public const float MAX_HIT = 0.95f;
 
-	private const float backrowDamageReduction = 0.8f;
+
 	public const float baseCritChance = 0.1f;
 	public const float baseCritMultiplier = 1.5f;
 
 	public BattleType currentBattleType;
 	public VfxLib vfxLib;
 	[SerializeField] private ExpDistributionController expDistributionController;
+	public ExpDistributionController ExpDistribution => expDistributionController;
 	[SerializeField] public BattleState battleState;
 	public EntityBase currentTurnEntity;
 	public void SetCurrentTurnEntity(EntityBase entity) { currentTurnEntity = entity; }
@@ -61,8 +57,9 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public MonsterParty monsterParty;
 	public bool battleOver;
 	private List<EntityBase> allEntities;
-	[SerializeField] List<BattleUnit> playerBattleUnits;
-	[SerializeField] List<BattleUnit> monsterBattleUnits;
+	[SerializeField] private List<BattleUnit> playerBattleUnits;
+	[SerializeField] private List<BattleUnit> monsterBattleUnits;
+	public BattleUnitRegistry UnitRegistry { get; private set; }
 	public TimelineManager timelineManager;
 	public TargetSelectionController targetSelectionController;
 	public ActiveSkill selectedSkill;
@@ -88,6 +85,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 
 		basicAttack = new ActiveSkill(basicAttackSkillData);
 		if (stateMachine == null) stateMachine = GetComponent<BattleStateMachine>();
+		UnitRegistry = new BattleUnitRegistry(this, playerBattleUnits, monsterBattleUnits);
 		lifecycleManager = new BattleLifecycleManager(this);
 		Hide();
 
@@ -100,32 +98,16 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		uiController.Hide();
 	}
-	private readonly Dictionary<GridPosition, int> positionToBattleUnitIndex = new Dictionary<GridPosition, int>
-	{
-		{ new GridPosition(0, 0), 0 },
-		{ new GridPosition(1, 0), 3 },
-		{ new GridPosition(1, 2), 5 },
-		{ new GridPosition(0, 1), 1 },
-		{ new GridPosition(1, 1), 4 },
-		{ new GridPosition(0, 2), 2 },
-	};
+
 	private Dictionary<EntityBase, DefenseState> entityDefenseStates = new Dictionary<EntityBase, DefenseState>();
 
 	[SerializeField] private float defenseStateDamageReduction = 0.1f;
-	private readonly DamageContext _ctx = new DamageContext();
-	public static readonly WaitForSeconds waifHalf = new WaitForSeconds(0.5f);
-	private static readonly WaitForSeconds waitOne = new WaitForSeconds(1f);
+	public static readonly WaitForSeconds waitHalf = new WaitForSeconds(0.5f);
 
 	public BattleState GetBattleState() => battleState;
-	public BattleUnit GetBattleUnitAt(int index) => playerBattleUnits[index];
+	public BattleUnit GetBattleUnitAt(int index) => UnitRegistry.GetBattleUnitAt(index);
 
-	public GridPosition GetPositionByUnitIndex(int index)
-	{
-		foreach (var kv in positionToBattleUnitIndex)
-			if (kv.Value == index) return kv.Key;
-
-		return new GridPosition(-999, -999);
-	}
+	public GridPosition GetPositionByUnitIndex(int index) => UnitRegistry.GetPositionByUnitIndex(index);
 	public void StartBattle(BattleType batteType)
 	{
 		Show();
@@ -133,7 +115,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		battleOver = false;
 		battleState = BattleState.Start;
 		battleSystem.SetActive(true);
-		lifecycleManager.SetUpBattle(playerBattleUnits, monsterBattleUnits, positionToBattleUnitIndex);
+		lifecycleManager.SetUpBattle(UnitRegistry.PlayerBattleUnits, UnitRegistry.MonsterBattleUnits, UnitRegistry.GetPositionMap());
 		allEntities = new List<EntityBase>();
 		allEntities.AddRange(playerParty.GetAllEntitiesInParty());
 		allEntities.AddRange(monsterParty.GetAllEntitiesInParty());
@@ -218,26 +200,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		var upcomingEntities = timelineManager.PeekNextEntitiesWithCurrent(currentTurnEntity, 5);
 		uiController.UpdateTimelineUI(upcomingEntities);
 	}
-	public BattleUnit FindBattleUnitForEntityPublic(EntityBase entity)
-	{
-		foreach (var unit in playerBattleUnits)
-		{
-			if (unit != null && unit.character == entity)
-			{
-				return unit;
-			}
-		}
-
-		foreach (var unit in monsterBattleUnits)
-		{
-			if (unit != null && unit.character == entity)
-			{
-				return unit;
-			}
-		}
-
-		return null;
-	}
+	public BattleUnit FindBattleUnitForEntityPublic(EntityBase entity) => UnitRegistry.FindUnit(entity);
 
 	public IEnumerator HandlePlayerTurnPublic(EntityBase entity)
 	{
@@ -255,7 +218,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		battleState = BattleState.RunningTurn;
 
-		yield return waifHalf;
+		yield return waitHalf;
 		var decision = BattleAIController.ChooseAction(entity, this);
 
 		if (decision.IsValid)
@@ -274,21 +237,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public void OnActionSelect(int actionIndex) => inputHandler.OnActionSelect(actionIndex);
 	public void OnActionConfirm() => inputHandler.OnActionConfirm();
 	public void ExecuteSwitchPosition(int indexA, int indexB) => inputHandler.ExecuteSwitchPosition(indexA, indexB);
-	public void SyncPlayerBattleUnitsFromPartySlots()
-	{
-		for (int i = 0; i < playerBattleUnits.Count; i++)
-		{
-			var pos = GetPositionByUnitIndex(i);
-			var entity = playerParty.GetEntityAtPosition(pos);
-
-			var unit = playerBattleUnits[i];
-			unit.character = entity;
-
-			unit.gameObject.SetActive(entity != null);
-
-			unit.SetUp();
-		}
-	}
+	public void SyncPlayerBattleUnitsFromPartySlots() => UnitRegistry.SyncPlayerBattleUnitsFromPartySlots();
 	public void OnSkillSelect(int skillIndex) => inputHandler.OnSkillSelect(skillIndex);
 	public void OnSkillConfirm() => inputHandler.OnSkillConfirm();
 	public void OnSkillCancel() => inputHandler.OnSkillCancel();
@@ -307,66 +256,13 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		return actionExecutor.CalculateDamage(source, skill, target);
 	}
 
-	public void UpdateUnitHealth(EntityBase entity)
-	{
-
-		foreach (var unit in playerBattleUnits)
-		{
-			if (unit.character == entity)
-			{
-				bool wasAlive = unit.IsAlive();
-				unit.UpdateHP();
-				break;
-			}
-		}
-
-		foreach (var unit in monsterBattleUnits)
-		{
-			if (unit.character == entity)
-			{
-				bool wasAlive = unit.IsAlive();
-				unit.UpdateHP();
-				break;
-			}
-		}
-	}
-
-	public bool UpdateUnitState(EntityBase entity)
-	{
-		var unit = FindBattleUnitForEntityPublic(entity);
-		if (unit != null && !unit.IsAlive())
-		{
-			timelineManager.RemoveDeadEntityFromTimeline(entity);
-			UpdateTimelineUI();
-			return CheckBattleEndConditionPublic();
-		}
-		return false;
-	}
-
-	public void RemoveDeadUnitsFromTimelinePublic()
-	{
-		var deadEntities = ListPool<EntityBase>.Get();
-
-		foreach (var unit in playerBattleUnits)
-			if (unit?.character != null && !unit.IsAlive())
-				deadEntities.Add(unit.character);
-
-		foreach (var unit in monsterBattleUnits)
-			if (unit?.character != null && !unit.IsAlive())
-				deadEntities.Add(unit.character);
-
-		if (deadEntities.Count > 0)
-		{
-			timelineManager.RemoveDeadEntitiesFromTimeline(deadEntities);
-			UpdateTimelineUI();
-		}
-
-		ListPool<EntityBase>.Release(deadEntities);
-	}
+	public void UpdateUnitHealth(EntityBase entity) => UnitRegistry.UpdateUnitHealth(entity);
+	public bool UpdateUnitState(EntityBase entity) => UnitRegistry.UpdateUnitState(entity);
+	public void RemoveDeadUnitsFromTimelinePublic() => UnitRegistry.RemoveDeadUnitsFromTimeline();
 	//end battle
 	public bool CheckBattleEndConditionPublic()
 	{
-		return lifecycleManager.CheckBattleEndCondition(playerBattleUnits, monsterBattleUnits);
+		return lifecycleManager.CheckBattleEndCondition(UnitRegistry.PlayerBattleUnits, UnitRegistry.MonsterBattleUnits);
 	}
 
 	public void HandleAfterMatch()
@@ -377,7 +273,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		uiController.battleDialogBox.EnableDialogText(true);
 		yield return StartCoroutine(uiController.battleDialogBox.TypeDialog(dialog));
-		yield return waifHalf;
+		yield return waitHalf;
 	}
 
 	public int CalculateHealing(EntityBase healer, ActiveSkill skill, EntityBase target)
@@ -385,11 +281,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		return actionExecutor.CalculateHealing(healer, skill, target);
 	}
 	#region helper
-	public bool IsEntityAlivePublic(EntityBase e)
-	{
-		var u = FindBattleUnitForEntityPublic(e);
-		return u != null && u.IsAlive();
-	}
+	public bool IsEntityAlivePublic(EntityBase e) => UnitRegistry.IsEntityAlive(e);
 
 	public IEnumerator ExecuteForcedActionPublic(EntityBase actor, TurnDirective dir)
 	{

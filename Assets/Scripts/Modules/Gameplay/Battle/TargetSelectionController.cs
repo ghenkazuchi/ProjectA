@@ -38,6 +38,14 @@ public class TargetSelectionController : MonoBehaviour
 		if (currentTargetType == TargetType.Enemy)
 		{
 			currentAvailableTargets = enemyUnits.Where(unit => unit.IsAlive()).ToList();
+			// Single-target Damage skills can't hit protected back-row units (unless weapon pierces)
+			if (currentSkillRange == SkillRange.SingleTarget && skillToUSe.SkillData.activeSkillType == ActiveSkillType.Damage)
+			{
+				var pp = BattleSystem.Instance.playerParty;
+				var mp = BattleSystem.Instance.monsterParty;
+				currentAvailableTargets.RemoveAll(unit =>
+					unit.character != null && !BattleGridUtils.IsTargetable(unit.character, pp, mp, callingEntity));
+			}
 		}
 		else if (currentTargetType == TargetType.Ally)
 		{

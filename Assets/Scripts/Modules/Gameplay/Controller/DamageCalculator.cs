@@ -6,7 +6,7 @@ public static class DamageCalculator
     public const float MAX_HIT = 0.95f;
     public const float baseCritChance = 0.1f;
     public const float baseCritMultiplier = 1.5f;
-    private const float backrowDamageReduction = 0.8f;
+
 
     public static int ApplyDefenseReduction(EntityBase entity, int originaldamage, float defenseStateDamageReduction, bool isDefending)
     {
@@ -129,18 +129,37 @@ public static class DamageCalculator
             return true;
         }
         float baseFromSkill = Mathf.Clamp01(skill.hitChance <= 0f ? 1f : skill.hitChance);
-        float acc = Mathf.Max(1f, source.GetFinalStat(Stat.Accuracy));
-        float eva = Mathf.Max(1f, target.GetFinalStat(Stat.Evasion));
-        const float k = 0.6f;
-        float ratio = acc / (acc + eva * k);
-        const float gamma = 0.85f;
-        ratio = Mathf.Pow(ratio, gamma);
 
-        finalHitChance = baseFromSkill * ratio;
-        finalHitChance = Mathf.Clamp(finalHitChance, MIN_HIT, MAX_HIT);
+        if (skill.SkillData.skillDefinition == SkillDefinition.Spell || skill.SkillData.skillRange != SkillRange.SingleTarget)
+        {
+            // Spells and AoE/Line attacks cannot be dodged passively
+            finalHitChance = baseFromSkill;
+        }
+        else
+        {
+            // Physical single-target attacks factor in Accuracy vs Evasion
+            float acc = Mathf.Max(0f, source.GetFinalStat(Stat.Accuracy));
+            float eva = Mathf.Max(0f, target.GetFinalStat(Stat.Evasion));
+
+            finalHitChance = baseFromSkill + (acc / 100f) - (eva / 100f);
+            finalHitChance = Mathf.Clamp(finalHitChance, 0.10f, 1f); // 10% min, 100% max
+        }
 
         roll = Random.value;
         return roll <= finalHitChance;
+    }
+
+    public static bool CheckEffectApplication(EntityBase source, EntityBase target, float baseChance)
+    {
+        float res = Mathf.Max(0f, target.GetFinalStat(Stat.Resistance));
+        float mitigationMultiplier = 100f / (100f + res);
+        float finalChance = baseChance * mitigationMultiplier;
+        finalChance = Mathf.Clamp01(finalChance);
+
+        float roll = Random.value;
+        bool applied = roll <= finalChance;
+        Debug.Log($"Effect application on {target.entityData.EntityName}: Base {baseChance*100}%, Res {res}, Final Chance {finalChance*100}%, Roll {roll*100}%. Applied: {applied}");
+        return applied;
     }
 
     public static bool TryRollCritical(EntityBase attacker, EntityBase target, SkillDefinition skill, out float critMul)
@@ -187,28 +206,8 @@ public static class DamageCalculator
         }
         ctx.CritDecided = true;
     }
-
     private static float GetRangePositionMultiplier(EntityBase source, ActiveSkill skill, EntityBase target, BattleSystem battleSystem)
     {
-        if (skill.SkillData.skillRange == SkillRange.AllTarget)
-            return 1f;
-
-        if (skill.SkillData.skillDefinition == SkillDefinition.Spell ||
-            skill.SkillData.skillDefinition == SkillDefinition.Almighty)
-            return 1f;
-
-        if (!BattleGridUtils.IsTargetInBackRow(target, battleSystem.playerParty, battleSystem.monsterParty))
-            return 1f;
-
-        if (!BattleGridUtils.HasAliveFrontAlly(target, battleSystem.playerParty, battleSystem.monsterParty))
-            return 1f;
-
-        if (BattleGridUtils.GetEntityWeaponType(source, out WeaponType wt))
-        {
-            if (wt == WeaponType.Bow || wt == WeaponType.Spear)
-                return 1f;
-        }
-
-        return Mathf.Clamp01(backrowDamageReduction);
+        return 1f;
     }
 }

@@ -28,10 +28,11 @@ MonoBehaviour:
   effectData:
   - trigger: 0
     effect: {fileID: 11400000, guid: 8da91c890c509f348826508c86ff57df, type: 2}
-    condition: {fileID: 0}
+    procChance: 1
   canDuplicateTrigger: 0
   equipmentSet: {fileID: 0}
   pieceWeight: 1
   basePrice: 30
   weaponType: 5
   requirement: 0
+  canPierceBackRow: 1

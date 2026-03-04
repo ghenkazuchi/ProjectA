@@ -21,16 +21,16 @@ public class MonsterStatCalculator : IStatCalculator
         switch (statToCalculate)
         {
             case Stat.HP:
-                baseValue = (20 + (vit * 2f)) * rankMultiplier;
+                baseValue = 50 + (vit * 3f * rankMultiplier);
                 break;
             case Stat.MP:
-                baseValue = 5 + ((inte + pie) * rankMultiplier * 0.5f);
+                baseValue = 20 + ((inte + pie) * 2f * rankMultiplier);
                 break;
             case Stat.SP:
-                baseValue = 5 + ((str + dex) * rankMultiplier * 0.5f);
+                baseValue = 20 + ((str + dex) * 2f * rankMultiplier);
                 break;
             case Stat.AttackPower:
-                baseValue = str * rankMultiplier;
+                baseValue = str * rankMultiplier * 0.7f + dex * 0.3f * rankMultiplier;
                 break;
             case Stat.MagicPower:
                 baseValue = inte * rankMultiplier;
@@ -39,22 +39,22 @@ public class MonsterStatCalculator : IStatCalculator
                 baseValue = pie * rankMultiplier;
                 break;
             case Stat.PhysicalDefense:
-                baseValue = vit * rankMultiplier;
+                baseValue = 5 + (vit * 1f * rankMultiplier + str * 0.1f * rankMultiplier);
                 break;
             case Stat.MagicalDefense:
-                baseValue = 0.5f * pie * rankMultiplier + 0.5f * inte * rankMultiplier;
+                baseValue = 5 + ((pie + inte) * 0.45f * rankMultiplier);
                 break;
             case Stat.ActionSpeed:
-                baseValue = agi * rankMultiplier;
+                baseValue = 20 + (agi * 1.5f * rankMultiplier);
                 break;
             case Stat.Evasion:
-                baseValue = agi * rankMultiplier * 0.6f + luk * 0.4f * rankMultiplier;
+                baseValue = (agi * 1.5f * rankMultiplier) + (luk * 0.8f * rankMultiplier);
                 break;
             case Stat.Accuracy:
-                baseValue = rankMultiplier * ((dex * 0.7f) + (luk * 0.3f));
+                baseValue = (dex * 1.5f * rankMultiplier);
                 break;
             case Stat.Resistance:
-                baseValue = rankMultiplier * ((pie * 0.5f + vit * 0.5f));
+                baseValue = (pie * 0.5f * rankMultiplier) + (luk * 0.6f * rankMultiplier);
                 break;
             default:
                 baseValue = 0;

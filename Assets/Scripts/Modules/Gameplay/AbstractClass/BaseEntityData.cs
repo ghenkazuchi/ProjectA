@@ -12,6 +12,9 @@ public abstract class BaseEntityData : ScriptableObject
 	[SerializeField] private Element entityElement;
 	[Header("Base Traits at Level 1")]
 	[SerializeField] private SerializableDictionaryBase<Trait, int> baseTraits = new SerializableDictionaryBase<Trait, int>();
+	[Header("Personal Trait Growth Rates (%)")]
+	[SerializeField] private SerializableDictionaryBase<Trait, int> personalGrowthRates = new SerializableDictionaryBase<Trait, int>();
+	
 	[Header("Exculive Active/Passsive Skills(optional)")]
 	public ActiveSkillData exclusiveActiveSkill;
 	public PassiveSkillData exclusivePassiveSkill;
@@ -40,4 +43,5 @@ public abstract class BaseEntityData : ScriptableObject
 		set => entityPortrait = value;
 	}
 	public SerializableDictionaryBase<Trait, int> BaseTraits => baseTraits;
+	public SerializableDictionaryBase<Trait, int> PersonalGrowthRates => personalGrowthRates;
 }

@@ -51,9 +51,75 @@ public static class BattleAIController
 		var availableTargets = ListPool<EntityBase>.Get();
 
 		if (skill.SkillData.targetType == TargetType.Enemy)
-			availableTargets.AddRange(playerParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0));
+		{
+			var alive = playerParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0);
+			// Single-target damage skills can't hit protected back-row units
+			if (skill.SkillData.skillRange == SkillRange.SingleTarget && skill.SkillData.activeSkillType == ActiveSkillType.Damage)
+				alive.RemoveAll(e => !BattleGridUtils.IsTargetable(e, playerParty, monsterParty));
+			
+			availableTargets.AddRange(alive);
+		}
 		else if (skill.SkillData.targetType == TargetType.Ally)
-			availableTargets.AddRange(monsterParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0));
+		{
+			var aliveAllies = monsterParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0);
+			
+			if (skill.SkillData.activeSkillType == ActiveSkillType.Buff)
+			{
+				// Smart Buff Targeting
+				var validUnbuffedAllies = new List<EntityBase>();
+				
+				foreach (var ally in aliveAllies)
+				{
+					bool alreadyHasBuffs = true;
+					foreach (var effect in skill.SkillData.effectsToApply)
+					{
+						// If the ally doesn't have an active buff matching the effect to apply, they are a valid target
+						if (!ally.currentActiveBuffs.Any(b => b.Effect == effect.effectData.Effect && b.Name == effect.effectData.Name))
+						{
+							alreadyHasBuffs = false;
+							break;
+						}
+					}
+					
+					if (!alreadyHasBuffs)
+					{
+						validUnbuffedAllies.Add(ally);
+					}
+				}
+				
+				// Optional: If everyone is already buffed, abort the skill completely (Return empty list to force a re-roll in FallbackRandom)
+				if (validUnbuffedAllies.Count == 0)
+				{
+					ListPool<EntityBase>.Release(targets);
+					ListPool<EntityBase>.Release(availableTargets);
+					return new List<EntityBase>();
+				}
+
+				// Priority: Pick the unbuffed ally who acts soonest in the timeline
+				var upcoming = BattleSystem.Instance.timelineManager.PeekNextEntities(5);
+				EntityBase chosenAlly = null;
+				foreach (var entity in upcoming)
+				{
+					if (validUnbuffedAllies.Contains(entity))
+					{
+						chosenAlly = entity;
+						break;
+					}
+				}
+
+				// If no unbuffed ally is in the immediate timeline, just pick a random unbuffed one
+				if (chosenAlly == null)
+				{
+					chosenAlly = validUnbuffedAllies[Random.Range(0, validUnbuffedAllies.Count)];
+				}
+				
+				availableTargets.Add(chosenAlly);
+			}
+			else
+			{
+				availableTargets.AddRange(aliveAllies);
+			}
+		}
 		else if (skill.SkillData.targetType == TargetType.Self)
 		{
 			targets.Add(aiEntity);

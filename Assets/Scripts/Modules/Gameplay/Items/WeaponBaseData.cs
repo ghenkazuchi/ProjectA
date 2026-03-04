@@ -7,4 +7,7 @@ public class WeaponBaseData : EquipableBaseData
 {
 	public WeaponType weaponType;
 	public WeaponRequirement requirement;
+
+	[Tooltip("If true, the wielder can single-target protected back-row units (e.g. bows).")]
+	public bool canPierceBackRow;
 }

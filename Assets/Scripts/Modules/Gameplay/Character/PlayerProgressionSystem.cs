@@ -46,25 +46,61 @@ public class PlayerProgressionSystem : RPGProgressionSystem
 
     public override void DistributeTraitPoints(int pointsToDistribute)
     {
-        string gainedTraits = "";
-        List<Trait> cache = new List<Trait>(player.TraitListCache);
-        int n = cache.Count;
-        while (n > 1)
+        if (player.GetClassData == null || player.GetClassData.traitGrowthRates == null)
         {
-            n--;
-            int k = _random.Next(n + 1);
-            Trait value = cache[k];
-            cache[k] = cache[n];
-            cache[n] = value;
+            Debug.LogWarning("ClassData or traitGrowthRates is missing. Cannot distribute trait points.");
+            return;
         }
 
-        for (int i = 0; i < Mathf.Min(pointsToDistribute, cache.Count); i++)
+        int levelsGained = Mathf.Max(1, pointsToDistribute / Mathf.Max(1, player.BonusTraitPointPerLevel));
+        string gainedTraitsLog = "";
+
+        for (int l = 0; l < levelsGained; l++)
         {
-            Trait traitToIncrease = cache[i];
-            player.IncrementTrait(traitToIncrease, 1);
-            gainedTraits += $"{traitToIncrease}+1 ";
+            foreach (Trait trait in player.TraitListCache)
+            {
+                int growthRate = 0;
+                
+                if (player.GetClassData != null && player.GetClassData.traitGrowthRates != null && player.GetClassData.traitGrowthRates.ContainsKey(trait))
+                {
+                    growthRate += player.GetClassData.traitGrowthRates[trait];
+                }
+                
+                if (player.entityData != null && player.entityData.PersonalGrowthRates != null && player.entityData.PersonalGrowthRates.ContainsKey(trait))
+                {
+                    growthRate += player.entityData.PersonalGrowthRates[trait];
+                }
+
+                if (growthRate <= 0) continue;
+                
+                int totalGain = 0;
+                while (growthRate >= 100)
+                {
+                    totalGain++;
+                    growthRate -= 100;
+                }
+                
+                if (growthRate > 0)
+                {
+                    int roll = _random.Next(1, 101); // 1 to 100
+                    if (roll <= growthRate)
+                    {
+                        totalGain++;
+                    }
+                }
+                
+                if (totalGain > 0)
+                {
+                    player.IncrementTrait(trait, totalGain);
+                    gainedTraitsLog += $"{trait}+{totalGain} ";
+                }
+            }
         }
-        Debug.Log($"Player {player.entityData.name} (Level {player.Level}) gained Trait points: {gainedTraits}");
+
+        if (!string.IsNullOrEmpty(gainedTraitsLog))
+        {
+            Debug.Log($"Player {player.entityData.name} (Level {player.Level}) gained Trait points: {gainedTraitsLog}");
+        }
     }
 
     public override void SetLevel(int targetLevel)

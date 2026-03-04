@@ -44,8 +44,6 @@ public class ActiveSkill
 					procChance = m.ModifyProcChance(procChance);
 				}
 			}
-			if(procChance < 1f && Random.value > procChance) continue;
-
 			IEnumerable<EntityBase> recipients = SkillData.targetType switch
 			{
 				TargetType.Self => new[] { ctx.Owner },
@@ -57,6 +55,11 @@ public class ActiveSkill
 			foreach (var r in recipients)
 			{
 				if (r == null) continue;
+
+				if (procChance < 1f && !DamageCalculator.CheckEffectApplication(ctx.Owner, r, procChance))
+				{
+				    continue;
+				}
 
 				var runtime = effect.effectData.CreateRuntimeEffect(ctx.Owner, r, effect.turnDuration);
 
@@ -82,15 +85,16 @@ public class ActiveSkill
 					procChance = m.ModifyProcChance(procChance);
 				}
 			}
-			if (procChance < 1f && Random.value > procChance)
-			{
-				yield return BattleSystem.Instance.ShowDialog($"Failed to active {effect.effectData.name}!");
-				continue;
-			}
 			if (effect.activeTiming == EffectActiveTiming.OnCast)
 			{
 				foreach (var entity in context.AllTarget)
 				{
+					if (procChance < 1f && !DamageCalculator.CheckEffectApplication(context.Owner, entity, procChance))
+					{
+						yield return BattleSystem.Instance.ShowDialog($"{effect.effectData.name} resisted by {entity.entityData.EntityName}!");
+						continue;
+					}
+
 					var effectInstance = effect.effectData.CreateRuntimeEffect(context.Owner, entity, effect.turnDuration);
 					if (effectInstance is IBeforeDealingDamage beforeDealingDamage)
 					{
@@ -125,9 +129,13 @@ public class ActiveSkill
 					procChance = m.ModifyProcChance(procChance);
 				}
 			}
-			if (procChance < 1f && Random.value > procChance) continue;
 			foreach (var entity in skillContext.HitTarget)
 			{
+				if (procChance < 1f && !DamageCalculator.CheckEffectApplication(skillContext.Owner, entity, procChance))
+				{
+					continue;
+				}
+
 				var effectInstance = effect.effectData.CreateRuntimeEffect(skillContext.Owner, entity, effect.turnDuration);
 				if (!effect.effectData.isInstantEffect)
 				{
