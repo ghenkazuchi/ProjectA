@@ -152,6 +152,11 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		foreach (var entity in allEntities)
 		{
+			if (entity == null || entity.GetCurrentHP() <= 0)
+			{
+				continue;
+			}
+
 			var activeSkillList = entity.usableSkills;
 			yield return (entity.PassiveSkillRunner.Trigger(PassiveTrigger.OnBattleStart, activeSkillList));
 			yield return (entity.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnBattleStart, entity));

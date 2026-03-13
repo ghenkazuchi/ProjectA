@@ -29,7 +29,7 @@ public class CampInteracableObject : Interacable, ICampInteracable
 	[Header("Referendce")]
 	DayNightCycleController daynightController;
 	SpriteRenderer spriteRenderer;
-	Collider2D collider;
+	Collider2D interactionCollider;
 
 	public void GetPlayerParty()
 	{
@@ -41,7 +41,7 @@ public class CampInteracableObject : Interacable, ICampInteracable
 		GetPlayerParty();
 		daynightController = FindAnyObjectByType<DayNightCycleController>();
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
-		collider = GetComponent<Collider2D>();
+		interactionCollider = GetComponent<Collider2D>();
 		daynightController.OnNightStateChanged += OnNightStateChanged;
 		ApplyNightState(daynightController.isNight);
 	}
@@ -80,7 +80,7 @@ public class CampInteracableObject : Interacable, ICampInteracable
 
 	private void ApplyNightState(bool isNight)
 	{
-		if (collider != null) collider.enabled = isNight;
+		if (interactionCollider != null) interactionCollider.enabled = isNight;
 		if (spriteRenderer != null)
 		{
 			var tint = isNight ? nightColor : dayColor;
@@ -111,7 +111,7 @@ public class CampInteracableObject : Interacable, ICampInteracable
 		Debug.Log("Party healed at camp");
 		foreach (var member in playerParty.partySlots)
 		{
-			if (member.entity is PlayerCharacter playerCharacter)
+			if (member.entity is PlayerCharacter playerCharacter && playerCharacter.GetCurrentHP() > 0)
 			{
 				playerCharacter.Heal(Mathf.CeilToInt(member.entity.MaxHp * hpHeal));
 				playerCharacter.RestoreMP(Mathf.CeilToInt(member.entity.MaxMP * mpHeal));

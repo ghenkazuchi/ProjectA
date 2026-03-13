@@ -30,6 +30,7 @@ public class BattleLifecycleManager
 			{
 				unit.gameObject.SetActive(false);
 				unit.character = null;
+				unit.SetUp();
 			}
 		}
 		foreach (var unit in monsterBattleUnits)
@@ -38,6 +39,7 @@ public class BattleLifecycleManager
 			{
 				unit.gameObject.SetActive(false);
 				unit.character = null;
+				unit.SetUp();
 			}
 		}
 

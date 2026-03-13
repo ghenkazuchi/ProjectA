@@ -44,10 +44,10 @@ public class BattleUnit : BaseUnit
 			return;
 		}
 
-		state = UnitState.Alive;
+		state = character.GetCurrentHP() > 0 ? UnitState.Alive : UnitState.Dead;
 
 		if (unitImage != null) unitImage.enabled = true;
-		unitImage.sprite = character.entityData.EntitySprite;
+		unitImage.sprite = state == UnitState.Dead ? deadSprite : character.entityData.EntitySprite;
 
 		level = character.level;
 		highlightOverlay.SetActive(false);

@@ -28,7 +28,7 @@ public class TimelineManager : Singleton<TimelineManager>
 		units.Clear();
 		foreach (var battleUnit in battleUnits)
 		{
-			if (battleUnit.IsAlive())
+			if (battleUnit != null && battleUnit.character != null && battleUnit.IsAlive())
 			{
 				units.Add(new TurnUnit(battleUnit.character) { speed = battleUnit.character.GetFinalStat(Stat.ActionSpeed) });
 			}
@@ -127,7 +127,7 @@ public class TimelineManager : Singleton<TimelineManager>
 		if (currentEntity != null)
 		{
 			BattleUnit currentBattleUnit = FindBattleUnitForEntity(currentEntity);
-			if (currentBattleUnit != null || currentBattleUnit.IsAlive())
+			if (currentBattleUnit != null && currentBattleUnit.IsAlive())
 			{
 				result.Add(currentEntity);
 			}
