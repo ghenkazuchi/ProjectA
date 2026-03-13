@@ -157,13 +157,13 @@ public class BattleLifecycleManager
 			.Select(s => s.entity as PlayerCharacter).Distinct()
 			.ToList();
 
-		List<int> expGainedPerMember = new List<int>();
+		Dictionary<PlayerCharacter, int> expGainedPerMember = new Dictionary<PlayerCharacter, int>();
 		if (activeCharacters.Count > 0)
 		{
 			float expPerCharacter = totalExp / activeCharacters.Count;
 			foreach (var character in activeCharacters)
 			{
-				expGainedPerMember.Add(Mathf.RoundToInt(expPerCharacter));
+				expGainedPerMember[character] = Mathf.RoundToInt(expPerCharacter);
 			}
 		}
 

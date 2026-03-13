@@ -73,17 +73,22 @@ public class ExpDistributionController : MonoBehaviour
 		battleSystem.HandleAfterMatch();
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleOver));
 	}
-	public void ShowExpDistribution(List<int> expGainedPerMember)
+	public void ShowExpDistribution(IReadOnlyDictionary<PlayerCharacter, int> expGainedPerMember)
 	{
 		InitializeUI();
-		int expIndex = 0;
+
 		for (int i = 0; i < partyMemberExpInfos.Count; i++)
 		{
 			var info = partyMemberExpInfos[i];
-			if (info != null && info.GetCharacterData() != null && expIndex < expGainedPerMember.Count)
+			if (info == null)
 			{
-				info.AnimateExpGain(expGainedPerMember[expIndex]);
-				expIndex++;
+				continue;
+			}
+
+			var playerCharacter = info.GetCharacterData() as PlayerCharacter;
+			if (playerCharacter != null && expGainedPerMember.TryGetValue(playerCharacter, out int expGained))
+			{
+				info.AnimateExpGain(expGained);
 			}
 		}
 		expDistributionCanvasGroup.alpha = 1;
