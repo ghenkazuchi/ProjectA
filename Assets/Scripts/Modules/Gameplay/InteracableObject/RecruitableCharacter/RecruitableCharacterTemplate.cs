@@ -18,9 +18,6 @@ public class RecruitableCharacterTemplate : ScriptableObject
 	public int minLevel;
 	public int maxLevel;
 
-	[Header("Availability")]
-	public int minGameProgress;
-	public int maxGameProgress;
 
 	public int GetRandomLevel()
 	{

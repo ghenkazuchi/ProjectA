@@ -83,8 +83,8 @@ public class MonsterProgressionSystem : RPGProgressionSystem
             int pointsForNewLevels = (monster.Level - oldLevel) * monster.BonusTraitPointPerLevel;
             DistributeTraitPoints(pointsForNewLevels);
         }
-        monster.CalculateAllStats();
         monster.AddExclusiveSkill();
         monster.CheckAndLearnSkill(monster.Level);
+        monster.CalculateAllStats();
     }
 }

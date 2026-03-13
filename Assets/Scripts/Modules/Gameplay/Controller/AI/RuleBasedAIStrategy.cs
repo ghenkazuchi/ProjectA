@@ -210,7 +210,7 @@ public class RuleBasedAIStrategy : IAIStrategy
 		var validOptions = new List<(ActiveSkill skill, EntityBase target)>();
 		foreach (var s in randomSkills)
 		{
-			var targetPool = s.SkillData.targetType == TargetType.Ally ? GetAliveAllies(monster, sys) : enemies;
+			var targetPool = (s.SkillData.targetType == TargetType.Ally || s.SkillData.targetType == TargetType.SelfOrAllies) ? GetAliveAllies(monster, sys) : enemies;
 			
 			foreach (var t in targetPool)
 			{

@@ -218,7 +218,8 @@ public enum PassiveTrigger
 	OnSkillUse,
 	OnDealingDamage,
 	OnTakingDamage,
-	OnBeforeTakingDamage
+	OnBeforeTakingDamage,
+	OnEvade
 }
 [System.Serializable]
 public class GrantEffect
@@ -350,7 +351,8 @@ public enum EquipEffectTrigger
 	OnDeath,
 	OnBeforeDealingDamage,
 	OnBeforeTakingDamage,
-	OnBeforeStatusApplied
+	OnBeforeStatusApplied,
+	OnEvade
 }
 
 [System.Serializable] 

@@ -83,8 +83,8 @@ MonoBehaviour:
   skillSet:
   - skill: {fileID: 11400000, guid: 2c71a8ab9d79a2649995eec383607fc8, type: 2}
     levelRequirements: 1
-  - skill: {fileID: 11400000, guid: d8311582c171d93499bfea2b810af99b, type: 2}
-    levelRequirements: 2
+  - skill: {fileID: 11400000, guid: bb89f81f1d53e0346a8fe1bcc5f8aebe, type: 2}
+    levelRequirements: 1
   - skill: {fileID: 11400000, guid: a7c3842448f4c1a4f98ff0a765da0741, type: 2}
     levelRequirements: 1
   traitGrowthRates:

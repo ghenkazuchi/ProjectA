@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10ba2bbf0c0130a47aac286f52564248, type: 3}
+  m_Name: Kathula
+  m_EditorClassIdentifier: 
+  successRecruitmentQuote: 
+  classData: {fileID: 11400000, guid: df6f2583db3fb594b81869981ca53fed, type: 2}
+  raceData: {fileID: 11400000, guid: 0508670629ea9c0419338604f0341c3c, type: 2}
+  entityData: {fileID: 11400000, guid: 0c8dd19de8cbcb74c9e4f1d7b65efa5a, type: 2}
+  minRecruimentCost: 0
+  minLevel: 2
+  maxLevel: 5
+  minGameProgress: 1
+  maxGameProgress: 1

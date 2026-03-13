@@ -22,40 +22,40 @@ public class PlayerStatCalculator : IStatCalculator
         switch (statToCalculate)
         {
             case Stat.HP:
-                baseValue = 50 + (vit * 2f * classMultiplier);
+                baseValue = 50 + (vit * 1.5f * classMultiplier);
                 break;
             case Stat.MP:
-                baseValue = 20 + ((inte + pie)  * classMultiplier);
+                baseValue = 20 + ((inte + pie) * classMultiplier);
                 break;
             case Stat.SP:
-                baseValue = 20 + ((str + dex)  * classMultiplier);
+                baseValue = 20 + ((str + dex) * classMultiplier);
                 break;
             case Stat.AttackPower:
-                baseValue = str * classMultiplier * 0.7f + dex * 0.3f * classMultiplier;
+                baseValue = (str * 0.5f + dex * 0.2f) * classMultiplier;
                 break;
             case Stat.MagicPower:
-                baseValue = inte * classMultiplier;
+                baseValue = inte * 0.7f * classMultiplier;
                 break;
             case Stat.DivinePower:
-                baseValue = pie * classMultiplier;
+                baseValue = pie * 0.7f * classMultiplier;
                 break;
             case Stat.PhysicalDefense:
-                baseValue = 5 + (vit * 0.6f * classMultiplier + str * 0.1f * classMultiplier);
+                baseValue = 5 + (vit * 0.4f + str * 0.1f) * classMultiplier;
                 break;
             case Stat.MagicalDefense:
-                baseValue = 5 + ((pie + inte) * 0.3f * classMultiplier);
+                baseValue = 5 + (pie + inte) * 0.25f * classMultiplier;
                 break;
             case Stat.ActionSpeed:
                 baseValue = 20 + (agi * 1.5f * classMultiplier);
                 break;
             case Stat.Evasion:
-                baseValue = (agi * 1.5f * classMultiplier) + (luk * 0.8f * classMultiplier);
+                baseValue = (agi * 0.5f + luk * 0.3f) * classMultiplier;
                 break;
             case Stat.Accuracy:
-                baseValue = (dex * 1.5f * classMultiplier);
+                baseValue = (dex * 0.5f + luk * 0.1f) * classMultiplier;
                 break;
             case Stat.Resistance:
-                baseValue = (pie * 0.6f * classMultiplier) + (luk * 0.7f * classMultiplier);
+                baseValue = (pie * 0.4f + luk * 0.3f) * classMultiplier;
                 break;
             default:
                 baseValue = 0;
@@ -88,7 +88,7 @@ public class PlayerStatCalculator : IStatCalculator
         }
         float effectRawModifier = 0f;
         float effectPercentageModifier = 1f;
-        foreach (var effect in player.currentActiveBuffs.Concat(player.currentActiveDebuffs).ToList())
+        foreach (var effect in player.GetAllEffect())
         {
             if (effect is StatModifiEffect statModifiEffect && statModifiEffect.StatToModify == statToCalculate)
             {
@@ -99,6 +99,23 @@ public class PlayerStatCalculator : IStatCalculator
                 else
                 {
                     effectPercentageModifier *= statModifiEffect.PercentageValue * statModifiEffect.CurrentStack;
+                }
+            }
+            else if (effect is IStatModify statModifier) // Catch traditional buffs with IStatModify
+            {
+                effectRawModifier += (statModifier.ModifyStat(statToCalculate, baseValue, player) - baseValue);
+            }
+        }
+
+        // Isolate Passive Skills and search them for IStatModify manually
+        foreach (var passive in player.activePassiveSkills)
+        {
+            if (passive.RuntimeEffects == null) continue;
+            foreach (var runtimeEffect in passive.RuntimeEffects)
+            {
+                if (runtimeEffect is IStatModify passiveStatModifier)
+                {
+                    effectRawModifier += (passiveStatModifier.ModifyStat(statToCalculate, baseValue, player) - baseValue);
                 }
             }
         }

@@ -109,6 +109,7 @@ namespace HaKien
                     yield return battleSystem.StartCoroutine(battleSystem.ShowDialog(
                         $"{currentTurnEntity.entityData.EntityName} skips the turn{reasonSuffix}."
                     ));
+                    yield return new WaitForSeconds(1f);
                     yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnEnd());
                     continue;
                 }

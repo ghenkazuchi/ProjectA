@@ -52,7 +52,7 @@ public static class BattleGridUtils
 
     public static bool IsBackRow(GridPosition pos)
     {
-        return pos != null && pos.x == 0;
+        return pos != null && pos.x == 1; // X=1 is the Back Row
     }
 
     public static bool IsTargetInBackRow(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty)
@@ -91,17 +91,16 @@ public static class BattleGridUtils
     public static bool HasAliveFrontAlly(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty)
     {
         var pos = GetEntityPosition(target, playerParty, monsterParty);
-        if (pos == null || pos.x != 0) return false;
+        if (pos == null || pos.x != 1) return false; // If not in the back row, they don't have a front ally protecting them
 
         var party = GetPartyOf(target, playerParty, monsterParty);
         if (party == null) return false;
 
-        var frontPos = new GridPosition(1, pos.y);
+        var frontPos = new GridPosition(0, pos.y); // Look at X=0 (Front Row) in the same column
         var frontEntity = party.GetEntityAtPosition(frontPos);
 
         return frontEntity != null && frontEntity.GetCurrentHP() > 0;
     }
-
     public static bool AreAllies(EntityBase a, EntityBase b, PlayerParty playerParty, MonsterParty monsterParty)
     {
         if (a == null || b == null) return false;

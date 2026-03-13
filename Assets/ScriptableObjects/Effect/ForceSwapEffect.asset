@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393f1d3fee0fb9540a1b48e4f9bdd382, type: 3}
+  m_Name: ForceSwapEffect
+  m_EditorClassIdentifier: 
+  EffectType: 2
+  Effect: 5
+  Name: Force Swap Effect
+  MaxDuration: 0
+  CanBeRemoved: 0
+  Stackable: 0
+  MaxStack: 0
+  isInstantEffect: 0
+  tags: 0
+  effectIcon: {fileID: -698191854, guid: 9ee058b7604960c48878b6c3e705456d, type: 3}

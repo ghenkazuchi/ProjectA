@@ -52,6 +52,10 @@ public class BattleActionExecutor : MonoBehaviour
                 else
                 {
                     yield return StartCoroutine(sys.ShowDialog($"{sourceEntity.entityData.EntityName} missed attack on {e.entityData.EntityName}!"));
+                    
+                    // Trigger OnEvade Passives and Equipment Effects on the target who successfully dodged
+                    yield return e.PassiveSkillRunner.Trigger(PassiveTrigger.OnEvade, sourceEntity);
+                    yield return e.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnEvade, sourceEntity);
                 }
             }
         }

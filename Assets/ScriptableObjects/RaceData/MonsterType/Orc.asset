@@ -41,13 +41,5 @@ MonoBehaviour:
   monsterTypeDefinition: 0
   type: 0
   skillSet:
-  - skill: {fileID: 11400000, guid: 3da74fe018c52a142bb0f925638c8a77, type: 2}
+  - skill: {fileID: 11400000, guid: bb89f81f1d53e0346a8fe1bcc5f8aebe, type: 2}
     levelRequirements: 1
-  - skill: {fileID: 11400000, guid: c18f6976aeaffe94db7812bc710b5777, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 371a7cc88c400ad4aa13ebcdf408f51e, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 0ec6572ba39d8ff45ad2e29e71debe36, type: 2}
-    levelRequirements: 1
-  - skill: {fileID: 11400000, guid: 30bc49a6006874c468b317ee020b4be1, type: 2}
-    levelRequirements: 0

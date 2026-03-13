@@ -59,9 +59,13 @@ public static class BattleAIController
 			
 			availableTargets.AddRange(alive);
 		}
-		else if (skill.SkillData.targetType == TargetType.Ally)
+		else if (skill.SkillData.targetType == TargetType.Ally || skill.SkillData.targetType == TargetType.SelfOrAllies)
 		{
-			var aliveAllies = monsterParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0);
+			// Determine which party the AI actor belongs to so they buff their own team!
+			BaseParty myParty = BattleGridUtils.GetPartyOf(aiEntity, playerParty, monsterParty);
+			if (myParty == null) myParty = monsterParty; // Fallback
+
+			var aliveAllies = myParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0);
 			
 			if (skill.SkillData.activeSkillType == ActiveSkillType.Buff)
 			{

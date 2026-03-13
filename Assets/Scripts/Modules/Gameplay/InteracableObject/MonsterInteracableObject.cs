@@ -35,7 +35,19 @@ public class MonsterInteracableObject : Interacable, IMonsterInteracable
 	{
 		var spawnEntries = GamePoolManager.Instance.GetCurrentMonsterPool();
 		var availablePositions = monsterParty.GetAllAvailablePositions();
-		int count = Random.Range(1, Mathf.Min(availablePositions.Count, 6));
+
+		// Cap monster count based on player party size to prevent unfair early encounters
+		int playerCount = GameController.Instance.GetPlayerParty().GetAllEntitiesInParty().Count;
+		int maxMonsters;
+		if (playerCount <= 2)
+			maxMonsters = 2;     // Early game: 1-2 players → max 2 monsters
+		else if (playerCount <= 4)
+			maxMonsters = 4;     // Mid game: 3-4 players → max 4 monsters
+		else
+			maxMonsters = 6;     // Full party: 5-6 players → up to 6 monsters
+
+		int upperBound = Mathf.Min(availablePositions.Count, maxMonsters);
+		int count = Random.Range(1, Mathf.Max(2, upperBound + 1));
 		for (int i = 0; i < count; i++)
 		{
 			var spawnData = spawnEntries[Random.Range(0, spawnEntries.Count)];

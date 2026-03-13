@@ -112,8 +112,8 @@ public class PlayerProgressionSystem : RPGProgressionSystem
             int pointsForNewLevels = (player.level - oldLevel) * player.BonusTraitPointPerLevel;
             DistributeTraitPoints(pointsForNewLevels);
         }
-        player.CalculateAllStats();
         player.AddExclusiveSkill();
         player.CheckAndLearnSkill(player.Level);
+        player.CalculateAllStats();
     }
 }

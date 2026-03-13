@@ -237,6 +237,7 @@ public class BattleInputHandler : MonoBehaviour
         sys.uiController.battleDialogBox.EnableActionSelector(false);
         sys.uiController.battleDialogBox.EnableDialogText(true);
         yield return StartCoroutine(sys.uiController.TypeDialog($"{sys.currentTurnEntity.entityData.EntityName} takes a defensive stance!"));
+        yield return new WaitForSeconds(1f);
         sys.SetEntityDefenseState(sys.currentTurnEntity, DefenseState.Defending);
 
         sys.battleState = BattleState.RunningTurn;

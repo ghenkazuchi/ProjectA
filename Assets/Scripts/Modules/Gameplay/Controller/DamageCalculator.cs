@@ -38,38 +38,32 @@ public static class DamageCalculator
         foreach (var entry in skill.SkillData.scalingStatAndMutiply)
             scalingDamage += source.GetFinalStat(entry.Key) * entry.Value;
 
-        float totalDamage = baseDamage + scalingDamage;
+        // Apply attack increase percentage from context (buffs etc.)
+        float totalDamage = (baseDamage + scalingDamage) * ctx.attackIncreasePercentage;
 
-        float attackStat = 1f;
+        // Determine which defense stat to use based on skill type
         float defenseStat = 0f;
-        float kdef = 1f;
-
         switch (skill.SkillData.skillDefinition)
         {
             case SkillDefinition.Spell:
-                attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.MagicPower) * ctx.attackIncreasePercentage);
                 defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.MagicalDefense));
-                kdef = 1.2f;
                 break;
-
             case SkillDefinition.BattleArt:
-                attackStat = Mathf.Max(1f, source.GetFinalStat(Stat.AttackPower) * ctx.attackIncreasePercentage);
                 defenseStat = Mathf.Max(0f, target.GetFinalStat(Stat.PhysicalDefense));
-                kdef = 1.2f;
                 break;
-
             case SkillDefinition.Almighty:
-                attackStat = 1f;
-                defenseStat = 1f;
-                kdef = 1f;
+                defenseStat = 0f; // Almighty ignores defense entirely
                 break;
         }
 
+        // Apply defense-ignore percentage (from skill modifiers)
         float ignore = Mathf.Clamp01(ctx.defenseIgnorePercentage);
-        defenseStat = defenseStat * (1f - ignore);
+        defenseStat *= (1f - ignore);
 
-        float atkDefRatio = attackStat / (Mathf.Max(1f, defenseStat * kdef));
-        totalDamage *= atkDefRatio;
+        // Percentage-based defense reduction: 100 / (100 + DEF)
+        // DEF=0 -> 100% damage, DEF=100 -> 50%, DEF=300 -> 25%
+        float defenseMultiplier = 100f / (100f + defenseStat);
+        totalDamage *= defenseMultiplier;
 
         float damageMultiplier = ElementalChart.GetMultiplier(skill.element, target.entityData.EntityElement);
         totalDamage *= damageMultiplier;
