@@ -13,7 +13,8 @@ public abstract class Interacable : MonoBehaviour
 		if (collision.CompareTag("Player") && CanInteract(collision.gameObject))
 		{
 			Debug.Log("Interacted");
-			MessageManager.Instance.SendMessage(new Message(MessageType.OnInteract));
+			MessageManager.Instance.SendMessage(new Message(MessageType.OnInteract, new object[] { this }));
+			DataManager.Instance?.Achievements?.RecordInteraction(this);
 			TriggerInteraction();
 		}
 	}

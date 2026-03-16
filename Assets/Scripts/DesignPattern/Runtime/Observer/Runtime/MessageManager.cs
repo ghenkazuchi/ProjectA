@@ -64,6 +64,8 @@ namespace HaKien
         //Hero spirit 
         OnHeroSpiritInteractionPopupOpen,
 		OnHeroSpiritInteractionPopupClose,
+		OnAchievementScreenOpen,
+		OnAchievementScreenClose,
 
 	}
     public class Message

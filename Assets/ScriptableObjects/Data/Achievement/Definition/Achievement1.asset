@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3413ca3d5d142584783954262de76a64, type: 3}
+  m_Name: Achievement1
+  m_EditorClassIdentifier: 
+  achievementId: 003
+  achievementTitle: The hunter
+  description: "Kill 11 monster\t"
+  icon: {fileID: 0}
+  hiddenUntilCompleted: 0
+  conditions:
+  - {fileID: 11400000, guid: d473134a0a218774f88c2730f12d24e7, type: 2}
+  rewards:
+  - {fileID: 11400000, guid: 882ce86459024b74ab7d142ac8912530, type: 2}
+  - {fileID: 11400000, guid: 70ff17bb072e24f4885052e8775db769, type: 2}

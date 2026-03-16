@@ -11,6 +11,7 @@ public class EffectUsageTracker
 	public int baseMaxUsePerLifeCycle;
 	private int bonusMaxUsePerBattle;
 	private int bonusMaxUsePerLifeCycle;
+	private System.Action onRecordedUse;
 
 	public EffectUsageTracker(int maxUsePerBattle, int maxUse)
 	{
@@ -33,6 +34,12 @@ public class EffectUsageTracker
 	{
 		CurrentBattleUse++;
 		CurrentUse++;
+		onRecordedUse?.Invoke();
+	}
+
+	public void SetOnRecordedUse(System.Action callback)
+	{
+		onRecordedUse = callback;
 	}
 
 	public void ResetBattleUsage()

@@ -253,6 +253,36 @@ public abstract class EntityBase
 		if (!learnedActiveSkills.Contains(data))
 			learnedActiveSkills.Add(data);
 	}
+
+	public void MarkPassiveSkillLearned(PassiveSkillData data)
+	{
+		if (!learnedPassiveSkills.Contains(data))
+			learnedPassiveSkills.Add(data);
+	}
+
+	public bool KnowsActiveSkill(ActiveSkillData data)
+	{
+		if (data == null) return false;
+		return learnedActiveSkills.Contains(data) || usableSkills.Exists(s => s != null && s.SkillData == data);
+	}
+
+	public bool KnowsPassiveSkill(PassiveSkillData data)
+	{
+		if (data == null) return false;
+		return learnedPassiveSkills.Contains(data) || activePassiveSkills.Exists(s => s != null && s.PassiveSkillData == data);
+	}
+
+	public bool TryLearnPassiveSkill(PassiveSkillData data)
+	{
+		if (data == null || KnowsPassiveSkill(data))
+		{
+			return false;
+		}
+
+		AddPassiveSkill(data);
+		MarkPassiveSkillLearned(data);
+		return true;
+	}
 	public IEnumerator AddEffect(EffectBase effect)
 	{
 		if(effect != null && effect.Effect == Effect.CrownControl && EquipmentEffectRunner != null)

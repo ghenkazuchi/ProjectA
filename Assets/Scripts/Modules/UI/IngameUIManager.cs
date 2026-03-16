@@ -43,6 +43,10 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 		MessageManager.Instance.AddSubcriber(MessageType.OnGameLose, this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnBattleOver, this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnTargetSelection, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnInteract, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnInteractEnd, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnChestClose, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnShopClose, this);
 	}
 	private void OnDisable()
 	{
@@ -56,6 +60,10 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnGameLose, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnBattleOver, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnTargetSelection, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnInteract, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnInteractEnd, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnChestClose, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnShopClose, this);
 	}
 	public void Handle(Message message)
 	{
@@ -64,6 +72,22 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 			case MessageType.OnTargetSelection:
 				break;
 			case MessageType.OnGameStart:
+				overworldUIController.Show();
+				break;
+			case MessageType.OnInteract:
+				Interacable interactable = message.data != null && message.data.Length > 0 ? message.data[0] as Interacable : null;
+				if (ShouldKeepOverworldVisible(interactable))
+				{
+					overworldUIController.Show();
+				}
+				else
+				{
+					overworldUIController.Hide();
+				}
+				break;
+			case MessageType.OnInteractEnd:
+			case MessageType.OnChestClose:
+			case MessageType.OnShopClose:
 				overworldUIController.Show();
 				break;
 			case MessageType.OnBattleStart:
@@ -84,17 +108,20 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 				break;
 			case MessageType.OnRecruitCharacter:
 			case MessageType.OnRecruitCharacterUIClose:
+				overworldUIController.Show();
 				recruitCharacterCanvasGroup.alpha = 0f;
 				recruitCharacterCanvasGroup.interactable = false;
 				recruitCharacterCanvasGroup.blocksRaycasts = false;
 				break;
 			case MessageType.OnPartyMenuOpen:
+				overworldUIController.Hide();
 				partyMenuCanvasGroup.alpha = 1f;
 				partyMenuCanvasGroup.blocksRaycasts = true;
 				partyMenuCanvasGroup.interactable = true;
 				if (partyMenuController != null) partyMenuController.RefreshPartyDisplay();
 				break;
 			case MessageType.OnPartyMenuClose:
+				overworldUIController.Show();
 				partyMenuCanvasGroup.alpha = 0f;
 				partyMenuCanvasGroup.blocksRaycasts = false;
 				partyMenuCanvasGroup.interactable = false;
@@ -110,5 +137,17 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 				battleCanvasGroup.blocksRaycasts = false;
 				break;
 		}
+	}
+
+	private static bool ShouldKeepOverworldVisible(Interacable interactable)
+	{
+		if (interactable is CampInteracableObject)
+		{
+			return true;
+		}
+
+		return interactable != null
+			&& interactable.spawnableData != null
+			&& interactable.spawnableData.interacableType == InteracableType.FireCamp;
 	}
 }

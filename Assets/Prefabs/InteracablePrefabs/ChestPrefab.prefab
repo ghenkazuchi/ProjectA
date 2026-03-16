@@ -144,11 +144,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnableData: {fileID: 11400000, guid: 430e29e541d5a354bb1128c21f7faf62, type: 2}
-  possibleItems:
-  - {fileID: 11400000, guid: cfc5cf206e04b0f47912bb6f4cd53fdb, type: 2}
-  - {fileID: 11400000, guid: 12f9f1174676d854587cbc2d78671e4d, type: 2}
-  - {fileID: 11400000, guid: 231233e189746ed4d92a84069787c3f8, type: 2}
-  - {fileID: 11400000, guid: 65b30bee5a8fc344b9740cdc83cf1e8f, type: 2}
+  possibleItems: []
+  unlockableChestPool: {fileID: 11400000, guid: eacfaed6544536f4abf9b72c58128e9a,
+    type: 2}
   itemContain: 3
   normalRate: 1
   goldRate: 0

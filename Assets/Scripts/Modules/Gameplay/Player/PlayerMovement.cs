@@ -85,6 +85,10 @@ public class PlayerMovement : MonoBehaviour
 		{
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnPartyMenuOpen));	
 		}
+		if (Input.GetKeyDown(KeyCode.Tab))
+		{
+			MessageManager.Instance.SendMessage(new Message(MessageType.OnAchievementScreenOpen));
+		}
 	}
 	private void HandleMovementInput()
 	{

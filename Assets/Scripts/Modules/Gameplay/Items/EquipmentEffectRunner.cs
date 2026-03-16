@@ -175,12 +175,14 @@ public class EquipmentEffectRunner
 		if (source is Weapon weapon)
 		{
 			usageTracker = weapon.GetEffectTracker(binding.effect.Name);
+			usageTracker?.SetOnRecordedUse(null);
 		}
 		else if (source is Item i)
 		{
 			usageTracker = i.GetEffectTracker(binding.effect.Name);
 			var tune = i.itemBaseData.GetTuning(i.currentItemGrade);
 			usageTracker?.SetGradeBonus(tune.bonusUsagePerBattle, tune.bonusUsagePerLifeCycle);
+			usageTracker?.SetOnRecordedUse(() => battleSystem?.RegisterBattleItemEffectUse(i));
 		}
 
 		if (effect is ILimitedUsageTime limited && usageTracker != null)

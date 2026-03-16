@@ -254,6 +254,10 @@ public class BattleActionExecutor : MonoBehaviour
         yield return BattleEventManager.TriggerDealingDamage(_ctx.Source, _ctx.Target, _ctx);
         yield return BattleEventManager.TriggerOnTakingDamage(_ctx.Target, _ctx);
         sys.UpdateUnitHealth(_ctx.Target);
+        if (_ctx.Target.GetCurrentHP() <= 0 && _ctx.Target is MonsterCharacter defeatedMonster)
+        {
+            DataManager.Instance?.Achievements?.RecordMonsterKill(defeatedMonster);
+        }
         if (sys.UpdateUnitState(_ctx.Target)) yield break;
     }
 

@@ -118,6 +118,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			slot.ClearItemSlot();
 		}
 		selectedItem = default;
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnInteractEnd));
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestClose));
 		CloseItemPanel();
 		chestRect.anchoredPosition = originalChestPos;

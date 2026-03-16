@@ -146,11 +146,13 @@ public class BattleLifecycleManager
 
 		Debug.Log("Exp calculation");
 		float totalExp = 0f;
+		List<MonsterCharacter> defeatedMonsters = new List<MonsterCharacter>();
 		foreach (var monsterSlot in sys.monsterParty.partySlots)
 		{
 			if (monsterSlot.entity is MonsterCharacter monster)
 			{
 				totalExp += monster.TotalExpToAward;
+				defeatedMonsters.Add(monster);
 			}
 		}
 
@@ -171,6 +173,35 @@ public class BattleLifecycleManager
 
 		if (sys.ExpDistribution != null)
 			sys.ExpDistribution.ShowExpDistribution(expGainedPerMember);
+
+		int totalPartyHp = 0;
+		int totalPartyMaxHp = 0;
+		int alivePartyMembers = 0;
+		int totalPartyMembers = 0;
+		foreach (var partySlot in sys.playerParty.partySlots)
+		{
+			if (partySlot.entity is not PlayerCharacter playerCharacter)
+			{
+				continue;
+			}
+
+			totalPartyMembers++;
+			totalPartyHp += Mathf.Max(0, playerCharacter.GetCurrentHP());
+			totalPartyMaxHp += Mathf.Max(1, playerCharacter.MaxHp);
+			if (playerCharacter.GetCurrentHP() > 0)
+			{
+				alivePartyMembers++;
+			}
+		}
+
+		float partyHealthRatio = totalPartyMaxHp > 0 ? (float)totalPartyHp / totalPartyMaxHp : 0f;
+		DataManager.Instance?.Achievements?.RecordBattleWin(
+			partyHealthRatio,
+			alivePartyMembers,
+			totalPartyMembers,
+			sys.currentBattleType,
+			sys.BattleItemEffectUseCount,
+			defeatedMonsters);
 	}
 
 	/// <summary>

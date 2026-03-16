@@ -7,6 +7,7 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 {
 	[Header("Chest Setting")]
 	public List<EquipableBaseData> possibleItems = new List<EquipableBaseData>();
+	[SerializeField] private UnlockableEquipablePool unlockableChestPool;
 	public int itemContain = 3;
 
 	[Header("Grade drop rate ")]
@@ -31,11 +32,12 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 	public void GenerateChestItems()
 	{
 		generatedItems.Clear();
+		List<EquipableBaseData> availableItems = GetResolvedChestPool();
 
-		for (int i = 0; i < itemContain && possibleItems.Count > 0; i++)
+		for (int i = 0; i < itemContain && availableItems.Count > 0; i++)
 		{
-			int randomIndex = Random.Range(0, possibleItems.Count);
-			var pick = possibleItems[randomIndex];
+			int randomIndex = Random.Range(0, availableItems.Count);
+			var pick = availableItems[randomIndex];
 
 			ItemGrade grade = RollGrade();
 			if (pick is ItemBaseData) grade = RollGrade();
@@ -48,6 +50,7 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 	public void openChest()
 	{
 		GenerateChestItems();
+		DataManager.Instance?.Achievements?.RecordChestOpen();
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestOpen, new object[] { generatedItems }));
 		Destroy(gameObject);
 	}
@@ -55,5 +58,15 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 	public override void TriggerInteraction()
 	{
 		openChest();
+	}
+
+	private List<EquipableBaseData> GetResolvedChestPool()
+	{
+		if (unlockableChestPool == null || DataManager.Instance?.Achievements == null)
+		{
+			return new List<EquipableBaseData>(possibleItems);
+		}
+
+		return DataManager.Instance.Achievements.GetEquipablesForPool(unlockableChestPool, possibleItems);
 	}
 }

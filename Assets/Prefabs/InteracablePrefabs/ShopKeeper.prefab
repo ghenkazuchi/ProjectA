@@ -144,10 +144,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnableData: {fileID: 11400000, guid: 26e44a3fdfd93754592763af6cf0fd9e, type: 2}
-  shopPool:
-  - {fileID: 11400000, guid: 231233e189746ed4d92a84069787c3f8, type: 2}
-  - {fileID: 11400000, guid: bb371a6209caeac4b98844fe187fcc1f, type: 2}
-  - {fileID: 11400000, guid: 7576f306d7fa883479d58e14334960fb, type: 2}
-  - {fileID: 11400000, guid: 4a8e596febb8b2f4eb75c0a717449f61, type: 2}
-  - {fileID: 11400000, guid: 641c2288f433dd849b3ba00141cd2cd3, type: 2}
+  shopPool: []
+  unlockableShopPool: {fileID: 11400000, guid: 53e48c4cce2a3384c974e03ca6d66c10, type: 2}
   stockSize: 9

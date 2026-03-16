@@ -61,13 +61,14 @@ public class PopupController : Singleton<PopupController>, IMessageHandle
 			case MessageType.OnHeroSpiritInteractionPopupOpen:
 				Debug.Log("Hero Spirit Popup Opened");
 				var skillData = message.data?[0] as BaseSkillData;
+				var heroSpiritInteractable = message.data?[1] as IHeroSpiritInteractable;
 				if(skillData == null)
 				{
 					Debug.LogError("PopupController: Handle - skillData is null");
 					return;
 				}
 				Show();
-				heroSpiritController?.InitPopup(skillData);
+				heroSpiritController?.InitPopup(skillData, heroSpiritInteractable);
 				heroSpiritController?.Show();
 				break;
 			case MessageType.OnHeroSpiritInteractionPopupClose:

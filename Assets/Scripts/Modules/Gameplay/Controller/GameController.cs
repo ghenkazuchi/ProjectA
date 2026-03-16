@@ -11,7 +11,8 @@ public enum GameState
 	RecruitMenu,
 	PartyMenu,
 	ChestOpen,
-	OnInteract
+	OnInteract,
+	AchievementMenu
 }
 
 public class GameController : Singleton<GameController>,IMessageHandle
@@ -43,6 +44,8 @@ public class GameController : Singleton<GameController>,IMessageHandle
 		MessageManager.Instance.AddSubcriber(MessageType.OnChestClose,this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnInteract, this);	
 		MessageManager.Instance.AddSubcriber(MessageType.OnInteractEnd, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnAchievementScreenOpen, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnAchievementScreenClose, this);
 	}
 	private void OnDisable()
 	{
@@ -60,6 +63,8 @@ public class GameController : Singleton<GameController>,IMessageHandle
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnChestOpen, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnInteract, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnInteractEnd, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnAchievementScreenOpen, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnAchievementScreenClose, this);
 	}
 	public void Handle(Message message)
 	{
@@ -84,6 +89,7 @@ public class GameController : Singleton<GameController>,IMessageHandle
 				PlayerCharacter newCharacter = recruitedCharData.CreatePlayerCharacter();
 				playerParty.AddCharacter(newCharacter);
 				recruitedInteractive?.Recruit();
+				DataManager.Instance?.Achievements?.RecordRecruit(recruitedCharData?.characterTemplate?.entityData, recruitedCharData?.characterTemplate);
 				currentState = GameState.FreeRoam;
 			break;
 			case MessageType.OnRecruitCharacterUIClose:
@@ -113,6 +119,12 @@ public class GameController : Singleton<GameController>,IMessageHandle
 				currentState = GameState.OnInteract;
 				break;
 			case MessageType.OnInteractEnd:
+				currentState = GameState.FreeRoam;
+				break;
+			case MessageType.OnAchievementScreenOpen:
+				currentState = GameState.AchievementMenu;
+				break;
+			case MessageType.OnAchievementScreenClose:
 				currentState = GameState.FreeRoam;
 				break;
 		}

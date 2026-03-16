@@ -8,6 +8,7 @@ public class ShopKeeperInteractableObject : Interacable, IShopKeeper
 {
 	[Header("Shop stuff")]
 	[SerializeField] private List<EquipableBaseData> shopPool;
+	[SerializeField] private UnlockableEquipablePool unlockableShopPool;
 	[SerializeField] private int stockSize = 9;
 
 	private List<EquipableBaseData> _stock = new List<EquipableBaseData>();
@@ -19,7 +20,7 @@ public class ShopKeeperInteractableObject : Interacable, IShopKeeper
 
 	public void RestockEquipables()
 	{
-		_stock = PickRandom(shopPool, stockSize);
+		_stock = PickRandom(GetResolvedShopPool(), stockSize);
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnShopUpdated, new object[] { new List<EquipableBaseData>(_stock) }));
 	}
 
@@ -33,13 +34,9 @@ public class ShopKeeperInteractableObject : Interacable, IShopKeeper
 		var result = new List<T>();
 		if (list == null || list.Count == 0) return result;
 		var tmp = new List<T>(list);
-		for (int i = 0; i < size; i++)
+		int pickCount = Mathf.Min(size, tmp.Count);
+		for (int i = 0; i < pickCount; i++)
 		{
-			if(tmp.Count == 0)
-			{
-				Debug.Log("Bug");
-				break;
-			}
 			int idx = Random.Range(0, tmp.Count);
 			var pick = tmp[idx];
 			result.Add(pick);
@@ -79,7 +76,18 @@ public class ShopKeeperInteractableObject : Interacable, IShopKeeper
 			return false;
 		}
 		_stock.Remove(equip);
+		DataManager.Instance?.Achievements?.RecordShopPurchase(equip);
 		return true;
+	}
+
+	private List<EquipableBaseData> GetResolvedShopPool()
+	{
+		if (unlockableShopPool == null || DataManager.Instance?.Achievements == null)
+		{
+			return new List<EquipableBaseData>(shopPool);
+		}
+
+		return DataManager.Instance.Achievements.GetEquipablesForPool(unlockableShopPool, shopPool);
 	}
 
 }

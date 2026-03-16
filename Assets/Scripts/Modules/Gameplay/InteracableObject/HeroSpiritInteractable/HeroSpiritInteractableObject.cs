@@ -6,6 +6,7 @@ using UnityEngine;
 public class HeroSpiritInteractableObject : Interacable, IHeroSpiritInteractable
 {
 	[SerializeField] private List<BaseSkillData> listSkillData;
+	[SerializeField] private UnlockableSkillPool unlockableSkillPool;
 	[SerializeField] private BaseSkillData assignedSkill;
 
 	private void Start()
@@ -14,17 +15,44 @@ public class HeroSpiritInteractableObject : Interacable, IHeroSpiritInteractable
 	}
 	public void OnCreation()
 	{
-		int randomIndex = Random.Range(0, listSkillData.Count);
-		assignedSkill = listSkillData[randomIndex];
+		List<BaseSkillData> availableSkills = GetResolvedSkillPool();
+		if (availableSkills.Count == 0)
+		{
+			assignedSkill = null;
+			return;
+		}
+
+		int randomIndex = Random.Range(0, availableSkills.Count);
+		assignedSkill = availableSkills[randomIndex];
 	}
 
 	public void OnLearned()
 	{
-		throw new System.NotImplementedException();
+		Destroy(gameObject);
 	}
 
 	public override void TriggerInteraction()
 	{
+		if (assignedSkill == null)
+		{
+			OnCreation();
+		}
+		if (assignedSkill == null)
+		{
+			Debug.LogWarning("HeroSpiritInteractableObject: No skill available to learn.");
+			return;
+		}
+
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnHeroSpiritInteractionPopupOpen, new object[] { assignedSkill, this }));
+	}
+
+	private List<BaseSkillData> GetResolvedSkillPool()
+	{
+		if (unlockableSkillPool == null || DataManager.Instance?.Achievements == null)
+		{
+			return new List<BaseSkillData>(listSkillData);
+		}
+
+		return DataManager.Instance.Achievements.GetSkillsForPool(unlockableSkillPool, listSkillData);
 	}
 }

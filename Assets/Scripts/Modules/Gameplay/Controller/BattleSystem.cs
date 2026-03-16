@@ -65,6 +65,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public ActiveSkill selectedSkill;
 	public List<EntityBase> selectedTargets;
 	private Coroutine battleCoroutine;
+	private int battleItemEffectUseCount;
 	public IMonsterInteracable currentMonsterInteractable;
 	[SerializeField] private ActiveSkillData basicAttackSkillData;
 	public ActiveSkill basicAttack;
@@ -108,12 +109,23 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public BattleUnit GetBattleUnitAt(int index) => UnitRegistry.GetBattleUnitAt(index);
 
 	public GridPosition GetPositionByUnitIndex(int index) => UnitRegistry.GetPositionByUnitIndex(index);
+	public int BattleItemEffectUseCount => battleItemEffectUseCount;
+	public void RegisterBattleItemEffectUse(Item item)
+	{
+		if (item == null || item.itemBaseData == null)
+		{
+			return;
+		}
+
+		battleItemEffectUseCount++;
+	}
 	public void StartBattle(BattleType batteType)
 	{
 		Show();
 		currentBattleType = batteType;
 		battleOver = false;
 		battleState = BattleState.Start;
+		battleItemEffectUseCount = 0;
 		battleSystem.SetActive(true);
 		lifecycleManager.SetUpBattle(UnitRegistry.PlayerBattleUnits, UnitRegistry.MonsterBattleUnits, UnitRegistry.GetPositionMap());
 		allEntities = new List<EntityBase>();
