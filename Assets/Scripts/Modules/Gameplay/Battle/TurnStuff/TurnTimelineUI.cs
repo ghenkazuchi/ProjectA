@@ -36,7 +36,12 @@ public class TurnTimelineUI : MonoBehaviour
 		{
 			if (i < upcomingEntities.Count)
 			{
+				turnIcons[i].gameObject.SetActive(true);
 				turnIcons[i].SetData(upcomingEntities[i]);
+			}
+			else
+			{
+				turnIcons[i].gameObject.SetActive(false);
 			}
 		}
 	}

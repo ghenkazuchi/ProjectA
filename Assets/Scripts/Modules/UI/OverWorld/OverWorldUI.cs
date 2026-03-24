@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class OverWorldUI : MonoBehaviour
 {
@@ -7,6 +8,38 @@ public class OverWorldUI : MonoBehaviour
 	[SerializeField] private OverworldGameProgressUI gameProgressUI;
 	[SerializeField] private CanvasGroup overWorldCanvasgroup;
 
+	[Header("Currency Display")]
+	[SerializeField] private TextMeshProUGUI goldText;
+	[SerializeField] private TextMeshProUGUI soulDuskText;
+
+	private void OnEnable()
+	{
+		if (DataManager.Instance != null && DataManager.Instance.Currency != null)
+		{
+			DataManager.Instance.Currency.Wallet.OnCurrencyChanged += HandleCurrencyChanged;
+		}
+	}
+
+	private void OnDisable()
+	{
+		if (DataManager.Instance != null && DataManager.Instance.Currency != null)
+		{
+			DataManager.Instance.Currency.Wallet.OnCurrencyChanged -= HandleCurrencyChanged;
+		}
+	}
+
+	private void HandleCurrencyChanged(CurrencyType type, int amount)
+	{
+		if (type == CurrencyType.Gold && goldText != null)
+		{
+			goldText.text = amount.ToString();
+		}
+		else if (type == CurrencyType.SoulDusk && soulDuskText != null)
+		{
+			soulDuskText.text = amount.ToString();
+		}
+	}
+
 	private void Start()
 	{
 		if (dayNightController == null)
@@ -14,6 +47,22 @@ public class OverWorldUI : MonoBehaviour
 
 		if (gameProgressUI != null && dayNightController != null)
 			gameProgressUI.Bind(dayNightController);
+
+		if (DataManager.Instance != null && DataManager.Instance.Currency != null)
+		{
+			if (goldText != null)
+			{
+				goldText.text = DataManager.Instance.Currency.Wallet.Get(CurrencyType.Gold).ToString();
+			}
+			if (soulDuskText != null)
+			{
+				soulDuskText.text = DataManager.Instance.Currency.Wallet.Get(CurrencyType.SoulDusk).ToString();
+			}
+
+			// Also ensure event is hooked up if Start happens after OnEnable
+			DataManager.Instance.Currency.Wallet.OnCurrencyChanged -= HandleCurrencyChanged;
+			DataManager.Instance.Currency.Wallet.OnCurrencyChanged += HandleCurrencyChanged;
+		}
 	}
 	private void Awake()
 	{

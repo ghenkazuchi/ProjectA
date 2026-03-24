@@ -6,11 +6,13 @@ using UnityEngine;
 public class RestoreHPEffectData : EffectData
 {
 	public float restoreAmount;
+	public float restoreThreshold;	
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
 		return new RestoreHPEffect(this, owner, target, duration, restoreAmount)
 		{
-			RestoreAmount = restoreAmount
+			RestoreAmount = restoreAmount,
+			RestoreThreshold = restoreThreshold
 		};
 	}
 }

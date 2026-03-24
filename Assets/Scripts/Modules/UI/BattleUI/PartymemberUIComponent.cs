@@ -50,7 +50,7 @@ public class PartymemberUIComponent : MonoBehaviour
 			return;
 		}
 		//characterSprite.enabled = true;
-		//characterSprite.sprite = battleUnit.character.entityData.EntitySprite;
+		//characterSprite.sprite = battleUnit.character.entityData.EntityPortrait;
 	}
 
 	public void SetSelected(bool value)

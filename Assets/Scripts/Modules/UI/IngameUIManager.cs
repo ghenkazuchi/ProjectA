@@ -132,6 +132,7 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 				gameLoseUICanvasGroup.blocksRaycasts = true;
 				break;
 			case MessageType.OnBattleOver:
+				overworldUIController.Show();
 				battleCanvasGroup.alpha = 0f;
 				battleCanvasGroup.interactable = false;
 				battleCanvasGroup.blocksRaycasts = false;

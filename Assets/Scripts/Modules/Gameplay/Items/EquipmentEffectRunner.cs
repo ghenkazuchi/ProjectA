@@ -82,7 +82,7 @@ public class EquipmentEffectRunner
 		if (binding.effect.isInstantEffect)
 		{
 			yield return effectTarget.TriggerEffectDirectly(effect);
-			usageTracker?.RecordUse();
+			ConsumeUsage(effect, usageTracker);
 		}
 		else
 		{
@@ -119,6 +119,7 @@ public class EquipmentEffectRunner
 			if (!hooked)
 			{
 				yield return effectTarget.TriggerEffectDirectly(effect);
+				ConsumeUsage(effect, usageTracker);
 			}
 		}
 		else
@@ -137,13 +138,29 @@ public class EquipmentEffectRunner
 			yield return statusHook.OnBeforeStatusApplied(ctx);
 
 			if (ctx != null && ctx.Cancle)
-				usageTracker?.RecordUse();
+				ConsumeUsage(effect, usageTracker);
 		}
 
 		if (!hooked)
 		{
 			yield return effectTarget.TriggerEffectDirectly(effect);
+			ConsumeUsage(effect, usageTracker);
 		}
+	}
+
+	private void ConsumeUsage(EffectBase effect, EffectUsageTracker usageTracker)
+	{
+		if (usageTracker == null)
+		{
+			return;
+		}
+
+		if (effect is ILimitedUsageTime)
+		{
+			return;
+		}
+
+		usageTracker.RecordUse();
 	}
 
 	private bool ProcessEffectBinding(object source, EquipEffectBinding binding, EntityBase overrideTarget, out EffectBase effect, out EffectUsageTracker usageTracker, out EntityBase effectTarget)

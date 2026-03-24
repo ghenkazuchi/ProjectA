@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class MonsterAI : MonoBehaviour
 {
@@ -105,7 +106,11 @@ public class MonsterAI : MonoBehaviour
 
 		Vector2Int next = path[pathIndex];
 
-		transform.position = map.GetWorldPosition(next);
+		Vector3 targetPos = map.GetWorldPosition(next);
+		
+		transform.DOKill();
+		transform.DOMove(targetPos, stepInterval).SetEase(Ease.Linear);
+		
 		currentGrid = next;
 		pathIndex++;
 

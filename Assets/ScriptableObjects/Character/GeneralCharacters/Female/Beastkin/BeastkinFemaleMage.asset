@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Beastkin Mage
   entitySprite: {fileID: 21300000, guid: 069b504e0496df045bcab99a2ae7f48d, type: 3}
-  entityPortrait: {fileID: 0}
-  entityElement: 0
+  entityPortrait: {fileID: 21300000, guid: e8bace01e9ce5424d9db082e7a6d64ea, type: 3}
+  entityElement: 5
   baseTraits:
     reorderableList:
       canAdd: 1
@@ -39,9 +39,35 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: 
-    _keys: 
-    _values: 
+    _keyValues: 00000000010000000400000003000000020000000500000006000000
+    _keys: 00000000010000000400000003000000020000000500000006000000
+    _values: 070000000b0000000d000000070000000a0000000700000007000000
+  personalGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 010000000400000006000000
+    _keys: 010000000400000006000000
+    _values: 1e0000001e00000014000000
   exclusiveActiveSkill: {fileID: 0}
   exclusivePassiveSkill: {fileID: 0}
   description: 

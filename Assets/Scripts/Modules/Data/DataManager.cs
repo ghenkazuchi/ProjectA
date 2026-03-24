@@ -13,11 +13,14 @@ public class DataManager : Singleton<DataManager>, IMessageHandle
 	{
 		var storage = new JSonWalletStorage("wallet.json");
 		Currency = new CurrencyService(storage);
+		
+		// Wipe the wallet at the start of every Editor session/run
+		Currency.Clear();
+
 		var achievementStorage = new JSonAchievementStorage("achievements.json");
 		Achievements = new AchievementService(LoadAchievementDatabase(), achievementStorage);
 		_ = AchievementToastController.Instance;
 		_ = AchievementScreenController.Instance;
-		Currency.Add(CurrencyType.Gold, 20);
 	}
 
 	private AchievementDatabase LoadAchievementDatabase()
@@ -35,8 +38,23 @@ public class DataManager : Singleton<DataManager>, IMessageHandle
 
 		return achievementDatabase;
 	}
+	private void OnEnable()
+	{
+		MessageManager.Instance.AddSubcriber(MessageType.OnCharacterCreationEnter, this);
+	}
+
+	private void OnDisable()
+	{
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnCharacterCreationEnter, this);
+	}
+
 	public void Handle(Message message)
-    {
-        throw new System.NotImplementedException();
-    }
+	{
+		switch (message.type)
+		{
+			case MessageType.OnCharacterCreationEnter:
+				Currency?.Clear();
+				break;
+		}
+	}
 }

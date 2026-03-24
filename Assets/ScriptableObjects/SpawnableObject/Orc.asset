@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b06ec2c4d70e0940942e5149a5eb9eb, type: 3}
   m_Name: Orc
   m_EditorClassIdentifier: 
+  group: 0
   interacableType: 0
   ingameSprite: {fileID: 45396006, guid: 653e7fcdcc489c040916c7f3a9737f75, type: 3}
   prefab: {fileID: 671993994658027252, guid: 02365b7a0f741b54db2e78f7a6bab9fb, type: 3}
+  spawnWeight: 4
+  uniquePerMap: 0
+  uniqueKey: 

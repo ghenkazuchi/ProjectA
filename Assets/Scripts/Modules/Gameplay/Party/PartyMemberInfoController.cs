@@ -117,7 +117,7 @@ public class PartyMemberInfoController : Singleton<PartyMemberInfoController>, I
 	{
 		if (currentCharacter != null) 
 		{
-			portrait.sprite = currentCharacter.entityData.EntitySprite;
+			portrait.sprite = currentCharacter.entityData.EntityPortrait;
 			characterNameText.text = currentCharacter.entityData.EntityName;
 			characterLevelText.text = $"Level: {currentCharacter.level}";
 			raceText.text =  $"Race: {currentCharacter.RaceDataName}";	

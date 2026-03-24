@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class PoissonDisc
 {
-	public static List<Vector2> GeneratePoints(float radius, Vector2 regionSize, int tryNumber = 20)
+	public static List<Vector2> GeneratePoints(float radius, Vector2 regionSize, int tryNumber = 20, System.Random sysRandom = null)
 	{
 		float cellSize = radius / Mathf.Sqrt(2);
 		int[,] grid = new int[Mathf.CeilToInt(regionSize.x / cellSize), Mathf.CeilToInt(regionSize.y / cellSize)];
@@ -14,15 +14,17 @@ public static class PoissonDisc
 		spawnPoints.Add(regionSize / 2);
 		while (spawnPoints.Count > 0)
 		{
-			int spawnIndex = Random.Range(0, spawnPoints.Count);
+			int spawnIndex = sysRandom != null ? sysRandom.Next(0, spawnPoints.Count) : UnityEngine.Random.Range(0, spawnPoints.Count);
 			Vector2 spawnCenter = spawnPoints[spawnIndex];
 			bool candidateAccepted = false;
 
 			for (int i = 0; i < tryNumber; i++)
 			{
-				float angle = Random.value * Mathf.PI * 2;
+				float randValue = sysRandom != null ? (float)sysRandom.NextDouble() : UnityEngine.Random.value;
+				float angle = randValue * Mathf.PI * 2;
 				Vector2 dir = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
-				Vector2 candidate = spawnCenter + dir * Random.Range(radius, 2 * radius);
+				float dist = sysRandom != null ? radius + (float)sysRandom.NextDouble() * radius : UnityEngine.Random.Range(radius, 2 * radius);
+				Vector2 candidate = spawnCenter + dir * dist;
 				if (isValid(candidate,regionSize,cellSize,radius,points,grid))
 				{
 					points.Add(candidate);

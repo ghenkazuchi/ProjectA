@@ -66,6 +66,8 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public List<EntityBase> selectedTargets;
 	private Coroutine battleCoroutine;
 	private int battleItemEffectUseCount;
+	private EntityBase turnOwner;
+	private bool currentTurnActionTaken;
 	public IMonsterInteracable currentMonsterInteractable;
 	[SerializeField] private ActiveSkillData basicAttackSkillData;
 	public ActiveSkill basicAttack;
@@ -119,6 +121,31 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 
 		battleItemEffectUseCount++;
 	}
+	public void BeginTurn(EntityBase entity)
+	{
+		turnOwner = entity;
+		currentTurnActionTaken = false;
+	}
+
+	public void MarkTurnActionTaken(EntityBase entity = null)
+	{
+		if (turnOwner == null)
+		{
+			return;
+		}
+
+		if (entity == null || entity == turnOwner)
+		{
+			currentTurnActionTaken = true;
+		}
+	}
+
+	public bool DidEntityTakeActionThisTurn(EntityBase entity)
+	{
+		return entity != null && entity == turnOwner && currentTurnActionTaken;
+	}
+
+	public int CurrentTimelineRound => timelineManager != null ? timelineManager.CurrentRoundNumber : 0;
 	public void StartBattle(BattleType batteType)
 	{
 		Show();
@@ -265,6 +292,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	}
 	public IEnumerator PerformSkillAction(EntityBase sourceEntity, List<EntityBase> targetEntites, ActiveSkill skillToUse)
 	{
+		MarkTurnActionTaken(sourceEntity);
 		yield return StartCoroutine(actionExecutor.PerformSkillAction(sourceEntity, targetEntites, skillToUse));
 	}
 

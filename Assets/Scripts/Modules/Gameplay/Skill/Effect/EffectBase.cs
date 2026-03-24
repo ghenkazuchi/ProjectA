@@ -7,6 +7,7 @@ public abstract class EffectBase
 {
 	private static int _nextRuntimeId = 1;
 	public int RuntimeId { get; } = _nextRuntimeId++;
+	private readonly EffectData sourceData;
 	public EffectType EffectType { get; protected set; }
 	public Effect Effect { get; protected set; }
 	public EffectTriggerPhase TriggerPhase { get; protected set; }
@@ -27,16 +28,20 @@ public abstract class EffectBase
 
 	public Sprite EffectIcon { get; protected set; }
 	public EffectTag Tags { get; protected set; }
+	public EffectData SourceData => sourceData;
 
 	public bool HasTag(EffectTag tag) => (Tags & tag) != 0;
 
 	public event System.Action<EffectBase> OnChanged;
+	public event System.Action<EffectBase, EffectVfxTrigger> OnVfxRequested;
 
 	private void NotifyChanged() => OnChanged?.Invoke(this);
+	protected void RequestVfx(EffectVfxTrigger trigger) => OnVfxRequested?.Invoke(this, trigger);
 
 	/// <summary>New simplified constructor — pulls config from EffectData SO.</summary>
 	public EffectBase(EffectData data, EntityBase owner, EntityBase target, int duration)
 	{
+		sourceData = data;
 		EffectType = data.EffectType;
 		Effect = data.Effect;
 		Name = data.Name;
@@ -71,8 +76,20 @@ public abstract class EffectBase
 
 	public virtual string GetExpireMessage() => $"{Target.entityData.EntityName} is no longer affected by {Name}.";
 
+	public bool TryGetStatusVfx(EffectVfxTrigger trigger, out EffectVfxClipData clip)
+	{
+		if (sourceData != null)
+		{
+			return sourceData.TryGetStatusVfx(trigger, out clip);
+		}
+
+		clip = null;
+		return false;
+	}
+
 	public virtual IEnumerator ApplyEffect()
 	{
+		RequestVfx(EffectVfxTrigger.Apply);
 		yield return BattleSystem.Instance.ShowDialog($"{Name} applied to {Target.entityData.EntityName}!");
 	}
 
@@ -80,6 +97,7 @@ public abstract class EffectBase
 	{
 		CurrentDuration = InitialDuration;
 		Debug.Log($"Effect {Name} on {Target.entityData.EntityName} has been refreshed to {CurrentDuration} turns.");
+		RequestVfx(EffectVfxTrigger.Apply);
 		NotifyChanged();
 	}
 	public virtual void AddStack(int amount)
@@ -88,6 +106,7 @@ public abstract class EffectBase
 		{
 			CurrentStack += amount;
 			Debug.Log(amount + $" stacks of {Name} added to {Target.entityData.EntityName}. Current stack: {CurrentStack}/{MaxStack}");
+			RequestVfx(EffectVfxTrigger.Apply);
 			NotifyChanged();
 			if (this is IThreshholdable threshholdableEffect)
 			{

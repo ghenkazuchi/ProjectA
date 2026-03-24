@@ -151,3 +151,6 @@ MonoBehaviour:
   normalRate: 1
   goldRate: 0
   diamondRate: 0
+  goldDropChance: 0.7
+  minGold: 10
+  maxGold: 30

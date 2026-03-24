@@ -21,7 +21,8 @@ public class PoisonEffect : EffectBase,ITurnEnd
 		if(Target.GetCurrentHP() <= 0)
 		{
 			yield break;
-		}	
+		}
+		RequestVfx(EffectVfxTrigger.TurnEnd);
 		int finalDamage = Mathf.CeilToInt(BasePoisonDamage);
 		yield return BattleSystem.Instance.ApplyEffectDamage(Target, finalDamage, Owner, "poison");
 	}

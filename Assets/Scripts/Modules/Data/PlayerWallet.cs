@@ -16,6 +16,7 @@ public class PlayerWallet
 			amounts[type] = 0;
 		}
 	}
+
 	public int Get(CurrencyType type)
 	{
 		return amounts.TryGetValue(type, out int amount) ? amount : 0;
@@ -36,18 +37,32 @@ public class PlayerWallet
 		}
 		return false;
 	}
-	public void Adð(CurrencyType type, int amount)
+
+	// FIX: renamed from corrupted "Ad?" to "Add"
+	public void Add(CurrencyType type, int amount)
 	{
 		if (amount <= 0) return;
 		amounts[type] += amount;
 		OnCurrencyChanged?.Invoke(type, amounts[type]);
 	}
+
+	public void Clear()
+	{
+		var types = new List<CurrencyType>(amounts.Keys);
+		foreach (var type in types)
+		{
+			amounts[type] = 0;
+			OnCurrencyChanged?.Invoke(type, 0);
+		}
+	}
+
 	[Serializable]
 	public class WalletEntryDTO
 	{
 		public CurrencyType type;
 		public int amount;
 	}
+
 	[Serializable]
 	public class WalletDTO
 	{
@@ -67,6 +82,7 @@ public class PlayerWallet
 		}
 		return dto;
 	}
+
 	public void FromDTO(WalletDTO dto)
 	{
 		amounts.Clear();
@@ -74,7 +90,8 @@ public class PlayerWallet
 		{
 			amounts[type] = 0;
 		}
-		if (dto != null || dto.entries != null)
+		// FIX: was "|| dto.entries != null" which crashes when dto is null
+		if (dto != null && dto.entries != null)
 		{
 			foreach (var e in dto.entries)
 			{

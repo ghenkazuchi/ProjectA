@@ -20,14 +20,14 @@ MonoBehaviour:
       rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
       raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
       level: 4
+    - monsterData: {fileID: 11400000, guid: a0c634b57b171bc4dbede7cf16d96790, type: 2}
+      rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
+      raceData: {fileID: 11400000, guid: 08810b71e3f948d42ab6426b5be03d7a, type: 2}
+      level: 4
   - day: 0
     timeOfDay: 1
     monsters:
-    - monsterData: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+    - monsterData: {fileID: 11400000, guid: 14d75fe2c49b1c84392626122c8d5503, type: 2}
       rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
-      raceData: {fileID: 11400000, guid: b73f56cc1a0bb1f49bd57994ce518d6d, type: 2}
-      level: 4
-    - monsterData: {fileID: 11400000, guid: d9a5654d4685dc44ca792b71ac374418, type: 2}
-      rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
-      raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
-      level: 4
+      raceData: {fileID: 11400000, guid: 45b593e5d5212ee4eacaa39151fac1b0, type: 2}
+      level: 3

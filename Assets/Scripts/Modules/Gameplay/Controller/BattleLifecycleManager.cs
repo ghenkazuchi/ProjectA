@@ -146,14 +146,24 @@ public class BattleLifecycleManager
 
 		Debug.Log("Exp calculation");
 		float totalExp = 0f;
+		int totalSouldusk = 0;
 		List<MonsterCharacter> defeatedMonsters = new List<MonsterCharacter>();
 		foreach (var monsterSlot in sys.monsterParty.partySlots)
 		{
 			if (monsterSlot.entity is MonsterCharacter monster)
 			{
 				totalExp += monster.TotalExpToAward;
+				if (monster.RankData != null)
+				{
+					totalSouldusk += monster.RankData.baseSoulduskReward;
+				}
 				defeatedMonsters.Add(monster);
 			}
+		}
+
+		if (totalSouldusk > 0 && DataManager.Instance?.Currency != null)
+		{
+			DataManager.Instance.Currency.Add(CurrencyType.SoulDusk, totalSouldusk);
 		}
 
 		List<PlayerCharacter> activeCharacters = sys.playerParty.partySlots
@@ -172,7 +182,7 @@ public class BattleLifecycleManager
 		}
 
 		if (sys.ExpDistribution != null)
-			sys.ExpDistribution.ShowExpDistribution(expGainedPerMember);
+			sys.ExpDistribution.ShowExpDistribution(expGainedPerMember, totalSouldusk);
 
 		int totalPartyHp = 0;
 		int totalPartyMaxHp = 0;
@@ -236,6 +246,14 @@ public class BattleLifecycleManager
 		sys.uiController.battleDialogBox?.EnableDialogText(false);
 		sys.uiController.battleDialogBox?.EnableActionSelector(false);
 		sys.targetSelectionController?.gameObject.SetActive(false);
+
+		// If no specific entities were provided, grab all from both parties to ensure a full wipe
+		if (allEntities == null || allEntities.Count == 0)
+		{
+			allEntities = new List<EntityBase>();
+			foreach (var s in sys.playerParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+			foreach (var s in sys.monsterParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+		}
 
 		if (allEntities != null)
 		{

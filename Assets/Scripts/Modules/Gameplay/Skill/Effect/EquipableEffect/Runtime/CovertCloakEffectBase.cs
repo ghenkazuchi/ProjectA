@@ -23,7 +23,7 @@ public class CovertCloakEffectBase : EffectBase, IBeforeStatusApplied, ILimitedU
 		if(context == null || context.IncomingEffect == null) yield break;
 		if (context.Target != Target) yield break;
 		if (context.IncomingEffect.Effect != Effect.CrownControl) yield break;
-		if(tracker != null && !tracker.CanUse()) yield break;
+		if (!TryConsumeUse()) yield break;
 
 		context.Cancle = true;
 		context.CancleReason = $"{Target.entityData.EntityName}'s {Name} negate the effect!";
@@ -32,6 +32,12 @@ public class CovertCloakEffectBase : EffectBase, IBeforeStatusApplied, ILimitedU
 
 	public bool TryConsumeUse()
 	{
-		throw new System.NotImplementedException();
+		if (tracker != null && tracker.CanUse())
+		{
+			tracker.RecordUse();
+			return true;
+		}
+
+		return tracker == null;
 	}
 }

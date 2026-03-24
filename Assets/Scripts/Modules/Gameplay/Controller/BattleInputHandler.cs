@@ -199,6 +199,7 @@ public class BattleInputHandler : MonoBehaviour
 
             bool changed = sys.playerParty.TrySwitchPositions(posA, posB);
             if (!changed) return;
+            sys.MarkTurnActionTaken(sys.currentTurnEntity);
 
             sys.SyncPlayerBattleUnitsFromPartySlots();
 
@@ -232,6 +233,7 @@ public class BattleInputHandler : MonoBehaviour
     public IEnumerator HandleDefend()
     {
         yield return null;
+        sys.MarkTurnActionTaken(sys.currentTurnEntity);
         sys.battleState = BattleState.Busy;
         sys.uiController.currentPlayerCharacterInfo.EnableBattleHud(false);
         sys.uiController.battleDialogBox.EnableActionSelector(false);

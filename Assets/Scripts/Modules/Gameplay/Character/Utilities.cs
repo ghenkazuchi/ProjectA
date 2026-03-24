@@ -60,6 +60,8 @@ public enum MonsterTypeName
 	Cyclop,
 	DragonFly,
 	HeadlessHorseman,
+	ZombieWolf,
+
 }
 public enum MonsterRank
 {
@@ -67,9 +69,7 @@ public enum MonsterRank
 	RankC,
 	RankB,
 	RankA,
-	RankAPlus,
 	RankS,
-	CatastropheRank
 
 }
 public enum ClassType
@@ -397,6 +397,20 @@ public struct ChestLootEntry
 		this.data = data;
 		this.grade = grade;
 	}
+}
+
+[System.Serializable]
+public class ChestReward
+{
+	public bool isGold;
+	public int goldAmount;
+	public List<ChestLootEntry> items;
+
+	public static ChestReward Gold(int amount)
+		=> new ChestReward { isGold = true, goldAmount = amount, items = null };
+
+	public static ChestReward Items(List<ChestLootEntry> entries)
+		=> new ChestReward { isGold = false, goldAmount = 0, items = entries };
 }
 	// gameprogress
 

@@ -1,6 +1,7 @@
 using HaKien;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 public class ExpDistributionController : MonoBehaviour
 {
 	[SerializeField] PlayerParty playerParty;
+	[SerializeField] private TextMeshProUGUI soulDuskGainedText;
 	[SerializeField] CanvasGroup expDistributionCanvasGroup;
 	[SerializeField] List<PartyMemberExpInfo> partyMemberExpInfos;
 	[SerializeField] Button closeButton;
@@ -73,9 +75,14 @@ public class ExpDistributionController : MonoBehaviour
 		battleSystem.HandleAfterMatch();
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleOver));
 	}
-	public void ShowExpDistribution(IReadOnlyDictionary<PlayerCharacter, int> expGainedPerMember)
+	public void ShowExpDistribution(IReadOnlyDictionary<PlayerCharacter, int> expGainedPerMember, int soulduskGained = 0)
 	{
 		InitializeUI();
+
+		if (soulDuskGainedText != null)
+		{
+			soulDuskGainedText.text = $"Soul dusk gained:{soulduskGained}";
+		}
 
 		for (int i = 0; i < partyMemberExpInfos.Count; i++)
 		{

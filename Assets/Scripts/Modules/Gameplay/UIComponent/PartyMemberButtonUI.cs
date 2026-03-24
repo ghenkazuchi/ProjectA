@@ -12,7 +12,7 @@ public class PartyMemberButtonUI : MonoBehaviour
 	[SerializeField] Button button;
 	public void SetupButton(PlayerCharacter character)
 	{
-		characterPortrait.sprite = character.entityData.EntitySprite;
+		characterPortrait.sprite = character.entityData.EntityPortrait;
 		characterWeapon.text = character.GetWeaponStatus();
 		characterItemSlotStatus.text = character.GetItemSlotStatus();
 	}

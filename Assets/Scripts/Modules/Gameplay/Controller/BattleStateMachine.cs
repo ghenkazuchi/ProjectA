@@ -85,7 +85,12 @@ namespace HaKien
                 battleSystem.UpdateTimelineUI();
                 
                 EntityBase currentTurnEntity = battleSystem.timelineManager.GetNextTurnEntity();
+                if (currentTurnEntity == null)
+                {
+                    continue;
+                }
                 battleSystem.SetCurrentTurnEntity(currentTurnEntity);
+                battleSystem.BeginTurn(currentTurnEntity);
                 BattleUnit currentUnit = battleSystem.FindBattleUnitForEntityPublic(currentTurnEntity);
                 
                 currentTurnEntity.ResetTurnDirective();

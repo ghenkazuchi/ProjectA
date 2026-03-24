@@ -93,8 +93,8 @@ public class RuleBasedSpawner
 
             if (!FarEnough(p, generator.minSpacing)) continue;
 
-            // Pick random fallback object
-            var so = pool[Random.Range(0, pool.Count)];
+            // Pick weighted random fallback object
+            var so = WeightedPick(pool);
             if (so == null || so.prefab == null) continue;
 
             if (TryPlaceExplicit(so, p))
@@ -154,17 +154,36 @@ public class RuleBasedSpawner
 
     private SpawnableObject PickFromRuleGroups(SpawnRule rule)
     {
-        var avail = new List<InteracableGroup>(rule.matchTypes.Count);
+        // Build a flat weighted pool from all matching groups
+        var weightedPool = new List<SpawnableObject>();
         for (int i = 0; i < rule.matchTypes.Count; i++)
         {
             var g = rule.matchTypes[i];
-            if (byGroup.TryGetValue(g, out var pool) && pool.Count > 0) avail.Add(g);
+            if (byGroup.TryGetValue(g, out var pool))
+                weightedPool.AddRange(pool);
         }
-        if (avail.Count == 0) return null;
+        return WeightedPick(weightedPool);
+    }
 
-        var chosenGroup = avail[Random.Range(0, avail.Count)];
-        var list = byGroup[chosenGroup];
-        return list[Random.Range(0, list.Count)];
+    private SpawnableObject WeightedPick(List<SpawnableObject> pool)
+    {
+        if (pool == null || pool.Count == 0) return null;
+
+        int totalWeight = 0;
+        foreach (var so in pool)
+        {
+            if (so != null) totalWeight += so.spawnWeight;
+        }
+        if (totalWeight <= 0) return pool[Random.Range(0, pool.Count)];
+
+        int roll = Random.Range(0, totalWeight);
+        foreach (var so in pool)
+        {
+            if (so == null) continue;
+            roll -= so.spawnWeight;
+            if (roll < 0) return so;
+        }
+        return pool[pool.Count - 1];
     }
 
     private void ShuffleList<T>(IList<T> list)

@@ -16,6 +16,12 @@ public class TurnIconUI : MonoBehaviour
 
 	public void SetData(EntityBase entity)
 	{
-		avatar.sprite = entity.entityData.EntitySprite;
+		gameObject.SetActive(entity != null);
+		if (entity == null)
+		{
+			return;
+		}
+
+		avatar.sprite = entity.entityData.EntityPortrait;
 	}
 }

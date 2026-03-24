@@ -8,11 +8,23 @@ using UnityEngine.UI;
 
 public class PlayerCreationUITest : MonoBehaviour
 {
+	[System.Serializable]
+	private class CharacterPortraitOption
+	{
+		public CharacterRaceData race = null;
+		public ClassData characterClass = null;
+		public Sprite portrait = null;
+		public Sprite battleSprite = null;
+	}
+
 	public CanvasGroup canvasGroup;
 	public TMP_Dropdown raceDropdown;
 	public TMP_Dropdown classDropdown;
 	public TMP_Dropdown elementalDropDown;
 	public Button createButton;
+	[SerializeField] private TMP_InputField playerNameInput;
+	[SerializeField] private Image characterPortraitImage;
+	[SerializeField] private List<CharacterPortraitOption> characterPortraitOptions = new List<CharacterPortraitOption>();
 
 	public List<CharacterRaceData> allRaces;
 	public List<ClassData> allClasses;
@@ -49,8 +61,10 @@ public class PlayerCreationUITest : MonoBehaviour
 		}
 		PopulateDropdowns();
 		PopulateElementDropDown();
+		SetDefaultCharacterName();
 		SetListTrait();
 		SetUpTraitButtons();
+		SetUpSelectionPreview();
 		createButton.onClick.AddListener(CreateCharacter);
 	}
 
@@ -73,6 +87,35 @@ public class PlayerCreationUITest : MonoBehaviour
 			options.Add(e.ToString());
 		}
 		elementalDropDown.AddOptions(options);
+	}
+
+	private void SetDefaultCharacterName()
+	{
+		if (playerNameInput == null || !string.IsNullOrWhiteSpace(playerNameInput.text))
+		{
+			return;
+		}
+
+		playerNameInput.text = playerCharacterData.EntityName;
+	}
+
+	private void SetUpSelectionPreview()
+	{
+		raceDropdown.onValueChanged.AddListener(_ => RefreshCharacterPreview());
+		classDropdown.onValueChanged.AddListener(_ => RefreshCharacterPreview());
+		RefreshCharacterPreview();
+	}
+
+	private void RefreshCharacterPreview()
+	{
+		if (characterPortraitImage == null)
+		{
+			return;
+		}
+
+		Sprite portrait = ResolveSelectedPortrait();
+		characterPortraitImage.sprite = portrait;
+		characterPortraitImage.enabled = portrait != null;
 	}
 	void SetListTrait()
 	{
@@ -125,10 +168,105 @@ public class PlayerCreationUITest : MonoBehaviour
 		SetListTrait();
 	}
 
+	private CharacterRaceData GetSelectedRace()
+	{
+		if (allRaces == null || allRaces.Count == 0)
+		{
+			return null;
+		}
+
+		int raceIndex = Mathf.Clamp(raceDropdown.value, 0, allRaces.Count - 1);
+		return allRaces[raceIndex];
+	}
+
+	private ClassData GetSelectedClass()
+	{
+		if (allClasses == null || allClasses.Count == 0)
+		{
+			return null;
+		}
+
+		int classIndex = Mathf.Clamp(classDropdown.value, 0, allClasses.Count - 1);
+		return allClasses[classIndex];
+	}
+
+	private Sprite ResolveSelectedPortrait()
+	{
+		CharacterPortraitOption option = ResolveSelectedVisualOption();
+		if (option != null && option.portrait != null)
+		{
+			return option.portrait;
+		}
+
+		if (playerCharacterData.EntityPortrait != null)
+		{
+			return playerCharacterData.EntityPortrait;
+		}
+
+		return playerCharacterData.EntitySprite;
+	}
+
+	private Sprite ResolveSelectedBattleSprite()
+	{
+		CharacterPortraitOption option = ResolveSelectedVisualOption();
+		if (option != null && option.battleSprite != null)
+		{
+			return option.battleSprite;
+		}
+
+		return playerCharacterData.EntitySprite;
+	}
+
+	private CharacterPortraitOption ResolveSelectedVisualOption()
+	{
+		CharacterRaceData selectedRace = GetSelectedRace();
+		ClassData selectedClass = GetSelectedClass();
+
+		foreach (CharacterPortraitOption option in characterPortraitOptions)
+		{
+			if (option == null || option.race != selectedRace || option.characterClass != selectedClass)
+			{
+				continue;
+			}
+
+			return option;
+		}
+
+		return null;
+	}
+
+	private string ResolveCharacterName()
+	{
+		if (playerNameInput == null)
+		{
+			return playerCharacterData.EntityName;
+		}
+
+		string enteredName = playerNameInput.text.Trim();
+		return string.IsNullOrWhiteSpace(enteredName) ? playerCharacterData.EntityName : enteredName;
+	}
+
 	void CreateCharacter()
 	{
-		int raceIndex = raceDropdown.value;
-		int classIndex = classDropdown.value;
+		StartCoroutine(CreateCharacterRoutine());
+	}
+
+	IEnumerator CreateCharacterRoutine()
+	{
+		canvasGroup.interactable = false;
+		var mapGen = FindObjectOfType<VoronoiPathGenerator>();
+		if (mapGen != null && !mapGen.IsMapGenerated())
+		{
+			yield return new WaitUntil(() => mapGen.IsMapGenerated());
+		}
+
+		CharacterRaceData race = GetSelectedRace();
+		ClassData cls = GetSelectedClass();
+		if (race == null || cls == null)
+		{
+			yield return null;
+		}
+
 		Element chosenElement = Element.None;
 		{
 			var values = new List<Element>();
@@ -139,12 +277,12 @@ public class PlayerCreationUITest : MonoBehaviour
 			}
 			chosenElement = values[elementalDropDown.value];
 		}
-			CharacterRaceData race = allRaces[raceIndex];
-		ClassData cls = allClasses[classIndex];
+
 		RunTimeEntityData runtimeData = ScriptableObject.CreateInstance<RunTimeEntityData>();
-		runtimeData.EntityName = playerCharacterData.EntityName;
-		runtimeData.EntitySprite = playerCharacterData.EntitySprite;
 		runtimeData.CloneFrom(playerCharacterData);
+		runtimeData.EntityName = ResolveCharacterName();
+		runtimeData.EntityPortrait = ResolveSelectedPortrait();
+		runtimeData.EntitySprite = ResolveSelectedBattleSprite();
 		runtimeData.SetTraits(currentTraitValues);
 		runtimeData.EntityElement = chosenElement;
 		PlayerCharacter newCharacter = new PlayerCharacter(cls, race,1,runtimeData);

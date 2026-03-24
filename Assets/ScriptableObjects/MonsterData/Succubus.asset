@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894b54a31adb29b4cb0a00cbf1300d41, type: 3}
+  m_Name: Succubus
+  m_EditorClassIdentifier: 
+  entityName: 'Succubus '
+  entitySprite: {fileID: 21300000, guid: c336826582791ee46b7f92b89cb75694, type: 3}
+  entityPortrait: {fileID: 21300000, guid: 5f9f48c53156aa442bf98f23813bfe4f, type: 3}
+  entityElement: 4
+  baseTraits:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 00000000010000000200000003000000040000000500000006000000
+    _keys: 00000000010000000200000003000000040000000500000006000000
+    _values: 050000000c0000000a00000006000000070000000500000007000000
+  personalGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 01000000020000000400000003000000
+    _keys: 01000000020000000400000003000000
+    _values: 1e00000014000000140000000a000000
+  exclusiveActiveSkill: {fileID: 11400000, guid: b9b4acb823b76ef40a7ef6de76d9f489,
+    type: 2}
+  exclusivePassiveSkill: {fileID: 0}
+  dominantTrait: 1
+  dominantWeight: 4
+  baseExp: 100
+  aiStrategy: 1
+  aiBehavior:
+    finishKill: 1
+    healCriticalAlly: 1
+    exploitElement: 1
+    randomTarget: 1
+    focusBeforeEnemyHeals: 0
+    buffBeforeAllyTurn: 0
+    healThreshold: 0.25

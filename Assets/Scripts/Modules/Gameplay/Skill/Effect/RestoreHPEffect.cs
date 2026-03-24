@@ -5,6 +5,7 @@ using UnityEngine;
 public class RestoreHPEffect : EffectBase, IScaleableEffect, ILimitedUsageTime
 {
 	public float RestoreAmount { get; set; }
+	public float RestoreThreshold { get; set; }
 
 	private EffectUsageTracker usageTracker;
 	public RestoreHPEffect(EffectData data, EntityBase owner, EntityBase target, int duration, float amount = 0) : base(data, owner, target, duration)
@@ -15,6 +16,14 @@ public class RestoreHPEffect : EffectBase, IScaleableEffect, ILimitedUsageTime
 	public override IEnumerator ApplyEffect()
 	{
 		if (Target.GetCurrentHP() <= 0) yield break;
+		
+		float normalizedThreshold = RestoreThreshold > 1f ? RestoreThreshold / 100f : RestoreThreshold;
+		if (RestoreThreshold > 0 && Target.GetCurrentHP() / (float)Target.MaxHp > normalizedThreshold)
+		{
+			yield break;
+		}
+		
+		if (!TryConsumeUse()) yield break;
 		int amount = Mathf.CeilToInt(Target.MaxHp * RestoreAmount);
 		Target.Heal(amount);
 		yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} restored {amount} HP from {Name}!");
@@ -38,6 +47,14 @@ public class RestoreHPEffect : EffectBase, IScaleableEffect, ILimitedUsageTime
 
 	public bool TryConsumeUse()
 	{
-		return true;
+		if (usageTracker != null && usageTracker.CanUse())
+		{
+			usageTracker.RecordUse();
+			return true;
+		}
+
+		// If usageTracker is null for an item, we block consumption to be safe and prevent infinite loops
+		// In some pure passive setups this might be changed, but for items it ensures strict limit conformity.
+		return false; 
 	}
 }

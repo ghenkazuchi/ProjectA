@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Pathfinding
 {
-	private class PathNode
+	public class PathNode
 	{
 		public Vector2Int position; 
 		public int gCost;         
@@ -25,6 +25,45 @@ public static class Pathfinding
 			fCost = gCost + hCost;
 		}
 	}
+	
+	public class Workspace
+	{
+		public List<PathNode> openList = new List<PathNode>(1024);
+		public HashSet<Vector2Int> closedListPositions = new HashSet<Vector2Int>(1024);
+		public Dictionary<Vector2Int, PathNode> nodeMap = new Dictionary<Vector2Int, PathNode>(1024);
+		
+		private List<PathNode> nodePool = new List<PathNode>(4096);
+		private int poolIdx = 0;
+
+		public PathNode GetNode(Vector2Int pos)
+		{
+			if (nodeMap.TryGetValue(pos, out PathNode node))
+				return node;
+
+			if (poolIdx >= nodePool.Count)
+				nodePool.Add(new PathNode(pos));
+			
+			PathNode newNode = nodePool[poolIdx++];
+			newNode.position = pos;
+			newNode.gCost = int.MaxValue;
+			newNode.fCost = int.MaxValue;
+			newNode.parent = null;
+			
+			nodeMap[pos] = newNode;
+			return newNode;
+		}
+
+		public void Clear()
+		{
+			openList.Clear();
+			closedListPositions.Clear();
+			nodeMap.Clear();
+			poolIdx = 0;
+		}
+	}
+
+	[System.ThreadStatic]
+	private static Workspace sharedWorkspace;
 	private const int MOVE_STRAIGHT_COST = 10;
 
 	public static List<Vector2Int> FindPathAStar(Vector2Int start, Vector2Int end, Vector2Int mapSize, System.Func<Vector2Int, bool> isWalkable)
@@ -39,33 +78,34 @@ public static class Pathfinding
 			return new List<Vector2Int> { start };
 		}
 
-		List<PathNode> openList = new List<PathNode>();
-		HashSet<Vector2Int> closedListPositions = new HashSet<Vector2Int>();
-		Dictionary<Vector2Int, PathNode> nodeMap = new Dictionary<Vector2Int, PathNode>();
-		PathNode startNode = GetNode(nodeMap, start);
+		if (sharedWorkspace == null) sharedWorkspace = new Workspace();
+		Workspace ws = sharedWorkspace;
+		ws.Clear();
+
+		PathNode startNode = ws.GetNode(start);
 		startNode.gCost = 0;
 		startNode.hCost = CalculateDistanceCost(start, end);
 		startNode.CalculateFCost();
-		openList.Add(startNode);
+		ws.openList.Add(startNode);
 
-		while (openList.Count > 0)
+		while (ws.openList.Count > 0)
 		{
-			PathNode currentNode = GetLowestFCostNode(openList);
+			PathNode currentNode = GetLowestFCostNode(ws.openList);
 			if (currentNode.position == end)
 			{
 				return ReconstructPath(currentNode);
 			}
-			openList.Remove(currentNode);
-			closedListPositions.Add(currentNode.position);
+			ws.openList.Remove(currentNode);
+			ws.closedListPositions.Add(currentNode.position);
 			foreach (Vector2Int neighbourPosition in GetNeighbours(currentNode.position, mapSize,isWalkable))
 			{
-				if (closedListPositions.Contains(neighbourPosition))
+				if (ws.closedListPositions.Contains(neighbourPosition))
 				{
 					continue;
 				}
 				int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode.position, neighbourPosition);
 
-				PathNode neighbourNode = GetNode(nodeMap, neighbourPosition);
+				PathNode neighbourNode = ws.GetNode(neighbourPosition);
 
 				if (tentativeGCost < neighbourNode.gCost)
 				{
@@ -74,22 +114,14 @@ public static class Pathfinding
 					neighbourNode.hCost = CalculateDistanceCost(neighbourPosition, end);
 					neighbourNode.CalculateFCost();
 
-					if (!openList.Contains(neighbourNode))
+					if (!ws.openList.Contains(neighbourNode))
 					{
-						openList.Add(neighbourNode);
+						ws.openList.Add(neighbourNode);
 					}
 				}
 			}
 		}
 		return null;
-	}
-	private static PathNode GetNode(Dictionary<Vector2Int, PathNode> nodeMap, Vector2Int position)
-	{
-		if (!nodeMap.ContainsKey(position))
-		{
-			nodeMap[position] = new PathNode(position);
-		}
-		return nodeMap[position];
 	}
 
 

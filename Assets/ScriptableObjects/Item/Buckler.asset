@@ -30,7 +30,7 @@ MonoBehaviour:
   canDuplicateTrigger: 0
   equipmentSet: {fileID: 11400000, guid: 1836e794a8c89754cb5245d0ee113eec, type: 2}
   pieceWeight: 1
-  basePrice: 0
+  basePrice: 40
   canBeUpgraded: 0
   normal:
     magnitudeMultiplier: 0

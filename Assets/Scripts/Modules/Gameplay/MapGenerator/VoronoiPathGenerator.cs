@@ -1,9 +1,10 @@
-﻿using csDelaunay;
+using csDelaunay;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Threading.Tasks;
 
 public class VoronoiPathGenerator : MonoBehaviour
 {
@@ -34,17 +35,33 @@ public class VoronoiPathGenerator : MonoBehaviour
 
 	private void Awake()
 	{
-		GenerateMap();
+		StartCoroutine(GenerateMapAsyncCoroutine());
 	}
 
 	[ContextMenu("Generate map")]
 	public void GenerateMapInspector()
 	{
 		ClearSpawnableObjects();
-		GenerateMap();
+		GenerateMapSync();
 	}
 
-	void GenerateMap()
+	[ContextMenu("Clear map")]
+	public void ClearMapInspector()
+	{
+		if (pathTilemap != null) pathTilemap.ClearAllTiles();
+		if (regionTilemap != null) regionTilemap.ClearAllTiles();
+		
+		foreach (var entry in spawnedObjectInMap)
+		{
+			if (entry.Value != null)
+			{
+				DestroyImmediate(entry.Value);
+			}
+		}
+		spawnedObjectInMap.Clear();
+	}
+
+	public void GenerateMapSync()
 	{
 		ClearSpawnableObjects();
 		List<Vector2> sitePoints = PoissonDisc.GeneratePoints(poissonRadius, mapRegionSize, tryNumber);
@@ -121,6 +138,153 @@ public class VoronoiPathGenerator : MonoBehaviour
 
 		mapGenerated = true;
 		OnMapGenerated?.Invoke();
+	}
+
+	public IEnumerator GenerateMapAsyncCoroutine()
+	{
+		mapGenerated = false;
+
+		HashSet<Vector2Int> generatedPathTiles = null;
+		Vector2Int? generatedSpawn = null;
+		MapTopologyAnalyzer generatedTopology = null;
+
+		Vector2Int mapSizeInt = new Vector2Int(
+			Mathf.CeilToInt(mapRegionSize.x),
+			Mathf.CeilToInt(mapRegionSize.y)
+		);
+
+		Task mapTask = Task.Run(() =>
+		{
+			System.Random sysRandom = new System.Random();
+			List<Vector2> sitePoints = PoissonDisc.GeneratePoints(poissonRadius, mapRegionSize, tryNumber, sysRandom);
+
+			Rect bounds = new Rect(0, 0, mapRegionSize.x, mapRegionSize.y);
+			Voronoi voronoiDiagram = new Voronoi(sitePoints, bounds);
+			List<Edge> edges = voronoiDiagram.Edges;
+			var tempPathTiles = new HashSet<Vector2Int>();
+
+			foreach (Edge e in edges)
+			{
+				if (!e.Visible()) continue;
+
+				Vector2 point1 = e.ClippedVertices[LR.LEFT];
+				Vector2 point2 = e.ClippedVertices[LR.RIGHT];
+
+				Vector2Int startPoint = new Vector2Int(Mathf.RoundToInt(point1.x), Mathf.RoundToInt(point1.y));
+				Vector2Int endPoint = new Vector2Int(Mathf.RoundToInt(point2.x), Mathf.RoundToInt(point2.y));
+
+				startPoint.x = Mathf.Clamp(startPoint.x, 0, mapSizeInt.x - 1);
+				startPoint.y = Mathf.Clamp(startPoint.y, 0, mapSizeInt.y - 1);
+				endPoint.x = Mathf.Clamp(endPoint.x, 0, mapSizeInt.x - 1);
+				endPoint.y = Mathf.Clamp(endPoint.y, 0, mapSizeInt.y - 1);
+
+				List<Vector2Int> currentPath = Pathfinding.FindPathAStar(startPoint, endPoint, mapSizeInt);
+				if (currentPath == null) continue;
+
+				foreach (var node in currentPath)
+					tempPathTiles.Add(node);
+			}
+
+			// Perform ChooseCenteredSpawn equivalent logic without instance state dependence
+			generatedSpawn = ChooseCenteredSpawnStandalone(tempPathTiles, mapSizeInt);
+			generatedTopology = new MapTopologyAnalyzer(tempPathTiles, generatedSpawn.Value, mapSizeInt, safeRing);
+			generatedPathTiles = tempPathTiles;
+		});
+
+		yield return new WaitUntil(() => mapTask.IsCompleted);
+
+		if (mapTask.Exception != null)
+		{
+			Debug.LogError("Map Generation Task Failed: " + mapTask.Exception);
+			yield break;
+		}
+
+		ClearSpawnableObjects();
+		allPathTiles = generatedPathTiles;
+		playerSpawnPosition = generatedSpawn;
+
+		pathTilemap.ClearAllTiles();
+		regionTilemap.ClearAllTiles();
+
+		int pathCount = allPathTiles.Count;
+		Vector3Int[] pathPosArray = new Vector3Int[pathCount];
+		TileBase[] pathTileArray = new TileBase[pathCount];
+
+		int pathIdx = 0;
+		foreach (Vector2Int pathTilePos in allPathTiles)
+		{
+			pathPosArray[pathIdx] = new Vector3Int(pathTilePos.x, pathTilePos.y, 0);
+			pathTileArray[pathIdx] = pathTile;
+			pathIdx++;
+		}
+		pathTilemap.SetTiles(pathPosArray, pathTileArray);
+
+		int regionCount = (mapSizeInt.x * mapSizeInt.y) - pathCount;
+		Vector3Int[] regPosArray = new Vector3Int[regionCount];
+		TileBase[] regTileArray = new TileBase[regionCount];
+
+		int regIdx = 0;
+		for (int x = 0; x < mapSizeInt.x; x++)
+		{
+			for (int y = 0; y < mapSizeInt.y; y++)
+			{
+				Vector2Int currentCell = new Vector2Int(x, y);
+				if (!allPathTiles.Contains(currentCell))
+				{
+					regPosArray[regIdx] = new Vector3Int(x, y, 0);
+					regTileArray[regIdx] = regionTile;
+					regIdx++;
+				}
+			}
+		}
+		regionTilemap.SetTiles(regPosArray, regTileArray);
+
+		var director = new InteractableSpawnDirector(this, generatedTopology, spawnedObjectInMap);
+		director.SpawnAll();
+
+		mapGenerated = true;
+		OnMapGenerated?.Invoke();
+	}
+
+	private Vector2Int ChooseCenteredSpawnStandalone(HashSet<Vector2Int> tiles, Vector2Int mapSizeInt)
+	{
+		if (tiles.Count == 0) return Vector2Int.zero;
+
+		Vector2 center = new Vector2((mapSizeInt.x - 1) * 0.5f, (mapSizeInt.y - 1) * 0.5f);
+		Vector2Int best = default;
+		float bestScore = float.PositiveInfinity;
+
+		foreach (var p in tiles)
+		{
+			float dx = p.x - center.x;
+			float dy = p.y - center.y;
+			float dist2 = dx * dx + dy * dy;
+
+            int d = 0;
+            if (tiles.Contains(p + Vector2Int.up)) d++;
+            if (tiles.Contains(p + Vector2Int.down)) d++;
+            if (tiles.Contains(p + Vector2Int.left)) d++;
+            if (tiles.Contains(p + Vector2Int.right)) d++;
+
+			int left = p.x;
+			int right = mapSizeInt.x - 1 - p.x;
+			int down = p.y;
+			int up = mapSizeInt.y - 1 - p.y;
+			int border = Mathf.Min(left, right, down, up);
+
+			float penalty = 0f;
+			if (d <= 1) penalty += 1000f;
+			penalty += Mathf.Max(0, 4 - border) * 50f; 
+			penalty += Mathf.Abs(d - 2) * 10f; 
+
+			float score = dist2 + penalty;
+			if (score < bestScore)
+			{
+				bestScore = score;
+				best = p;
+			}
+		}
+		return best;
 	}
 
 	public void ClearSpawnableObjects()

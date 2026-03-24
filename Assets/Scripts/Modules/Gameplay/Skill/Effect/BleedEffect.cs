@@ -16,6 +16,7 @@ public class BleedEffect : EffectBase, ITurnEnd
 		{
 			yield break;
 		}
+		RequestVfx(EffectVfxTrigger.TurnEnd);
 		int finalDamage = Mathf.CeilToInt(Target.GetFinalStat(Stat.HP) * bleedMaxHealthPercentagePerTurn * CurrentStack);
 		Debug.Log($"{bleedMaxHealthPercentagePerTurn * CurrentStack}");
 		yield return BattleSystem.Instance.ApplyEffectDamage(Target, finalDamage, Owner, "bleed");

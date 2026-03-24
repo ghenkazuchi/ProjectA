@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ElfFemalePriest
   m_EditorClassIdentifier: 
   entityName: Elf Priest
-  entitySprite: {fileID: 21300000, guid: 695791d37cd497b4fa435c03b325a009, type: 3}
-  entityPortrait: {fileID: 0}
+  entitySprite: {fileID: 21300000, guid: ed39684cc50d55145af65d8045867d4e, type: 3}
+  entityPortrait: {fileID: 21300000, guid: bbd981b230740f54889c450fa8d33443, type: 3}
   entityElement: 5
   baseTraits:
     reorderableList:
@@ -41,7 +41,33 @@ MonoBehaviour:
     isExpanded: 1
     _keyValues: 01000000000000000200000003000000040000000500000006000000
     _keys: 01000000000000000200000003000000040000000500000006000000
-    _values: 00000000000000000000000000000000000000000000000000000000
+    _values: 0b000000070000000d00000007000000060000000500000006000000
+  personalGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 01000000020000000300000004000000
+    _keys: 01000000020000000300000004000000
+    _values: 1e000000280000000a0000000a000000
   exclusiveActiveSkill: {fileID: 0}
   exclusivePassiveSkill: {fileID: 0}
   description: 

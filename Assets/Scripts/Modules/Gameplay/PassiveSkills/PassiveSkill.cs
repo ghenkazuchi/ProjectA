@@ -35,6 +35,8 @@ public class PassiveSkill
 	{
 		RuntimeEffects = new List<PassiveEffectBase>();
 
+		if (PassiveSkillData.effects == null) return;
+
 		foreach (var effectData in PassiveSkillData.effects)
 		{
 			if (effectData != null)

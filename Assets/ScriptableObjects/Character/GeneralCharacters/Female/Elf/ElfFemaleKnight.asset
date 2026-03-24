@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ElfFemaleKnight
   m_EditorClassIdentifier: 
   entityName: Elf Knight
-  entitySprite: {fileID: 21300000, guid: 0c68f0ae8aa7cc34a95a51619cb0ce44, type: 3}
-  entityPortrait: {fileID: 0}
-  entityElement: 0
+  entitySprite: {fileID: 21300000, guid: af9ca4c00fe0f594c803b4a022e67a42, type: 3}
+  entityPortrait: {fileID: 21300000, guid: d525c77ebc94d9f49aa0252b89842eb8, type: 3}
+  entityElement: 4
   baseTraits:
     reorderableList:
       canAdd: 1
@@ -41,7 +41,33 @@ MonoBehaviour:
     isExpanded: 1
     _keyValues: 01000000000000000200000003000000040000000500000006000000
     _keys: 01000000000000000200000003000000040000000500000006000000
-    _values: 00000000000000000000000000000000000000000000000000000000
+    _values: 0b000000070000000c0000000a0000000a0000000900000008000000
+  personalGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 000000000100000003000000040000000500000006000000
+    _keys: 000000000100000003000000040000000500000006000000
+    _values: 0a0000000a0000001e0000000f0000000a0000000a000000
   exclusiveActiveSkill: {fileID: 0}
   exclusivePassiveSkill: {fileID: 0}
   description: 

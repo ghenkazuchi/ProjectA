@@ -15,7 +15,8 @@ public class CurrencyService
 		var dto = storage.Load();
 		_wallet.FromDTO(dto);
 	}
-	public bool TrySpend(CurrencyType type,int amount)
+
+	public bool TrySpend(CurrencyType type, int amount)
 	{
 		bool ok = _wallet.TrySpend(type, amount);
 		if (ok)
@@ -24,14 +25,21 @@ public class CurrencyService
 		}
 		return ok;
 	}
+
 	public void Add(CurrencyType type, int amount)
 	{
-		_wallet.Adð(type, amount);
+		_wallet.Add(type, amount);
 		storage.Save(_wallet.ToDTO());
 	}
+
+	public void Clear()
+	{
+		_wallet.Clear();
+		storage.Save(_wallet.ToDTO());
+	}
+
 	public bool HasEnough(CurrencyType type, int amount)
 	{
 		return _wallet.CanAfford(type, amount);
 	}
-
 }

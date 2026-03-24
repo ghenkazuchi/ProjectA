@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class RecruitUIController : MonoBehaviour
 {
 	[Header("Basic info")]
+	[SerializeField] TextMeshProUGUI recruitmentCost;
 	[SerializeField] Image characterPortrait;
 	[SerializeField] TextMeshProUGUI nameText;
 	[SerializeField] TextMeshProUGUI levelText;
@@ -57,6 +58,19 @@ public class RecruitUIController : MonoBehaviour
 	}
 	private void OnRecruitButtonClicked()
 	{
+		if (currentRecruitableCharacterData == null) return;
+
+		int cost = currentRecruitableCharacterData.recruitmentCost;
+		if (DataManager.Instance != null && DataManager.Instance.Currency != null)
+		{
+			if (!DataManager.Instance.Currency.TrySpend(CurrencyType.SoulDusk, cost))
+			{
+				Debug.LogWarning($"Not enough Souldusk to recruit {currentRecruitableCharacterData.characterName}. Need {cost} Souldusk.");
+				// Optionally pop a Toast UI here
+				return;
+			}
+		}
+
 		Debug.Log("Recruited");
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnRecruitCharacter, new object[] { currentRecruitableCharacterData, currentRecruitableCharacterInteractive }));
 	}
@@ -85,6 +99,11 @@ public class RecruitUIController : MonoBehaviour
 		levelText.text = $"Level: {characterData.level}";
 		raceText.text = $"Race: {characterData.characterTemplate.raceData.raceType.ToString()}";
 		ElementText.text = $"Element: {characterData.characterTemplate.entityData.EntityElement.ToString()}";
+
+		if (recruitmentCost != null)
+		{
+			recruitmentCost.text = $"{characterData.recruitmentCost}";
+		}
 	}
 
 	private void DisplayCharacterSkills(RecruitableCharacterData characterData,SkillType skillType)

@@ -11,7 +11,7 @@ public class ShopPlayerCharacterUIButton : MonoBehaviour
 
 	public void Setup(PlayerCharacter character)
 	{
-		characterPortrait.sprite = character.entityData.EntitySprite;
+		characterPortrait.sprite = character.entityData.EntityPortrait;
 		playerCharacter = character;
 	}
 }

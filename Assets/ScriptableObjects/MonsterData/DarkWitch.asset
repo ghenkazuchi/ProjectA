@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894b54a31adb29b4cb0a00cbf1300d41, type: 3}
+  m_Name: DarkWitch
+  m_EditorClassIdentifier: 
+  entityName: Dark Witch
+  entitySprite: {fileID: 21300000, guid: a6219b77592f103469de930f79d60606, type: 3}
+  entityPortrait: {fileID: 21300000, guid: d23d5b1836cf315468f95bce1937ca94, type: 3}
+  entityElement: 6
+  baseTraits:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 01000000000000000200000003000000040000000500000006000000
+    _keys: 01000000000000000200000003000000040000000500000006000000
+    _values: 0f000000050000000c00000006000000070000000500000005000000
+  personalGrowthRates:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 01000000020000000300000004000000
+    _keys: 01000000020000000300000004000000
+    _values: 32000000230000000a0000000a000000
+  exclusiveActiveSkill: {fileID: 0}
+  exclusivePassiveSkill: {fileID: 11400000, guid: 33910b807caa23c439dc0a9167cc8ca9,
+    type: 2}
+  dominantTrait: 1
+  dominantWeight: 6
+  baseExp: 100
+  aiStrategy: 1
+  aiBehavior:
+    finishKill: 1
+    healCriticalAlly: 1
+    exploitElement: 1
+    randomTarget: 1
+    focusBeforeEnemyHeals: 0
+    buffBeforeAllyTurn: 1
+    healThreshold: 0.3

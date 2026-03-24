@@ -11,6 +11,7 @@ public class CharmEffect : EffectBase, ITurnStart
 
 	public  IEnumerator OnTurnStart()
 	{
+		RequestVfx(EffectVfxTrigger.TurnStart);
 		var d = new TurnDirective
 		{
 			SkipThisTurn = false,

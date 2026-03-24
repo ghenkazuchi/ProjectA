@@ -15,6 +15,12 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 	public float goldRate;
 	public float diamondRate;
 
+	[Header("Gold Reward")]
+	[Tooltip("70% chance to drop gold instead of items")]
+	[Range(0f, 1f)] public float goldDropChance = 0.7f;
+	public int minGold = 10;
+	public int maxGold = 50;
+
 	private List<ChestLootEntry> generatedItems = new List<ChestLootEntry>();
 
 	private ItemGrade RollGrade()
@@ -27,7 +33,6 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 		else
 			return ItemGrade.Normal;
 	}
-
 
 	public void GenerateChestItems()
 	{
@@ -42,16 +47,30 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 			ItemGrade grade = RollGrade();
 			if (pick is ItemBaseData) grade = RollGrade();
 
-			generatedItems.Add(new ChestLootEntry(pick,grade));
+			generatedItems.Add(new ChestLootEntry(pick, grade));
 		}
-
 	}
 
 	public void openChest()
 	{
-		GenerateChestItems();
 		DataManager.Instance?.Achievements?.RecordChestOpen();
-		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestOpen, new object[] { generatedItems }));
+
+		ChestReward reward;
+		if (Random.value < goldDropChance)
+		{
+			// Gold reward
+			int gold = Random.Range(minGold, maxGold + 1);
+			DataManager.Instance?.Currency?.Add(CurrencyType.Gold, gold);
+			reward = ChestReward.Gold(gold);
+		}
+		else
+		{
+			// Equipable reward
+			GenerateChestItems();
+			reward = ChestReward.Items(generatedItems);
+		}
+
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestOpen, new object[] { reward }));
 		Destroy(gameObject);
 	}
 

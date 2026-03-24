@@ -19,12 +19,38 @@ MonoBehaviour:
   CanBeRemoved: 1
   Stackable: 1
   MaxStack: 5
-  AppliesTo: 1
   isInstantEffect: 0
-  hasLimitedUsage: 0
-  maxUsePerBattle: 0
-  maxUSePerLifeCycle: 0
-  timing: 1
-  requiredHit: 1
+  tags: 0
   effectIcon: {fileID: 21300000, guid: ebe18e1885fd7024494820308d4b0496, type: 3}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames:
+    - {fileID: 2054093428, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 1154408791, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -1558171655, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -758978868, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 1676275971, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 290091457, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 1521348553, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 2033060919, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 1702647739, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 1837993996, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -1897994777, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: 2075807738, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -79242027, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -1622161607, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    - {fileID: -1093960394, guid: 8eacccda6e962584f9d81f91506a378f, type: 3}
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
   basePoisonDamage: 5

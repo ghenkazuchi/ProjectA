@@ -12,4 +12,6 @@ public class MonsterRankData :ScriptableObject
 	public SerializableDictionaryBase<Trait, int> traitBonuses = new SerializableDictionaryBase<Trait, int> { };
 	[Header("Exp Multipliers")]
 	public float expMultipliers;
+	[Header("Souldusk Reward")]
+	public int baseSoulduskReward = 10;
 }

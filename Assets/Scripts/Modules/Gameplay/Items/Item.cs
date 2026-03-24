@@ -19,6 +19,21 @@ public class Item
 	}
 	public EffectUsageTracker GetEffectTracker(string effectName)
 	{
+		if (effectUsageCounter == null || effectUsageCounter.Count == 0)
+		{
+			effectUsageCounter = new Dictionary<string, EffectUsageTracker>();
+			if (itemBaseData != null && itemBaseData.effectData != null)
+			{
+				foreach (var effect in itemBaseData.effectData)
+				{
+					if (effect != null && effect.effect != null && !effectUsageCounter.ContainsKey(effect.effect.Name))
+					{
+						effectUsageCounter.Add(effect.effect.Name, new EffectUsageTracker(itemBaseData.maxUsePerBattle, itemBaseData.maxUsePerLifeCyle));
+					}
+				}
+			}
+		}
+
 		if (effectUsageCounter.TryGetValue(effectName, out var tracker))
 		{
 			return tracker;

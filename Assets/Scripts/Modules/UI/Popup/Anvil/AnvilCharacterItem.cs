@@ -29,7 +29,7 @@ public class AnvilCharacterItem : MonoBehaviour
 	{
 		currentCharacter = character;
 		onToggleSelect = onItemToggle;
-		characterSprite.sprite = character.entityData.EntitySprite;
+		characterSprite.sprite = character.entityData.EntityPortrait;
 		canvasGroup.alpha = 1f;
 		canvasGroup.interactable = true;
 		canvasGroup.blocksRaycasts = true;

@@ -11,6 +11,7 @@ public class SpawnableObject : ScriptableObject
 	public InteracableType interacableType;
 	public Sprite ingameSprite;
 	public GameObject prefab;
+	[Min(1)] public int spawnWeight = 1;
 
 	[Header("Unique setting")]
 	public bool uniquePerMap = false;

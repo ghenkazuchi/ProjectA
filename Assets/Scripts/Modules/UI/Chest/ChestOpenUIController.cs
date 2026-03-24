@@ -2,6 +2,7 @@ using DG.Tweening;
 using HaKien;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,11 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 	[SerializeField] Vector2 chestIntendedPos = new Vector2(0, 0);
 	private Vector2 originalChestPos;
 	[SerializeField] CanvasGroup selectItemCanvasGroup;
+
+	[Header("Gold Reward UI")]
+	[SerializeField] CanvasGroup goldRewardCanvasGroup;
+	[SerializeField] TextMeshProUGUI goldRewardText;
+
 	private void Awake()
 	{
 		UICanvasGroup.alpha = 0f;
@@ -29,17 +35,26 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		chestCanvasGroup.alpha = 0f;
 		chestCanvasGroup.blocksRaycasts = false;
 		chestCanvasGroup.interactable = false;
+		if (goldRewardCanvasGroup != null)
+		{
+			goldRewardCanvasGroup.alpha = 0f;
+			goldRewardCanvasGroup.interactable = false;
+			goldRewardCanvasGroup.blocksRaycasts = false;
+		}
 	}
+
 	public void Handle(Message message)
 	{
 		switch (message.type)
 		{
 			case MessageType.OnChestOpen:
-				if (message.data != null && message.data.Length > 0 && message.data[0] is List<ChestLootEntry> entries)
+				if (message.data != null && message.data.Length > 0 && message.data[0] is ChestReward reward)
 				{
-					PlayOpenChestAnimation();
-					InitializeChestItems(entries);
 					OpenChestUI();
+					if (!reward.isGold)
+						InitializeChestItems(reward.items);
+					
+					PlayOpenChestAnimation(reward);
 				}
 				break;
 			case MessageType.OnItemSelected:
@@ -58,17 +73,20 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		MessageManager.Instance.AddSubcriber(MessageType.OnChestOpen, this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnItemSelected, this);
 	}
+
 	public void OnDisable()
 	{
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnChestOpen, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnItemSelected, this);
 	}
+
 	public void OpenChestUI()
 	{
 		UICanvasGroup.alpha = 1f;
 		UICanvasGroup.interactable = true;
 		UICanvasGroup.blocksRaycasts = true;
 	}
+
 	public void OpenItemPanel()
 	{
 		selectItemCanvasGroup.alpha = 1f;
@@ -82,6 +100,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		selectItemCanvasGroup.interactable = false;
 		selectItemCanvasGroup.blocksRaycasts = false;
 	}
+
 	public void InitializeChestItems(List<ChestLootEntry> entries)
 	{
 		for (int i = 0; i < chestItemSlots.Length; i++)
@@ -96,6 +115,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			}
 		}
 	}
+
 	public void ShowPartySelection(ChestLootEntry entry)
 	{
 		selectedItem = entry;
@@ -108,6 +128,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			Debug.LogError("PartyMemberSelectionUI is not assigned!");
 		}
 	}
+
 	public void CloseChestUI()
 	{
 		UICanvasGroup.alpha = 0f;
@@ -117,6 +138,12 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		{
 			slot.ClearItemSlot();
 		}
+		if (goldRewardCanvasGroup != null)
+		{
+			goldRewardCanvasGroup.alpha = 0f;
+			goldRewardCanvasGroup.interactable = false;
+			goldRewardCanvasGroup.blocksRaycasts = false;
+		}
 		selectedItem = default;
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnInteractEnd));
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestClose));
@@ -125,7 +152,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		chestImage.sprite = frames[0];
 	}
 
-	private void PlayOpenChestAnimation()
+	private void PlayOpenChestAnimation(ChestReward reward)
 	{
 		UICanvasGroup.alpha = 1f;
 		UICanvasGroup.interactable = false;
@@ -135,7 +162,12 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		Sequence sequence = DOTween.Sequence().SetLink(gameObject);
 		sequence.Append(chestRect.DOAnchorPos(chestIntendedPos, 0.75f).SetEase(Ease.OutBounce));
 		sequence.Append(DOVirtual.Int(0, frames.Length - 1, 0.35f, i => chestImage.sprite = frames[i]));
-		sequence.AppendCallback(() => SpawnChestAnimation());
+		
+		if (!reward.isGold)
+		{
+			sequence.AppendCallback(() => SpawnChestAnimation());
+		}
+
 		sequence.OnComplete(() =>
 		{
 			UICanvasGroup.interactable = true;
@@ -143,9 +175,14 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			chestCanvasGroup.blocksRaycasts = false;
 			chestCanvasGroup.interactable = false;
 			chestCanvasGroup.alpha = 0f;
+			
+			if (reward.isGold)
+			{
+				SpawnGoldAnimation(reward.goldAmount);
+			}
 		});
-
 	}
+
 	private void SpawnChestAnimation()
 	{
 		OpenItemPanel();
@@ -174,5 +211,31 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			slotRect.DOAnchorPos(endAnchored, t).SetEase(Ease.OutQuad).SetDelay(delay).SetLink(slot.gameObject);
 			slotRect.DOScale(1f, t).SetEase(Ease.OutBack).SetDelay(delay).SetLink(slot.gameObject);
 		}
+	}
+
+	private void SpawnGoldAnimation(int amount)
+	{
+		if (goldRewardCanvasGroup == null || goldRewardText == null)
+		{
+			CloseChestUI();
+			return;
+		}
+
+		goldRewardText.text = $"+{amount}";
+		
+		RectTransform goldRect = goldRewardCanvasGroup.GetComponent<RectTransform>();
+		goldRect.anchoredPosition = chestRect.anchoredPosition; 
+		goldRect.localScale = Vector3.zero;
+		
+		goldRewardCanvasGroup.alpha = 1f;
+		goldRewardCanvasGroup.interactable = false;
+		goldRewardCanvasGroup.blocksRaycasts = false;
+		
+		Sequence seq = DOTween.Sequence().SetLink(goldRewardCanvasGroup.gameObject);
+		seq.Append(goldRect.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack));
+		seq.Join(goldRect.DOAnchorPosY(goldRect.anchoredPosition.y + 120f, 1f).SetEase(Ease.OutQuad));
+		seq.AppendInterval(0.3f);
+		seq.Append(goldRewardCanvasGroup.DOFade(0f, 0.25f));
+		seq.OnComplete(() => CloseChestUI());
 	}
 }

@@ -24,7 +24,7 @@ public class AnvilCharacterSelectionUIComponent : MonoBehaviour
 			Debug.Log("pc is null");
 		}
 		this.onSelectCharacter = onSelectCharacter;
-		characterSprite.sprite = pc.entityData.EntitySprite;
+		characterSprite.sprite = pc.entityData.EntityPortrait;
 		selectButton.onClick.RemoveAllListeners();
 		selectButton.onClick.AddListener(() => onSelectCharacter?.Invoke(pc));
 	}
