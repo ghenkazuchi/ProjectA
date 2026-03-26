@@ -16,6 +16,6 @@ MonoBehaviour:
   interacableType: 0
   ingameSprite: {fileID: 45396006, guid: 653e7fcdcc489c040916c7f3a9737f75, type: 3}
   prefab: {fileID: 671993994658027252, guid: 02365b7a0f741b54db2e78f7a6bab9fb, type: 3}
-  spawnWeight: 4
+  spawnWeight: 2
   uniquePerMap: 0
   uniqueKey: 

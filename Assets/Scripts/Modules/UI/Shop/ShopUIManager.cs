@@ -16,6 +16,7 @@ public class ShopUIManager : MonoBehaviour, IMessageHandle
 	[SerializeField] private Button closeButton;
 	private List<EquipableBaseData> currentEquipableStock;
 	private ShopKeeperInteractableObject currentInteractShopKeeper;
+	[SerializeField] private ToastUI shopToast;
 	public void Awake()
 	{
 		Hide();
@@ -110,7 +111,18 @@ public class ShopUIManager : MonoBehaviour, IMessageHandle
 					removeWeapon = false,
 					removeItemIndices = null
 				};
-				currentInteractShopKeeper.TryPurchase(selection,price);
+				bool successPure = currentInteractShopKeeper.TryPurchase(selection,price);
+				if (!successPure && selection.target != null && selection.newEquip != null)
+				{
+					if (!DataManager.Instance.Currency.HasEnough(CurrencyType.Gold, price))
+					{
+						ShowToastMessage("Not enough gold!");
+					}
+					else
+					{
+						ShowToastMessage($"{selection.target.entityData.EntityName} can't use {selection.newEquip.itemName}");
+					}
+				}
 				break;
 			case MessageType.OnShopCharacterReplaceSelectionConfirmed:
 				var selectedCharacter = (PlayerCharacter)message.data[0];
@@ -121,7 +133,18 @@ public class ShopUIManager : MonoBehaviour, IMessageHandle
 			case MessageType.OnSelectedEquipableConclude:
 				var concludedEquipable = (ShopReplaceSelection)message.data[0];
 				var equipablePrice = concludedEquipable.newEquip.basePrice;
-				currentInteractShopKeeper.TryPurchase(concludedEquipable, equipablePrice);
+				bool successReplace = currentInteractShopKeeper.TryPurchase(concludedEquipable, equipablePrice);
+				if (!successReplace && concludedEquipable.target != null && concludedEquipable.newEquip != null)
+				{
+					if (!DataManager.Instance.Currency.HasEnough(CurrencyType.Gold, equipablePrice))
+					{
+						ShowToastMessage("Not enough gold!");
+					}
+					else
+					{
+						ShowToastMessage($"{concludedEquipable.target.entityData.EntityName} can't use {concludedEquipable.newEquip.itemName}");
+					}
+				}
 				break;
 		}
 	}
@@ -134,7 +157,7 @@ public class ShopUIManager : MonoBehaviour, IMessageHandle
 
 		if (!currency.HasEnough(CurrencyType.Gold, price))
 		{
-			Debug.Log("Not enough gold to buy " + data.itemName);
+			ShowToastMessage("Not enough gold!");
 			return;
 		}
 
@@ -143,5 +166,12 @@ public class ShopUIManager : MonoBehaviour, IMessageHandle
 	private void OnRerollClicked()
 	{
 		currentInteractShopKeeper.RestockEquipables();
+	}
+	public void ShowToastMessage(string message)
+	{
+		if (shopToast != null)
+		{
+			shopToast.ShowToast(message);
+		}
 	}
 }

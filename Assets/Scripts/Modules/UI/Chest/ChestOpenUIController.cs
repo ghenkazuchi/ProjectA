@@ -26,6 +26,9 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 	[SerializeField] CanvasGroup goldRewardCanvasGroup;
 	[SerializeField] TextMeshProUGUI goldRewardText;
 
+	[Header("Toast")]
+	[SerializeField] private ToastUI toastUI;
+
 	private void Awake()
 	{
 		UICanvasGroup.alpha = 0f;
@@ -237,5 +240,16 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		seq.AppendInterval(0.3f);
 		seq.Append(goldRewardCanvasGroup.DOFade(0f, 0.25f));
 		seq.OnComplete(() => CloseChestUI());
+	}
+	public void ShowToast(string message)
+	{
+		if (toastUI != null)
+		{
+			toastUI.ShowToast(message);
+		}
+		else
+		{
+			Debug.LogError("ToastUI is not assigned!");
+		}
 	}
 }

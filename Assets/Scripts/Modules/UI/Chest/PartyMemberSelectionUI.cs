@@ -55,6 +55,7 @@ public class PartyMemberSelectionUI : MonoBehaviour
 			else
 			{
 				Debug.Log($"Failed to equip {weaponData.itemName} to {selectedMember.entityData.EntityName}");
+				ChestOpenUIController.Instance.ShowToast($"{selectedMember.entityData.EntityName} can't use {weaponData.itemName}");
 			}
 		}
 		else

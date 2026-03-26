@@ -20,7 +20,7 @@ MonoBehaviour:
   skillRange: 0
   baseSpCost: 10
   baseMpCost: 0
-  baseSkillDamage: 40
+  baseSkillDamage: 100
   baseHitChance: 1
   skillElement: 0
   activeSkillType: 0

@@ -19,11 +19,24 @@ MonoBehaviour:
   CanBeRemoved: 0
   Stackable: 0
   MaxStack: 0
-  AppliesTo: 0
   isInstantEffect: 1
-  hasLimitedUsage: 1
-  maxUsePerBattle: 1
-  maxUSePerLifeCycle: 1000000000
-  timing: 0
-  requiredHit: 0
+  tags: 0
+  effectIcon: {fileID: 0}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
   restoreAmount: 0.3
+  restoreThreshold: 0.2
