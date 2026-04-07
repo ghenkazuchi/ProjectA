@@ -240,7 +240,7 @@ public class VoronoiPathGenerator : MonoBehaviour
 		regionTilemap.SetTiles(regPosArray, regTileArray);
 
 		var director = new InteractableSpawnDirector(this, generatedTopology, spawnedObjectInMap);
-		director.SpawnAll();
+		yield return StartCoroutine(director.SpawnAllCoroutine());
 
 		mapGenerated = true;
 		OnMapGenerated?.Invoke();

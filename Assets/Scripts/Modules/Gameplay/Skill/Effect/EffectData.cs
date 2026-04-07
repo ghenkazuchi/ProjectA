@@ -30,6 +30,7 @@ public abstract class EffectData : ScriptableObject
 	public bool Stackable;
 	public int MaxStack;
 	public bool isInstantEffect;
+	public bool isPassiveEquipmentEffect;
 	public EffectTag tags;
 
 

@@ -251,13 +251,17 @@ public class PlayerCreationUITest : MonoBehaviour
 		StartCoroutine(CreateCharacterRoutine());
 	}
 
+	[SerializeField] private TextMeshProUGUI statusText;
+
 	IEnumerator CreateCharacterRoutine()
 	{
 		canvasGroup.interactable = false;
 		var mapGen = FindObjectOfType<VoronoiPathGenerator>();
 		if (mapGen != null && !mapGen.IsMapGenerated())
 		{
+			if (statusText != null) statusText.text = "Generating World...";
 			yield return new WaitUntil(() => mapGen.IsMapGenerated());
+			if (statusText != null) statusText.text = "";
 		}
 
 		CharacterRaceData race = GetSelectedRace();

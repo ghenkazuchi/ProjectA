@@ -12,7 +12,9 @@ public enum GameState
 	PartyMenu,
 	ChestOpen,
 	OnInteract,
-	AchievementMenu
+	AchievementMenu,
+	PortalMenu,
+	MapView
 }
 
 public class GameController : Singleton<GameController>,IMessageHandle
@@ -46,6 +48,10 @@ public class GameController : Singleton<GameController>,IMessageHandle
 		MessageManager.Instance.AddSubcriber(MessageType.OnInteractEnd, this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnAchievementScreenOpen, this);
 		MessageManager.Instance.AddSubcriber(MessageType.OnAchievementScreenClose, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnPortalOpen, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnPortalClose, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnMapViewOpen, this);
+		MessageManager.Instance.AddSubcriber(MessageType.OnMapViewClose, this);
 	}
 	private void OnDisable()
 	{
@@ -65,6 +71,10 @@ public class GameController : Singleton<GameController>,IMessageHandle
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnInteractEnd, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnAchievementScreenOpen, this);
 		MessageManager.Instance.RemoveSubcriber(MessageType.OnAchievementScreenClose, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnPortalOpen, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnPortalClose, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnMapViewOpen, this);
+		MessageManager.Instance.RemoveSubcriber(MessageType.OnMapViewClose, this);
 	}
 	public void Handle(Message message)
 	{
@@ -89,7 +99,11 @@ public class GameController : Singleton<GameController>,IMessageHandle
 				PlayerCharacter newCharacter = recruitedCharData.CreatePlayerCharacter();
 				playerParty.AddCharacter(newCharacter);
 				recruitedInteractive?.Recruit();
-				DataManager.Instance?.Achievements?.RecordRecruit(recruitedCharData?.characterTemplate?.entityData, recruitedCharData?.characterTemplate);
+				GameEventBus.Publish(new RecruitEvent
+				{
+					RecruitedCharacterData = recruitedCharData?.characterTemplate?.entityData,
+					RecruitedTemplate = recruitedCharData?.characterTemplate
+				});
 				currentState = GameState.FreeRoam;
 			break;
 			case MessageType.OnRecruitCharacterUIClose:
@@ -125,6 +139,18 @@ public class GameController : Singleton<GameController>,IMessageHandle
 				currentState = GameState.AchievementMenu;
 				break;
 			case MessageType.OnAchievementScreenClose:
+				currentState = GameState.FreeRoam;
+				break;
+			case MessageType.OnPortalOpen:
+				currentState = GameState.PortalMenu;
+				break;
+			case MessageType.OnPortalClose:
+				currentState = GameState.FreeRoam;
+				break;
+			case MessageType.OnMapViewOpen:
+				currentState = GameState.MapView;
+				break;
+			case MessageType.OnMapViewClose:
 				currentState = GameState.FreeRoam;
 				break;
 		}

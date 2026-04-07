@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IncreaseSpellDamageBuffData : EffectBase,IBeforeDealingDamage
+public class IncreaseSpellDamageBuffEffect : EffectBase,IBeforeDealingDamage
 {
 	public float IncreaseDamagePercentage;
-	public IncreaseSpellDamageBuffData(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
+	public IncreaseSpellDamageBuffEffect(EffectData data, EntityBase owner, EntityBase target, int duration) : base(data, owner, target, duration)
 	{
 	}
 

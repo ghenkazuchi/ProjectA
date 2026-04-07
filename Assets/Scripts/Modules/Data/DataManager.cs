@@ -57,4 +57,12 @@ public class DataManager : Singleton<DataManager>, IMessageHandle
 				break;
 		}
 	}
+
+#if UNITY_EDITOR
+	[ContextMenu("Debug/Reset All Achievements")]
+	private void ResetAchievements()
+	{
+		Achievements?.ResetAllAchievements();
+	}
+#endif
 }

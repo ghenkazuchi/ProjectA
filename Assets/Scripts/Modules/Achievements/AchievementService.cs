@@ -30,6 +30,21 @@ public sealed class AchievementService
 		InitializeDefinitions();
 		Load();
 		RebuildUnlockedRewards();
+		GameEventBus.SubscribeToAll(RecordEvent);
+	}
+
+	public void ResetAllAchievements()
+	{
+		statesById.Clear();
+		unlockedShopEquipablesByPool.Clear();
+		unlockedChestEquipablesByPool.Clear();
+		unlockedSkillsByPool.Clear();
+		nextCompletionOrder = 1;
+		
+		storage.Save(new AchievementProgressFileDTO());
+		RebuildUnlockedRewards();
+		
+		Debug.Log("[Achievements] All achievements and rewards have been reset.");
 	}
 
 	public bool HasDefinitions => database != null && database.Achievements != null && database.Achievements.Count > 0;
@@ -125,92 +140,7 @@ public sealed class AchievementService
 		return result;
 	}
 
-	public void RecordMonsterKill(MonsterCharacter monster)
-	{
-		if (monster == null) return;
-		RecordEvent(new AchievementEventData
-		{
-			Kind = AchievementEventKind.MonsterKill,
-			Monster = monster
-		});
-	}
 
-	public void RecordBattleWin()
-	{
-		RecordBattleWin(-1f, 0, 0, default, 0, null);
-	}
-
-	public void RecordBattleWin(float partyHealthRatio, int alivePartyMemberCount, int totalPartyMemberCount)
-	{
-		RecordBattleWin(partyHealthRatio, alivePartyMemberCount, totalPartyMemberCount, default, 0, null);
-	}
-
-	public void RecordBattleWin(
-		float partyHealthRatio,
-		int alivePartyMemberCount,
-		int totalPartyMemberCount,
-		BattleType battleType,
-		int battleItemUseCount,
-		IList<MonsterCharacter> battleMonsters)
-	{
-		RecordEvent(new AchievementEventData
-		{
-			Kind = AchievementEventKind.BattleWin,
-			PartyHealthRatio = partyHealthRatio,
-			AlivePartyMemberCount = Mathf.Max(0, alivePartyMemberCount),
-			TotalPartyMemberCount = Mathf.Max(0, totalPartyMemberCount),
-			BattleType = battleType,
-			BattleItemUseCount = Mathf.Max(0, battleItemUseCount),
-			BattleMonsters = battleMonsters != null ? new List<MonsterCharacter>(battleMonsters) : null
-		});
-	}
-
-	public void RecordShopPurchase(EquipableBaseData equipable)
-	{
-		RecordEvent(new AchievementEventData
-		{
-			Kind = AchievementEventKind.ShopPurchase,
-			Equipable = equipable
-		});
-	}
-
-	public void RecordChestOpen()
-	{
-		RecordEvent(new AchievementEventData { Kind = AchievementEventKind.ChestOpen });
-	}
-
-	public void RecordRecruit()
-	{
-		RecordRecruit(null, null);
-	}
-
-	public void RecordRecruit(BaseEntityData characterData, RecruitableCharacterTemplate template)
-	{
-		RecordEvent(new AchievementEventData
-		{
-			Kind = AchievementEventKind.Recruit,
-			RecruitedCharacterData = characterData,
-			RecruitedTemplate = template
-		});
-	}
-
-	public void RecordInteraction(Interacable interactable)
-	{
-		if (interactable == null)
-		{
-			return;
-		}
-
-		SpawnableObject spawnableObject = interactable.spawnableData;
-		RecordEvent(new AchievementEventData
-		{
-			Kind = AchievementEventKind.Interaction,
-			HasInteractableType = spawnableObject != null,
-			InteractableType = spawnableObject != null ? spawnableObject.interacableType : default,
-			SpawnableObject = spawnableObject,
-			InteractionKey = spawnableObject != null ? spawnableObject.GetKey() : interactable.name
-		});
-	}
 
 	private void InitializeDefinitions()
 	{
@@ -306,7 +236,7 @@ public sealed class AchievementService
 		return state;
 	}
 
-	private void RecordEvent(AchievementEventData achievementEvent)
+	private void RecordEvent(IGameEvent achievementEvent)
 	{
 		if (!HasDefinitions || achievementEvent == null)
 		{
@@ -413,14 +343,22 @@ public sealed class AchievementService
 			{
 				switch (reward)
 				{
-					case UnlockShopEquipableAchievementRewardData shopReward:
-						AddUnlockedEquipable(unlockedShopEquipablesByPool, shopReward.TargetPool, shopReward.Equipable);
-						break;
-					case UnlockChestEquipableAchievementRewardData chestReward:
-						AddUnlockedEquipable(unlockedChestEquipablesByPool, chestReward.TargetPool, chestReward.Equipable);
-						break;
+
 					case UnlockHeroSpiritSkillAchievementRewardData skillReward:
 						AddUnlockedSkill(skillReward.TargetPool, skillReward.Skill);
+						break;
+					case EquipableAchievementRewardData equipReward:
+						if (equipReward.TargetPools != null)
+						{
+							foreach (var pool in equipReward.TargetPools)
+							{
+								if (pool == null) continue;
+								var targetDict = pool.SourceKind == UnlockableEquipableSourceKind.Shop 
+									? unlockedShopEquipablesByPool 
+									: unlockedChestEquipablesByPool;
+								AddUnlockedEquipable(targetDict, pool, equipReward.Equipable);
+							}
+						}
 						break;
 				}
 			}

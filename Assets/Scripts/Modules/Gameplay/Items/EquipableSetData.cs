@@ -7,6 +7,7 @@ public class EquipableSetData : ScriptableObject
 {
 	public string setName;
 	public List<ThresholdBonus> thresholds = new();
+	public Sprite setEffectIcon;
 
 	public IEnumerable<EquipEffectBinding> GetEffects(int pieceCount)
 	{

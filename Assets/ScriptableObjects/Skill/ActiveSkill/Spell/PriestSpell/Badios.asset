@@ -18,8 +18,8 @@ MonoBehaviour:
   skillDefinition: 0
   targetType: 3
   skillRange: 0
-  baseSpCost: 8
-  baseMpCost: 0
+  baseSpCost: 0
+  baseMpCost: 12
   baseSkillDamage: 10
   baseHitChance: 1
   skillElement: 0

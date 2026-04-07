@@ -184,7 +184,8 @@ public enum InteracableType
 	ShopKeeper,
 	FireCamp,
 	Companion,
-	UniqueBoss
+	UniqueBoss,
+	Portal
 }
 public enum InteracableGroup
 {
@@ -193,6 +194,7 @@ public enum InteracableGroup
 	Service,
 	Event,
 	UniqueBoss,
+	Portal,
 }
 public enum BattleType
 {
@@ -342,6 +344,7 @@ public enum EquipEffectTrigger
 {
 	OnEquip,
 	OnBattleStart,
+	OnBattleEnd,
 	OnTurnStart,
 	OnTurnEnd,
 	OnDealingDamage,
@@ -491,6 +494,7 @@ public sealed class DamageContext
 
 	public bool CritDecided;
 	public bool IsCritical;
+	public bool HasElementalAdvantage;
 	public float CritMultiplier = 1f;
 	public CritFocedType CritForce = CritFocedType.None;
 	public int BaseDamage;
@@ -513,6 +517,10 @@ public sealed class DamageContext
 	public float attackIncreasePercentage;
 	public float propertyDamagePercentage;
 
+	// Critical hit bonuses (from skill modifiers, equipment, buffs)
+	public float BonusCritChance;
+	public float BonusCritMultiplier;
+
 
 	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, bool isEffect = false)
 	{
@@ -534,6 +542,9 @@ public sealed class DamageContext
 		CritForce = CritFocedType.None;
 		defenseIgnorePercentage = 0;
 		attackIncreasePercentage = 1;
+		BonusCritChance = 0f;
+		BonusCritMultiplier = 0f;
+		HasElementalAdvantage = false;
 	}
 }
 public sealed class HealingContext

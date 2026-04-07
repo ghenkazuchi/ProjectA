@@ -70,6 +70,8 @@ public class BattleUnitActiveEffect : MonoBehaviour
 
 	private void OnEffectAdded(EntityBase ent, EffectBase e)
 	{
+		if (e.SourceData != null && e.SourceData.isPassiveEquipmentEffect) return;
+
 		int rid = e.RuntimeId;
 		if (id2Icon.TryGetValue(rid, out var ui))
 		{
@@ -118,8 +120,11 @@ public class BattleUnitActiveEffect : MonoBehaviour
 		var all = entity?.GetAllEffect();
 		if (all == null || all.Count == 0) return;
 
-		foreach (var e in all.Take(maxIcons))
+		foreach (var e in all)
 		{
+			if (e.SourceData != null && e.SourceData.isPassiveEquipmentEffect) continue;
+			if (displayOrder.Count >= maxIcons) break;
+
 			var ui = GetUI();
 			ui.transform.SetParent(effectPanel, false);
 			ui.gameObject.SetActive(true);
@@ -149,6 +154,7 @@ public class BattleUnitActiveEffect : MonoBehaviour
 			var all = entity.GetAllEffect();
 			foreach (var eff in all)
 			{
+				if (eff.SourceData != null && eff.SourceData.isPassiveEquipmentEffect) continue;
 				if (displayOrder.Count >= maxIcons) break;
 				if (id2Icon.ContainsKey(eff.RuntimeId)) continue;
 				AddEffectToFront(eff);

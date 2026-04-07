@@ -72,7 +72,7 @@ MonoBehaviour:
   exclusivePassiveSkill: {fileID: 0}
   dominantTrait: 4
   dominantWeight: 4
-  baseExp: 50
+  baseExp: 10
   aiStrategy: 1
   aiBehavior:
     finishKill: 1

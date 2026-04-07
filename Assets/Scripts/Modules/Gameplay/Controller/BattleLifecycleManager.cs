@@ -1,4 +1,5 @@
 using HaKien;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -130,6 +131,13 @@ public class BattleLifecycleManager
 	/// </summary>
 	public void HandlePlayerLose(List<EntityBase> allEntities = null)
 	{
+		if (allEntities == null || allEntities.Count == 0)
+		{
+			allEntities = new List<EntityBase>();
+			foreach (var s in sys.playerParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+			foreach (var s in sys.monsterParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+		}
+
 		if (allEntities != null)
 			BattleEventManager.ResetEffectOnEntities(allEntities);
 		CleanupBattle();
@@ -141,6 +149,16 @@ public class BattleLifecycleManager
 	/// </summary>
 	public void HandlePlayerWin(List<EntityBase> allEntities = null)
 	{
+		if (allEntities == null || allEntities.Count == 0)
+		{
+			allEntities = new List<EntityBase>();
+			foreach (var s in sys.playerParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+			foreach (var s in sys.monsterParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+		}
+
+		// Fire OnBattleEnd equipment triggers for surviving player characters BEFORE effect reset
+		sys.StartCoroutine(FireBattleEndTriggers(allEntities));
+
 		if (allEntities != null)
 			BattleEventManager.ResetEffectOnEntities(allEntities);
 
@@ -205,13 +223,15 @@ public class BattleLifecycleManager
 		}
 
 		float partyHealthRatio = totalPartyMaxHp > 0 ? (float)totalPartyHp / totalPartyMaxHp : 0f;
-		DataManager.Instance?.Achievements?.RecordBattleWin(
-			partyHealthRatio,
-			alivePartyMembers,
-			totalPartyMembers,
-			sys.currentBattleType,
-			sys.BattleItemEffectUseCount,
-			defeatedMonsters);
+		GameEventBus.Publish(new BattleWinEvent
+		{
+			PartyHealthRatio = partyHealthRatio,
+			AlivePartyMemberCount = Mathf.Max(0, alivePartyMembers),
+			TotalPartyMemberCount = Mathf.Max(0, totalPartyMembers),
+			BattleType = sys.currentBattleType,
+			BattleItemUseCount = Mathf.Max(0, sys.BattleItemEffectUseCount),
+			BattleMonsters = defeatedMonsters != null ? new System.Collections.Generic.List<MonsterCharacter>(defeatedMonsters) : null
+		});
 	}
 
 	/// <summary>
@@ -271,5 +291,15 @@ public class BattleLifecycleManager
 		sys.currentMonsterInteractable = null;
 		Resources.UnloadUnusedAssets();
 		System.GC.Collect();
+	}
+
+	private IEnumerator FireBattleEndTriggers(List<EntityBase> entities)
+	{
+		foreach (var entity in entities)
+		{
+			if (entity == null || entity.GetCurrentHP() <= 0) continue;
+			if (entity.EquipmentEffectRunner != null)
+				yield return entity.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnBattleEnd, entity);
+		}
 	}
 }

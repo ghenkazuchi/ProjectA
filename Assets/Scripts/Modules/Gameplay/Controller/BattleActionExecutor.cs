@@ -125,6 +125,24 @@ public class BattleActionExecutor : MonoBehaviour
         {
             sourceEntity.ReduceSP(skillToUse.currentSPCost);
         }
+
+        // Fire IAfterSkillUsed hook
+        var skillUseCtx = new SkillUseContext
+        {
+            Caster = sourceEntity,
+            Skill = skillToUse,
+            Definition = skillToUse.SkillData.skillDefinition,
+            MPCost = skillToUse.currentMPCost,
+            SPCost = skillToUse.currentSPCost,
+            TotalDamageDealt = totalDamagDeal,
+        };
+        var casterEffects = sourceEntity.GetAllEffect();
+        for (int i = 0; i < casterEffects.Count; i++)
+        {
+            if (casterEffects[i] is IAfterSkillUsed afterHook)
+                yield return afterHook.OnAfterSkillUsed(skillUseCtx);
+        }
+
         yield return new WaitForSeconds(0.5f);
         sys.timelineManager.UpdateEntityTimeline(sourceEntity);
         sys.UpdateTimelineUI();
@@ -245,6 +263,12 @@ public class BattleActionExecutor : MonoBehaviour
         string msg = string.IsNullOrEmpty(flavor)
             ? $"{_ctx.Target.entityData.EntityName} took {_ctx.EffectiveDamage} damage!"
             : $"{_ctx.Target.entityData.EntityName} took {_ctx.EffectiveDamage} {flavor} damage!";
+
+        if (_ctx.HasElementalAdvantage)
+        {
+            msg += "\nIt's super effective!";
+        }
+
         yield return sys.ShowDialog(msg);
         if (_ctx.IsCritical)
         {
@@ -256,8 +280,12 @@ public class BattleActionExecutor : MonoBehaviour
         sys.UpdateUnitHealth(_ctx.Target);
         if (_ctx.Target.GetCurrentHP() <= 0 && _ctx.Target is MonsterCharacter defeatedMonster)
         {
-            DataManager.Instance?.Achievements?.RecordMonsterKill(defeatedMonster);
+            GameEventBus.Publish(new MonsterKillEvent
+            {
+                Monster = defeatedMonster
+            });
         }
+        GameEventBus.Publish(new DamageDealtEvent { damageAmount = _ctx.EffectiveDamage });
         if (sys.UpdateUnitState(_ctx.Target)) yield break;
     }
 

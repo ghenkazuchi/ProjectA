@@ -66,6 +66,7 @@ public static class DamageCalculator
         totalDamage *= defenseMultiplier;
 
         float damageMultiplier = ElementalChart.GetMultiplier(skill.element, target.entityData.EntityElement);
+        if (damageMultiplier > 1f) ctx.HasElementalAdvantage = true;
         totalDamage *= damageMultiplier;
 
         float rangePosMul = GetRangePositionMultiplier(source, skill, target, battleSystem);
@@ -156,18 +157,35 @@ public static class DamageCalculator
         return applied;
     }
 
-    public static bool TryRollCritical(EntityBase attacker, EntityBase target, SkillDefinition skill, out float critMul)
+    public static bool TryRollCritical(EntityBase attacker, DamageContext ctx, out float critMul)
     {
-        if (skill != SkillDefinition.BattleArt)
+        if (ctx.Origin != SkillDefinition.BattleArt)
         {
             critMul = 1f;
             return false;
         }
-        float chance = baseCritChance;
-        critMul = baseCritMultiplier;
 
+        // Base values
+        float chance = baseCritChance;
+        float mul = baseCritMultiplier;
+
+        // Layer 1: Skill modifier bonuses (Night Slash style, written into ctx by ModifyPreview)
+        chance += ctx.BonusCritChance;
+        mul += ctx.BonusCritMultiplier;
+
+        // Layer 2: Equipment / buff bonuses (Scope Lens / Sniper style)
         var attackerEffects = attacker.GetAllEffect();
-        return Random.value <= chance;
+        foreach (var e in attackerEffects)
+        {
+            if (e is IModifyCritical critMod)
+            {
+                chance += critMod.GetBonusCritChance();
+                mul += critMod.GetBonusCritMultiplier();
+            }
+        }
+
+        critMul = Mathf.Max(1f, mul);
+        return Random.value <= Mathf.Clamp01(chance);
     }
 
     public static void ResolveCrit(DamageContext ctx, bool isDefending)
@@ -193,7 +211,7 @@ public static class DamageCalculator
             ctx.CritMultiplier = 1f;
             return;
         }
-        if (TryRollCritical(ctx.Source, ctx.Target, ctx.Origin, out var cm))
+        if (TryRollCritical(ctx.Source, ctx, out var cm))
         {
             ctx.IsCritical = true;
             ctx.CritMultiplier = Mathf.Max(1f, cm);

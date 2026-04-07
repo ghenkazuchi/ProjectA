@@ -145,5 +145,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnableData: {fileID: 11400000, guid: 26e44a3fdfd93754592763af6cf0fd9e, type: 2}
   shopPool: []
-  unlockableShopPool: {fileID: 11400000, guid: 53e48c4cce2a3384c974e03ca6d66c10, type: 2}
+  unlockableShopPool: {fileID: 11400000, guid: c41901d7ebaf2b646a8edc48f13e72a9, type: 2}
   stockSize: 9

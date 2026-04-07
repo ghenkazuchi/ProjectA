@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3413ca3d5d142584783954262de76a64, type: 3}
+  m_Name: BigHitter
+  m_EditorClassIdentifier: 
+  achievementId: Big_Hitter
+  achievementTitle: Big Hitter
+  description: "Deal over 100 damage in one attack\t"
+  icon: {fileID: 0}
+  hiddenUntilCompleted: 1
+  conditions:
+  - {fileID: 11400000, guid: 27a4f79989ed55b469b99a17ef0c3774, type: 2}
+  rewards:
+  - {fileID: 11400000, guid: f75f20de63d926f4fa819bdc5d6b3629, type: 2}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public static class BattleEventManager
 {
+    
     public static IEnumerator TriggerBeforeDealingDamage(EntityBase attacker, EntityBase target, DamageContext ctx)
     {
         yield return attacker.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnBeforeDealingDamage, target, ctx);

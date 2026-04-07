@@ -95,6 +95,7 @@ namespace HaKien
                 
                 currentTurnEntity.ResetTurnDirective();
                 yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnStart());
+                if (battleSystem.battleOver) break;
                 
                 if (currentUnit == null || !currentUnit.IsAlive())
                 {
@@ -115,6 +116,7 @@ namespace HaKien
                         $"{currentTurnEntity.entityData.EntityName} skips the turn{reasonSuffix}."
                     ));
                     yield return new WaitForSeconds(1f);
+                    if (battleSystem.battleOver) break;
                     yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnEnd());
                     continue;
                 }
@@ -123,6 +125,7 @@ namespace HaKien
                 {
                     yield return battleSystem.StartCoroutine(battleSystem.ExecuteForcedActionPublic(currentTurnEntity, dir));
                     yield return new WaitForSeconds(0.5f);
+                    if (battleSystem.battleOver) break;
                     yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnEnd());
                     yield return new WaitForSeconds(0.5f);
                     continue;
@@ -140,6 +143,7 @@ namespace HaKien
                     yield return battleSystem.StartCoroutine(battleSystem.HandleMonsterTurnPublic(currentTurnEntity));
                 }
                 
+                if (battleSystem.battleOver) break;
                 yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnEnd());
                 yield return new WaitForSeconds(1f);
             }

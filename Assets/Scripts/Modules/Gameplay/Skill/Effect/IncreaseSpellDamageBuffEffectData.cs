@@ -7,7 +7,7 @@ public class IncreaseSpellDamageBuffEffectData : EffectData
 	public float increasePercentage;
 	public override EffectBase CreateRuntimeEffect(EntityBase owner, EntityBase target, int duration)
 	{
-		return new IncreaseSpellDamageBuffData(this, owner, target, duration)
+		return new IncreaseSpellDamageBuffEffect(this, owner, target, duration)
 		{
 			IncreaseDamagePercentage = increasePercentage,
 		};

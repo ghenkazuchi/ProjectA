@@ -79,6 +79,11 @@ public class EquipmentEffectRunner
 
 	private IEnumerator ApplyDefault(EquipEffectBinding binding, EffectBase effect, EffectUsageTracker usageTracker, EntityBase effectTarget)
 	{
+		if (effect is IBattleEnd battleEndEffect)
+		{
+			yield return battleEndEffect.OnBattleEnd();
+			yield break;
+		}
 		if (binding.effect.isInstantEffect)
 		{
 			yield return effectTarget.TriggerEffectDirectly(effect);

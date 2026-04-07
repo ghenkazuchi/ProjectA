@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69851fd65081a5249b847b108badce72, type: 3}
+  m_Name: GreenThornLongBow
+  m_EditorClassIdentifier: 
+  EquipableStatBonus: []
+  itemName: Green Thorn Long Bow
+  description: 
+  icon: {fileID: 21300000, guid: 918b17b67a7a22948ad7ffa4bd7fd605, type: 3}
+  maxUsePerLifeCyle: 0
+  maxUsePerBattle: 0
+  itemRarity: 1
+  effectData:
+  - trigger: 0
+    effect: {fileID: 11400000, guid: c8df9f2be75b748408cf5d21543d7c49, type: 2}
+    procChance: 1
+  canDuplicateTrigger: 0
+  equipmentSet: {fileID: 11400000, guid: 1f10f97702ac52140aaa3079945e849c, type: 2}
+  pieceWeight: 1
+  basePrice: 200
+  weaponType: 5
+  requirement: 0
+  canPierceBackRow: 1

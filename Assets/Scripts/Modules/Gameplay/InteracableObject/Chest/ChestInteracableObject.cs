@@ -53,7 +53,7 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 
 	public void openChest()
 	{
-		DataManager.Instance?.Achievements?.RecordChestOpen();
+		GameEventBus.Publish(new ChestOpenEvent());
 
 		ChestReward reward;
 		if (Random.value < goldDropChance)

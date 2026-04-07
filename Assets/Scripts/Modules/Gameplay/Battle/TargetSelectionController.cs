@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -328,9 +328,16 @@ public class TargetSelectionController : MonoBehaviour
 			{
 				if (preview)
 				{
-					int damage = BattleSystem.Instance.CalculateDamage(
-						callingEntity, currentSelectedSkill, unit.character);
-					unit.PreviewDamage(damage);
+					if (currentSelectedSkill.SkillData.activeSkillType == ActiveSkillType.Heal)
+					{
+						int healing = BattleSystem.Instance.CalculateHealing(callingEntity, currentSelectedSkill, unit.character);
+						unit.PreviewHealing(healing);
+					}
+					else
+					{
+						int damage = BattleSystem.Instance.CalculateDamage(callingEntity, currentSelectedSkill, unit.character);
+						unit.PreviewDamage(damage);
+					}
 				}
 				else
 				{

@@ -41,6 +41,7 @@ public abstract class EntityBase
 	[Header("Current ActiveEffect")]
 	[SerializeReference] public List<EffectBase> currentActiveBuffs = new List<EffectBase>();
 	[SerializeReference] public List<EffectBase> currentActiveDebuffs = new List<EffectBase>();
+	[SerializeReference] public List<EffectBase> passiveEquipmentEffects = new List<EffectBase>();
 	[Header("Traits and Stats")]
 	[SerializeField]
 	protected SerializableDictionaryBase<Trait, int> currentTraits = new SerializableDictionaryBase<Trait, int>();
@@ -283,6 +284,7 @@ public abstract class EntityBase
 		MarkPassiveSkillLearned(data);
 		return true;
 	}
+
 	public IEnumerator AddEffect(EffectBase effect)
 	{
 		if(effect != null && effect.Effect == Effect.CrownControl && EquipmentEffectRunner != null)
@@ -385,6 +387,7 @@ public abstract class EntityBase
 
 	public IEnumerator ProcessEffectOnTurnStart()
 	{
+		if (BattleSystem.Instance != null && BattleSystem.Instance.battleOver) yield break;
 		yield return RunEffectPhase(currentActiveBuffs,true);
 		yield return RunEffectPhase(currentActiveDebuffs, true);
 		yield return EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnTurnStart, this);
@@ -392,6 +395,7 @@ public abstract class EntityBase
 	}
 	public IEnumerator ProcessEffectOnTurnEnd()
 	{
+		if (BattleSystem.Instance != null && BattleSystem.Instance.battleOver) yield break;
 		yield return RunEffectPhase(currentActiveBuffs, false);
 		yield return RunEffectPhase(currentActiveDebuffs, false);
 		yield return EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnTurnEnd, this);
@@ -465,6 +469,7 @@ public abstract class EntityBase
 		List<EffectBase> allEffects = new List<EffectBase>();
 		allEffects.AddRange(currentActiveBuffs);
 		allEffects.AddRange(currentActiveDebuffs);
+		allEffects.AddRange(passiveEquipmentEffects);
 		return allEffects;
 	}
 

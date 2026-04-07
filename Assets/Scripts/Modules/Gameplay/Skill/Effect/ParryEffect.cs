@@ -21,6 +21,8 @@ public class ParryEffect : EffectBase, IBeforeTakingDamage
 		if (ctx.Target != Owner) yield break;
 		if (ctx.isEffectDamage || ctx.Origin != SkillDefinition.BattleArt) yield break;
 		if (ctx.EffectiveDamage <= 0) yield break;
+		if (Random.value > successfulParryPercentage) yield break;
+
 		ctx.CancleApply = true;
 		ctx.ReflectAmount = ctx.EffectiveDamage;
 

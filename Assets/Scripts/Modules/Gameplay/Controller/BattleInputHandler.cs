@@ -165,7 +165,7 @@ public class BattleInputHandler : MonoBehaviour
         if (sys.battleState == BattleState.SkillSelection)
         {
             selectedSkill = sys.currentTurnEntity.usableSkills[currentSkill];
-            if (!IsSkillUseAllowed(sys.currentTurnEntity, selectedSkill.SkillData))
+            if (!IsSkillUseAllowed(sys.currentTurnEntity, selectedSkill))
             {
                 StartCoroutine(HandleUnusableSkillConfirm(selectedSkill));
                 return;
@@ -264,7 +264,7 @@ public class BattleInputHandler : MonoBehaviour
             if (i < sys.currentTurnEntity.usableSkills.Count)
             {
                 var s = sys.currentTurnEntity.usableSkills[i];
-                bool allowed = IsSkillUseAllowed(sys.currentTurnEntity, s.SkillData);
+                bool allowed = IsSkillUseAllowed(sys.currentTurnEntity, s);
                 sys.uiController.battleDialogBox.skillUI[i].SetUnuseable(allowed);
             }
         }
@@ -339,14 +339,24 @@ public class BattleInputHandler : MonoBehaviour
 
     // --- Helpers ---
 
-    public bool IsSkillUseAllowed(EntityBase actor, ActiveSkillData skill)
+    public bool IsSkillUseAllowed(EntityBase actor, ActiveSkill skill)
     {
         var dir = actor.TurnControl;
 
-        if (dir.BannedSkillDefs.Contains(skill.skillDefinition))
+        if (dir.BannedSkillDefs.Contains(skill.SkillData.skillDefinition))
         {
             return false;
         }
+        if (skill.SkillData.skillDefinition == SkillDefinition.Spell && actor.GetCurrentMP() < skill.currentMPCost)
+        {
+            return false;
+        }
+
+        if (skill.SkillData.skillDefinition == SkillDefinition.BattleArt && actor.GetCurrentSP() < skill.currentSPCost)
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -360,7 +370,7 @@ public class BattleInputHandler : MonoBehaviour
         {
             idx = (idx + direction + n) % n;
             var s = sys.currentTurnEntity.usableSkills[idx];
-            if (IsSkillUseAllowed(sys.currentTurnEntity, s.SkillData))
+            if (IsSkillUseAllowed(sys.currentTurnEntity, s))
                 return idx;
         }
         return -1;

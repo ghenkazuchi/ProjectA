@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   achievements:
   - {fileID: 11400000, guid: e831ec153d1306943a1cc7945e06e7fd, type: 2}
+  - {fileID: 11400000, guid: 837993edd02f08845afb11391c57f109, type: 2}

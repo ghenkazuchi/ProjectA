@@ -14,7 +14,14 @@ public abstract class Interacable : MonoBehaviour
 		{
 			Debug.Log("Interacted");
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnInteract, new object[] { this }));
-			DataManager.Instance?.Achievements?.RecordInteraction(this);
+			SpawnableObject spawnableObject = spawnableData;
+			GameEventBus.Publish(new InteractionEvent
+			{
+				HasInteractableType = spawnableObject != null,
+				InteractableType = spawnableObject != null ? spawnableObject.interacableType : default,
+				SpawnableObject = spawnableObject,
+				InteractionKey = spawnableObject != null ? spawnableObject.GetKey() : name
+			});
 			TriggerInteraction();
 		}
 	}

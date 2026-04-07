@@ -76,7 +76,7 @@ public class ShopKeeperInteractableObject : Interacable, IShopKeeper
 			return false;
 		}
 		_stock.Remove(equip);
-		DataManager.Instance?.Achievements?.RecordShopPurchase(equip);
+		GameEventBus.Publish(new ShopPurchaseEvent { Equipable = equip });
 		return true;
 	}
 

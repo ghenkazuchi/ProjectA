@@ -20,7 +20,7 @@ MonoBehaviour:
   skillRange: 0
   baseSpCost: 5
   baseMpCost: 0
-  baseSkillDamage: 3
+  baseSkillDamage: 100
   baseHitChance: 100
   skillElement: 0
   activeSkillType: 0
@@ -47,9 +47,9 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 1
-    _keyValues: 0b000000
-    _keys: 0b000000
+    _keyValues: 03000000
+    _keys: 03000000
     _values:
-    - 1.2
+    - 1.3
   effectsToApply: []
   modifiers: []

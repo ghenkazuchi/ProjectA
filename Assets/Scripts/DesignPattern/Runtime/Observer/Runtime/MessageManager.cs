@@ -66,6 +66,10 @@ namespace HaKien
 		OnHeroSpiritInteractionPopupClose,
 		OnAchievementScreenOpen,
 		OnAchievementScreenClose,
+		OnPortalOpen,
+		OnPortalClose,
+		OnMapViewOpen,
+		OnMapViewClose,
 
 	}
     public class Message

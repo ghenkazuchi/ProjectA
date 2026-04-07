@@ -16,7 +16,7 @@ public class PartyMemberSelectionUI : MonoBehaviour
 
 	private void Awake()
 	{
-		//cancleButton.onClick.AddListener(CancelSelection);
+		cancleButton.onClick.AddListener(CancelSelection);
 		gameObject.SetActive(false);
 	}
 
@@ -89,5 +89,11 @@ public class PartyMemberSelectionUI : MonoBehaviour
 	{
 		ClearMemberButtons();
 		gameObject.SetActive(false);
+	}
+
+	private void CancelSelection()
+	{
+		CloseSelection();
+		ChestOpenUIController.Instance.CloseChestUI();
 	}
 }

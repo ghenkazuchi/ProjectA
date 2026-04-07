@@ -145,12 +145,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnableData: {fileID: 11400000, guid: 430e29e541d5a354bb1128c21f7faf62, type: 2}
   possibleItems: []
-  unlockableChestPool: {fileID: 11400000, guid: eacfaed6544536f4abf9b72c58128e9a,
+  unlockableChestPool: {fileID: 11400000, guid: 5e6eba7b056daad40ac3a39d5cf03431,
     type: 2}
   itemContain: 3
   normalRate: 1
   goldRate: 0
   diamondRate: 0
-  goldDropChance: 0.7
+  goldDropChance: 0
   minGold: 10
   maxGold: 30

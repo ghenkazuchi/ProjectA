@@ -73,6 +73,17 @@ public class PlayerMovement : MonoBehaviour
 			HandleMovementInput();
 			HandleUltilityInput();
 		}
+
+		// Allow Tab or Escape to exit map view / cancel portal selection
+		if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.Escape))
+		{
+			if (PortalManager.Instance != null)
+			{
+				PortalManager.Instance.ToggleMapView();
+				Debug.Log($"[Input] Map View Toggle. New State: {GameController.Instance.currentState}");
+			}
+		}
+
 		if (useSmoothMovement && _isMoving)
 		{
 			MoveSmoothlyToTarget();
@@ -85,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnPartyMenuOpen));	
 		}
-		if (Input.GetKeyDown(KeyCode.Tab))
+		if (Input.GetKeyDown(KeyCode.J))
 		{
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnAchievementScreenOpen));
 		}
@@ -136,5 +147,14 @@ public class PlayerMovement : MonoBehaviour
 			transform.position = _targetWorldPosition;
 			_isMoving = false;
 		}
+	}
+
+	public void TeleportTo(Vector3 worldPos, Vector2Int gridPos)
+	{
+		_currentGridPosition = gridPos;
+		_targetWorldPosition = worldPos;
+		transform.position = worldPos;
+		_isMoving = false;
+		Debug.Log($"[Portal] Player teleported to grid: {gridPos}, world: {worldPos}");
 	}
 }

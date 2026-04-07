@@ -22,7 +22,15 @@ public class StatsInfo : MonoBehaviour
 		for (int i  = 0; i < StatsTexts.Length; i++)
 		{
 			Stat stat = stats[i];
-			string statValue = currentCharacter.GetFinalStat(stat).ToString();
+			string statValue;
+			if (stat == Stat.HP)
+				statValue = $"{currentCharacter.GetCurrentHP()} / {currentCharacter.MaxHp}";
+			else if (stat == Stat.MP)
+				statValue = $"{currentCharacter.GetCurrentMP()} / {currentCharacter.MaxMP}";
+			else if (stat == Stat.SP)
+				statValue = $"{currentCharacter.GetCurrentSP()} / {currentCharacter.MaxSP}";
+			else
+				statValue = currentCharacter.GetFinalStat(stat).ToString("F0");
 			StatsTexts[i].text = $"{stat}: {statValue}";
 		}
 	}

@@ -11,7 +11,7 @@ public class DispelBuffEffect : EffectBase, IBeforeDealingDamage
 	}
 	public override IEnumerator ApplyEffect()
 	{
-		yield return null;
+		yield break;
 	}
 
 	public IEnumerator OnBeforeDealingDamage(DamageContext ctx)

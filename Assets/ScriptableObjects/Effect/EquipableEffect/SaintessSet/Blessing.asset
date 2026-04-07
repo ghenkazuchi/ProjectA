@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2434eb6817bf9748b65c194b612b92e, type: 3}
+  m_Name: Blessing
+  m_EditorClassIdentifier: 
+  EffectType: 0
+  Effect: 5
+  Name: Blessing
+  MaxDuration: 0
+  CanBeRemoved: 0
+  Stackable: 0
+  MaxStack: 1
+  isInstantEffect: 0
+  isPassiveEquipmentEffect: 1
+  tags: 1
+  effectIcon: {fileID: 0}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  healingBonusPercent: 0.2

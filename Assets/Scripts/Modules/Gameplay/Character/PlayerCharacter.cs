@@ -125,6 +125,7 @@ public class PlayerCharacter : EntityBase
 			}
 			//Aura Skill later
 		}
+		equipmentManager?.RebuildPassiveEffects();
 	}
 
 	public override bool AttemptToLearnSkill(ActiveSkillData data)
@@ -201,5 +202,5 @@ public class PlayerCharacter : EntityBase
 	public void ApplyReplaceSelection(bool removeWeapon, List<int> removeItemIndices) => equipmentManager.ApplyReplaceSelection(removeWeapon, removeItemIndices);
 	public string GetWeaponStatus() => equipmentManager.GetWeaponStatus();
 	public void OnBattleStartSyncSet() => equipmentManager.OnBattleStartSyncSet();
-	public void ApplyAllOnEquipEffect(List<EquipEffectBinding> bindings) => equipmentManager.ApplyAllOnEquipEffect(bindings);
+
 }

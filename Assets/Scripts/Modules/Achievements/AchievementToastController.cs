@@ -3,94 +3,77 @@ using UnityEngine;
 
 public class AchievementToastController : HaKien.Singleton<AchievementToastController>
 {
-	private sealed class ToastItem
-	{
-		public string title;
-		public string body;
-		public float expireAt;
-	}
+    [SerializeField] private AchievementToastUI toastPrefab;
+    [SerializeField] private RectTransform toastContainer;
 
-	private readonly Queue<ToastItem> pendingToasts = new Queue<ToastItem>();
-	private ToastItem currentToast;
-	private AchievementService subscribedService;
+    private struct PendingToast
+    {
+        public AchievementDefinition definition;
+        public string body;
+    }
 
-	private void Update()
-	{
-		TrySubscribe();
+    private readonly Queue<PendingToast> pendingToasts = new Queue<PendingToast>();
+    private bool isToastVisible = false;
+    private AchievementService subscribedService;
 
-		if (currentToast != null && Time.unscaledTime >= currentToast.expireAt)
-		{
-			currentToast = null;
-		}
+    private void Update()
+    {
+        TrySubscribe();
 
-		if (currentToast == null && pendingToasts.Count > 0)
-		{
-			currentToast = pendingToasts.Dequeue();
-			currentToast.expireAt = Time.unscaledTime + 4f;
-		}
-	}
+        if (!isToastVisible && pendingToasts.Count > 0)
+        {
+            ShowNextToast();
+        }
+    }
 
-	private void OnGUI()
-	{
-		if (currentToast == null)
-		{
-			return;
-		}
+    private void TrySubscribe()
+    {
+        AchievementService service = DataManager.Instance != null ? DataManager.Instance.Achievements : null;
+        if (service == null || service == subscribedService) return;
 
-		Rect rect = new Rect(Screen.width - 380f, 20f, 360f, 120f);
-		GUI.Box(rect, "Achievement Unlocked");
-		GUILayout.BeginArea(new Rect(rect.x + 12f, rect.y + 28f, rect.width - 24f, rect.height - 36f));
-		GUILayout.Label(currentToast.title);
-		GUILayout.Space(8f);
-		GUILayout.Label(currentToast.body);
-		GUILayout.EndArea();
-	}
+        Unsubscribe();
+        subscribedService = service;
+        subscribedService.OnAchievementCompleted += HandleAchievementCompleted;
+    }
 
-	private void OnDestroy()
-	{
-		Unsubscribe();
-	}
+    private void Unsubscribe()
+    {
+        if (subscribedService == null) return;
+        subscribedService.OnAchievementCompleted -= HandleAchievementCompleted;
+        subscribedService = null;
+    }
 
-	private void TrySubscribe()
-	{
-		AchievementService service = DataManager.Instance != null ? DataManager.Instance.Achievements : null;
-		if (service == null || service == subscribedService)
-		{
-			return;
-		}
+    private void OnDestroy() => Unsubscribe();
 
-		Unsubscribe();
-		subscribedService = service;
-		subscribedService.OnAchievementCompleted += HandleAchievementCompleted;
-	}
+    private void HandleAchievementCompleted(AchievementDefinition definition)
+    {
+        if (definition == null) return;
 
-	private void Unsubscribe()
-	{
-		if (subscribedService == null)
-		{
-			return;
-		}
+        List<string> rewardLines = DataManager.Instance.Achievements.GetRewardSummaries(definition);
+        string body = rewardLines.Count > 0 
+            ? string.Join("\n", rewardLines) 
+            : definition.Description;
 
-		subscribedService.OnAchievementCompleted -= HandleAchievementCompleted;
-		subscribedService = null;
-	}
+        pendingToasts.Enqueue(new PendingToast { definition = definition, body = body });
+    }
 
-	private void HandleAchievementCompleted(AchievementDefinition definition)
-	{
-		if (definition == null)
-		{
-			return;
-		}
+    private void ShowNextToast()
+    {
+        if (toastPrefab == null)
+        {
+            Debug.LogWarning("AchievementToastController: No toast prefab assigned!");
+            pendingToasts.Dequeue();
+            return;
+        }
 
-		List<string> rewardLines = DataManager.Instance.Achievements.GetRewardSummaries(definition);
-		string body = rewardLines.Count > 0
-			? string.Join("\n", rewardLines)
-			: definition.Description;
+        isToastVisible = true;
+        PendingToast next = pendingToasts.Dequeue();
 
-		pendingToasts.Enqueue(new ToastItem
-		{
-			title = definition.AchievementTitle,
-			body = body
-		});
-	}
+        // Instantiate under container, or default to root if container is missing
+        AchievementToastUI instance = Instantiate(toastPrefab, toastContainer);
+        instance.Show(next.definition, next.body, () => 
+        {
+            isToastVisible = false;
+        });
+    }
 }

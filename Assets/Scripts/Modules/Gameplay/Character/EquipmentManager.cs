@@ -31,6 +31,46 @@ public class EquipmentManager
         {
             player.EquipmentEffectRunner.RegisterEffectBinding(setSourceKey, active);
         }
+        RebuildPassiveEffects();
+    }
+
+    public void RebuildPassiveEffects()
+    {
+        foreach (var oldEffect in player.passiveEquipmentEffects)
+        {
+            if (oldEffect != null)
+            {
+                var removeCoroutine = oldEffect.RemoveEffect();
+                while (removeCoroutine.MoveNext()) { }
+            }
+        }
+        player.passiveEquipmentEffects.Clear();
+
+        if (player.weapon != null && player.weapon.WeaponBaseData != null)
+            ExtractPassives(player.weapon.WeaponBaseData.effectData);
+
+        foreach (var item in player.items)
+            if (item != null && item.itemBaseData != null)
+                ExtractPassives(item.itemBaseData.effectData);
+
+        ExtractPassives(setTracker.GetAllActiveBindings());
+        
+        player.CalculateAllStats();
+    }
+
+    private void ExtractPassives(List<EquipEffectBinding> bindings)
+    {
+        if (bindings == null) return;
+        foreach (var binding in bindings)
+        {
+            if (binding.trigger == EquipEffectTrigger.OnEquip && binding.effect != null && binding.effect.isPassiveEquipmentEffect)
+            {
+                var effect = binding.effect.CreateRuntimeEffect(player, player, binding.effect.MaxDuration);
+                player.passiveEquipmentEffects.Add(effect);
+                var applyCoroutine = effect.ApplyEffect();
+                while (applyCoroutine.MoveNext()) { }
+            }
+        }
     }
 
     public bool TryEquipWeapon(Weapon weaponToEquip)
@@ -47,6 +87,9 @@ public class EquipmentManager
             Debug.Log("Don't have enough slot");
             return false;
         }
+        
+        UnequipWeapon();
+        
         player.weapon = weaponToEquip;
         player.storedEquipmentBindings.AddRange(player.weapon.WeaponBaseData.effectData);
 
@@ -55,9 +98,7 @@ public class EquipmentManager
             player.items.Add(null);
         }
         player.EquipmentEffectRunner.RegisterEffectBinding(weaponToEquip, weaponToEquip.WeaponBaseData.effectData);
-        ApplyAllOnEquipEffect(player.weapon.WeaponBaseData.effectData);
         RefreshSetBonuses();
-        player.CalculateAllStats();
         Debug.Log("Equipped weapon: " + weaponToEquip.WeaponBaseData.name);
         return true;
     }
@@ -105,32 +146,9 @@ public class EquipmentManager
         }
         player.storedEquipmentBindings.AddRange(item.itemBaseData.effectData);
         player.EquipmentEffectRunner.RegisterEffectBinding(item, item.itemBaseData.effectData);
-        ApplyAllOnEquipEffect(item.itemBaseData.effectData);
         RefreshSetBonuses();
-        player.CalculateAllStats();
         Debug.Log("Added item: " + item.itemBaseData.itemName);
         return true;
-    }
-
-    public void ApplyAllOnEquipEffect(List<EquipEffectBinding> bindings)
-    {
-        if (bindings == null) return;
-
-        foreach (var binding in bindings)
-        {
-            if (binding.trigger == EquipEffectTrigger.OnEquip)
-            {
-                var effect = binding.effect.CreateRuntimeEffect(player, player, binding.effect.MaxDuration);
-                if (binding.effect.isInstantEffect)
-                {
-                    effect.ApplyEffect().MoveNext();
-                }
-                else
-                {
-                    effect.ApplyEffect().MoveNext();
-                }
-            }
-        }
     }
 
     public Item RemoveItemAtSlot(int index)
@@ -150,7 +168,6 @@ public class EquipmentManager
             if (replacement != null)
             {
                 player.EquipmentEffectRunner.RegisterEffectBinding(replacement, replacement.itemBaseData.effectData);
-                ApplyAllOnEquipEffect(replacement.itemBaseData.effectData);
             }
         }
         player.items.RemoveAt(index);

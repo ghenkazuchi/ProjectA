@@ -26,9 +26,9 @@ public class InstantKillEffect : EffectBase, IOnDealingDamage
 		float targetHPPercentage = (float)ctx.Target.GetCurrentHP() / ctx.Target.GetFinalStat(Stat.HP);
 		if (targetHPPercentage <= InstantKillThresholdPercentage)
 		{
-			int killAmount = Target.GetCurrentHP();
-			Target.TakeDamage(killAmount);
-			yield return BattleSystem.Instance.ShowDialog($"{Target.entityData.EntityName} was instantly killed !");
+			int killAmount = ctx.Target.GetCurrentHP();
+			ctx.Target.TakeDamage(killAmount);
+			yield return BattleSystem.Instance.ShowDialog($"{ctx.Target.entityData.EntityName} was instantly killed !");
 		}
 	}
 }
