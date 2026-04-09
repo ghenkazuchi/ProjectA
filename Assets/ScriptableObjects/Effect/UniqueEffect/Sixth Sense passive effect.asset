@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Sixth Sense passive effect
   m_EditorClassIdentifier: 
   useBasicAttack: 1
-  bonusEvasion: 200
+  bonusEvasion: 40

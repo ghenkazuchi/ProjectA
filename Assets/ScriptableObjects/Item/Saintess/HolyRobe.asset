@@ -30,7 +30,8 @@ MonoBehaviour:
   itemRarity: 2
   effectData: []
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 11400000, guid: 1b258835bb72a4443bd1a11acb9586e6, type: 2}
+  equipmentSets:
+  - {fileID: 11400000, guid: 1b258835bb72a4443bd1a11acb9586e6, type: 2}
   pieceWeight: 1
   basePrice: 250
   canBeUpgraded: 0

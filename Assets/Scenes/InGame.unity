@@ -10439,7 +10439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poissonRadius: 3
-  mapRegionSize: {x: 300, y: 300}
+  mapRegionSize: {x: 150, y: 150}
   tryNumber: 4
   pathTilemap: {fileID: 74214794}
   regionTilemap: {fileID: 633460054}
@@ -17000,7 +17000,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 694.7068, y: -135.23566}
+  m_AnchoredPosition: {x: 439.70676, y: -277.73566}
   m_SizeDelta: {x: 210, y: 210}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &505360801
@@ -27552,7 +27552,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845819207}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0

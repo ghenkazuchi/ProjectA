@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Badios
   m_EditorClassIdentifier: 
   skillName: Badios
-  skillDescription: Heal target for 10 + 60% of user piety
+  skillDescription: Heal target for 10 + 40% of user piety
   skillType: 0
   skillDefinition: 0
   targetType: 3
@@ -47,9 +47,10 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: 
-    _keys: 
-    _values: []
+    _keyValues: 05000000
+    _keys: 05000000
+    _values:
+    - 0.4
   effectsToApply: []
   modifiers:
   - {fileID: 11400000, guid: c69d51b498b2041479964d8131b88621, type: 2}

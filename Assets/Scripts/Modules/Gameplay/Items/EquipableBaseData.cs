@@ -15,9 +15,9 @@ public class EquipableBaseData : ScriptableObject
 	public List<EquipEffectBinding> effectData;
 
 	public bool canDuplicateTrigger;
-	[Header("Optional set bonus")]
-
-	public EquipableSetData equipmentSet;
+	[Header("Optional Set Bonuses")]
+	[UnityEngine.Serialization.FormerlySerializedAs("equipmentSet")]
+	public List<EquipableSetData> equipmentSets = new List<EquipableSetData>();
 	public int pieceWeight = 1;
 
 	[Header("Shop Price")]

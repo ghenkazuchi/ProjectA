@@ -445,6 +445,12 @@ public abstract class EntityBase
 		{
 			RemoveEffect(currentActiveDebuffs[i]);
 		}
+		
+		foreach (var passive in activePassiveSkills)
+		{
+			passive.CurrentSkillCoolDown = 0;
+		}
+
 		ResetEquipmentBattleUsage();
 		CalculateAllStats();
 	}

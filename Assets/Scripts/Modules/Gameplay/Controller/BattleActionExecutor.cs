@@ -284,6 +284,12 @@ public class BattleActionExecutor : MonoBehaviour
             {
                 Monster = defeatedMonster
             });
+
+            // Trigger OnEnemyKill equipment effects
+            if (_ctx.Source != null && _ctx.Source.EquipmentEffectRunner != null)
+            {
+                yield return _ctx.Source.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnEnemyKill, _ctx.Target);
+            }
         }
         GameEventBus.Publish(new DamageDealtEvent { damageAmount = _ctx.EffectiveDamage });
         if (sys.UpdateUnitState(_ctx.Target)) yield break;

@@ -44,6 +44,20 @@ public class PartyMemberSelectionUI : MonoBehaviour
 		bool success = false; 
 		if(selectedEntry.data is WeaponBaseData weaponData)
 		{
+			if (!selectedMember.GetClassData.usableWeaponTypes.Contains(weaponData.weaponType))
+			{
+				Debug.Log($"Failed to equip {weaponData.itemName} to {selectedMember.entityData.EntityName} (Wrong Class)");
+				ChestOpenUIController.Instance.ShowToast($"{selectedMember.entityData.EntityName} can't use {weaponData.itemName}");
+				return;
+			}
+
+			if (selectedMember.IsWeaponAtMaxStack(weaponData))
+			{
+				Debug.Log($"Failed to equip {weaponData.itemName} to {selectedMember.entityData.EntityName} (At Max Stacks)");
+				ChestOpenUIController.Instance.ShowToast($"{selectedMember.entityData.EntityName} already has maximum stacks!");
+				return;
+			}
+
 			Weapon weapon = new Weapon(weaponData);
 			success = PlayerParty.Instance.EquipWeaponToCharacter(selectedMember, weapon);
 			if (success)
@@ -54,8 +68,9 @@ public class PartyMemberSelectionUI : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log($"Failed to equip {weaponData.itemName} to {selectedMember.entityData.EntityName}");
-				ChestOpenUIController.Instance.ShowToast($"{selectedMember.entityData.EntityName} can't use {weaponData.itemName}");
+				Debug.Log($"Not enough slots for {weaponData.itemName} on {selectedMember.entityData.EntityName}");
+				CloseSelection();
+				MessageManager.Instance.SendMessage(new Message(MessageType.OnInventoryOpen, new object[] { selectedMember, selectedEntry}));
 			}
 		}
 		else

@@ -80,8 +80,30 @@ public class EquipmentManager
             Debug.Log("Weapon type not usable by this class or weapon is null.");
             return false;
         }
+
+        if (IsWeaponAtMaxStack(weaponToEquip.WeaponBaseData))
+        {
+            Debug.Log($"Weapon {weaponToEquip.WeaponBaseData.itemName} is already at max stack ({player.weapon.CurrentStack}/{player.weapon.WeaponBaseData.maxStack})");
+            return false;
+        }
+
+        // Stacking: if we already have the same stackable weapon, merge instead of replacing
+        if (player.weapon != null 
+            && player.weapon.WeaponBaseData == weaponToEquip.WeaponBaseData
+            && player.weapon.WeaponBaseData.isStackable)
+        {
+            if (player.weapon.TryAddStack())
+            {
+                RefreshSetBonuses();
+                Debug.Log($"Stacked weapon: {weaponToEquip.WeaponBaseData.itemName} (now {player.weapon.CurrentStack}/{player.weapon.WeaponBaseData.maxStack})");
+                return true;
+            }
+        }
+
         int requiredSlot = weaponToEquip.WeaponBaseData.requirement == WeaponRequirement.TwoHanded ? 2 : 1;
-        int availableSlot = player.GetClassData.itemSlotCount - player.items.Count;
+        int currentWeaponSlots = (player.weapon != null && player.weapon.WeaponBaseData != null) ? 
+            (player.weapon.WeaponBaseData.requirement == WeaponRequirement.TwoHanded ? 2 : 1) : 0;
+        int availableSlot = player.GetClassData.itemSlotCount - player.items.Count + currentWeaponSlots;
         if (availableSlot < requiredSlot)
         {
             Debug.Log("Don't have enough slot");
@@ -242,6 +264,14 @@ public class EquipmentManager
         {
             return "No weapon";
         }
+    }
+
+    public bool IsWeaponAtMaxStack(WeaponBaseData weaponData)
+    {
+        return player.weapon != null 
+               && player.weapon.WeaponBaseData == weaponData
+               && weaponData.isStackable
+               && player.weapon.CurrentStack >= weaponData.maxStack;
     }
 
     public void OnBattleStartSyncSet() => RefreshSetBonuses();

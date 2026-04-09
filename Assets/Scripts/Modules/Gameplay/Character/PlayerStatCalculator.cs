@@ -65,11 +65,12 @@ public class PlayerStatCalculator : IStatCalculator
         float gearPercentSum = 0f;
         if (player.weapon != null && player.weapon.WeaponBaseData != null)
         {
+            int weaponStack = player.weapon.CurrentStack;
             foreach (var b in player.weapon.WeaponBaseData.EquipableStatBonus)
             {
                 if (b.Stat != statToCalculate) continue;
-                if (b.ModType == ModType.Flat) gearRaw += b.value;
-                else gearPercentSum += b.value;
+                if (b.ModType == ModType.Flat) gearRaw += b.value * weaponStack;
+                else gearPercentSum += b.value * weaponStack;
             }
         }
 

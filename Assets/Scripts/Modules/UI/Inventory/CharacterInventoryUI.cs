@@ -45,15 +45,42 @@ public class CharacterInventoryUI : MonoBehaviour, IMessageHandle
 			case MessageType.OnInventoryItemSelected:
 				if (message.data != null && message.data.Length >= 2 && message.data[0] is ItemBaseData itemToReplace && message.data[1] is int index)
 				{
-					Debug.Log("Clicked");
+					Debug.Log("Clicked on item to replace");
 					currentPlayerCharacter.RemoveItemAtSlot(index);
-					var itemToAdd = new Item(itemToReplaced.data as ItemBaseData, this.itemToReplaced.grade);
-					currentPlayerCharacter.TryAddItem(itemToAdd);
-					Debug.Log($"Replaced item at slot {index} with {itemToReplaced.data.itemName}.");
-					CloseCharacterInventory();
-					ChestOpenUIController.Instance.CloseChestUI();
+					TryAddReplacementItemAndClose();
+				}
+				else if (message.data != null && message.data.Length >= 1 && message.data[0] is Weapon weaponToReplace)
+				{
+					Debug.Log("Clicked on weapon to replace");
+					currentPlayerCharacter.UnequipWeapon();
+					TryAddReplacementItemAndClose();
 				}
 				break;
+		}
+	}
+
+	private void TryAddReplacementItemAndClose()
+	{
+		bool success = false;
+		if (itemToReplaced.data is WeaponBaseData weaponData)
+		{
+			success = PlayerParty.Instance.EquipWeaponToCharacter(currentPlayerCharacter, new Weapon(weaponData));
+		}
+		else if (itemToReplaced.data is ItemBaseData itemBaseData)
+		{
+			success = currentPlayerCharacter.TryAddItem(new Item(itemBaseData, itemToReplaced.grade));
+		}
+
+		if (success)
+		{
+			CloseCharacterInventory();
+			ChestOpenUIController.Instance.CloseChestUI();
+		}
+		else
+		{
+			// Need more slots removed, keep UI open and wait for next click!
+			// We call SetUp again to force a UI refresh so the dropped items disappear
+			SetUp(currentPlayerCharacter);
 		}
 	}
 

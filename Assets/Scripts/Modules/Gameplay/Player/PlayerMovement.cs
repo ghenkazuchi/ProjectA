@@ -40,6 +40,11 @@ public class PlayerMovement : MonoBehaviour
 		_targetWorldPosition = transform.position;
 
 		Debug.Log($"Player spawned at grid: {spawnGridPosition}, world: {transform.position}");
+
+		if (FogOfWarManager.Instance != null)
+		{
+			FogOfWarManager.Instance.RevealArea(_currentGridPosition);
+		}
 	}
 
 	void AdjustSpriteToTileSize()
@@ -123,6 +128,12 @@ public class PlayerMovement : MonoBehaviour
 		{
 			_currentGridPosition = targetGridPosition;
 			_targetWorldPosition = _pathGenerator.GetWorldPosition(_currentGridPosition);
+			
+			if (FogOfWarManager.Instance != null)
+			{
+				FogOfWarManager.Instance.RevealArea(_currentGridPosition);
+			}
+
 			if (dayNight != null) dayNight.AdvanceSteps(1);
 			if (useSmoothMovement)
 			{
@@ -156,5 +167,10 @@ public class PlayerMovement : MonoBehaviour
 		transform.position = worldPos;
 		_isMoving = false;
 		Debug.Log($"[Portal] Player teleported to grid: {gridPos}, world: {worldPos}");
+
+		if (FogOfWarManager.Instance != null)
+		{
+			FogOfWarManager.Instance.RevealArea(_currentGridPosition);
+		}
 	}
 }

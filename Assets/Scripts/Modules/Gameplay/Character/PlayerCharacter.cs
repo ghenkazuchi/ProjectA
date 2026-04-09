@@ -201,6 +201,7 @@ public class PlayerCharacter : EntityBase
 	public int GetSlotCostForEquipable(EquipableBaseData data) => equipmentManager.GetSlotCostForEquipable(data);
 	public void ApplyReplaceSelection(bool removeWeapon, List<int> removeItemIndices) => equipmentManager.ApplyReplaceSelection(removeWeapon, removeItemIndices);
 	public string GetWeaponStatus() => equipmentManager.GetWeaponStatus();
+	public bool IsWeaponAtMaxStack(WeaponBaseData weaponData) => equipmentManager.IsWeaponAtMaxStack(weaponData);
 	public void OnBattleStartSyncSet() => equipmentManager.OnBattleStartSyncSet();
 
 }

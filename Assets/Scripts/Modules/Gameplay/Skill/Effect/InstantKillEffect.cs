@@ -22,13 +22,17 @@ public class InstantKillEffect : EffectBase, IOnDealingDamage
 
 	public IEnumerator OnDealingDamage(DamageContext ctx)
 	{
-		if (ctx.Target == null) yield break;
+		if (ctx.Target == null || ctx.Target.GetCurrentHP() <= 0) yield break;
+		
 		float targetHPPercentage = (float)ctx.Target.GetCurrentHP() / ctx.Target.GetFinalStat(Stat.HP);
 		if (targetHPPercentage <= InstantKillThresholdPercentage)
 		{
-			int killAmount = ctx.Target.GetCurrentHP();
-			ctx.Target.TakeDamage(killAmount);
-			yield return BattleSystem.Instance.ShowDialog($"{ctx.Target.entityData.EntityName} was instantly killed !");
+			// The Collector Execute: Deal overpowering flat true damage
+			int executeDamage = 9999;
+			ctx.Target.TakeDamage(executeDamage, ctx.Source);
+			
+			string executionerName = ctx.Source != null ? ctx.Source.entityData.EntityName : "The attacker";
+			yield return BattleSystem.Instance.ShowDialog($"{executionerName} dealt {executeDamage} True Damage!\n{ctx.Target.entityData.EntityName} was EXECUTED!");
 		}
 	}
 }

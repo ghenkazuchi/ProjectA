@@ -24,9 +24,12 @@ MonoBehaviour:
     effect: {fileID: 11400000, guid: c8df9f2be75b748408cf5d21543d7c49, type: 2}
     procChance: 1
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 11400000, guid: 1f10f97702ac52140aaa3079945e849c, type: 2}
+  equipmentSets:
+  - {fileID: 11400000, guid: 1f10f97702ac52140aaa3079945e849c, type: 2}
   pieceWeight: 1
   basePrice: 200
   weaponType: 5
   requirement: 0
   canPierceBackRow: 1
+  isStackable: 0
+  maxStack: 1

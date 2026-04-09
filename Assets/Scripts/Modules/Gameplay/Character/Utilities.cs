@@ -282,6 +282,8 @@ public enum EffectTriggerPhase
 {
 	StartOfTurn,
 	EndOfTurn,
+	Instant,
+	Passive
 }
 public enum EffectActiveTiming
 {

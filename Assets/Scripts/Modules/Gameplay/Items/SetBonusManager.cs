@@ -14,25 +14,45 @@ public sealed class SetBonusManager
 		equipablePerSet.Clear();
 		void Acc(EquipableBaseData b)
 		{
-			if (b == null || b.equipmentSet == null)
+			if (b == null || b.equipmentSets == null)
 			{
 				return;
 			}
-			var set = b.equipmentSet;
-			if(!equipablePerSet.TryGetValue(set, out var seen))
+			foreach (var set in b.equipmentSets)
 			{
-				equipablePerSet[set] = seen = new HashSet<EquipableBaseData>();
+				if (set == null) continue;
+				if(!equipablePerSet.TryGetValue(set, out var seen))
+				{
+					equipablePerSet[set] = seen = new HashSet<EquipableBaseData>();
+				}
+				if (seen.Contains(b)) continue;
+				seen.Add(b);
+				int w = Mathf.Max(1, b.pieceWeight);
+				counts[set] = counts.TryGetValue(set, out var c) ? c + w : w;
 			}
-			if (seen.Contains(b)) return;
-			seen.Add(b);
-			int w = Mathf.Max(1, b.pieceWeight);
-			counts[b.equipmentSet] = counts.TryGetValue(b.equipmentSet, out var c) ? c + w : w;
 		}
 		if (weapon != null) 
 		{
 			if(weapon.WeaponBaseData != null)
 			{
-				Acc(weapon.WeaponBaseData);
+				var wb = weapon.WeaponBaseData;
+				if (wb.equipmentSets != null)
+				{
+					foreach (var set in wb.equipmentSets)
+					{
+						if (set == null) continue;
+						if(!equipablePerSet.TryGetValue(set, out var seen))
+						{
+							equipablePerSet[set] = seen = new HashSet<EquipableBaseData>();
+						}
+						if (!seen.Contains(wb))
+						{
+							seen.Add(wb);
+							int w = Mathf.Max(1, wb.pieceWeight) * weapon.CurrentStack;
+							counts[set] = counts.TryGetValue(set, out var c) ? c + w : w;
+						}
+					}
+				}
 			}
 		}
 		if (items != null)

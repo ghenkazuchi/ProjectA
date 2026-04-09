@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
+  m_Name: NinjaLightArmor
+  m_EditorClassIdentifier: 
+  EquipableStatBonus: []
+  itemName: Ninja Light Armor
+  description: 
+  icon: {fileID: 0}
+  maxUsePerLifeCyle: 0
+  maxUsePerBattle: 0
+  itemRarity: 0
+  effectData: []
+  canDuplicateTrigger: 0
+  equipmentSets:
+  - {fileID: 11400000, guid: 8ce6f213f0f4fce4ba0b84494b698a9d, type: 2}
+  pieceWeight: 1
+  basePrice: 0
+  canBeUpgraded: 0
+  normal:
+    magnitudeMultiplier: 0
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+    gearFlatMultiplier: 0
+    gearPercentMultiplier: 0
+  gold:
+    magnitudeMultiplier: 0
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+    gearFlatMultiplier: 0
+    gearPercentMultiplier: 0
+  diamond:
+    magnitudeMultiplier: 0
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+    gearFlatMultiplier: 0
+    gearPercentMultiplier: 0
+  normalTint: {r: 1, g: 1, b: 1, a: 1}
+  goldTint: {r: 1, g: 0.92, b: 0.38, a: 1}
+  diamondTint:
+    serializedVersion: 2
+    rgba: 4289885011
+  goldDescription: 
+  diamondDescription: 

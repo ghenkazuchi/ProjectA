@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b3d1f337747c8f4c803eaebb42ba6ab, type: 3}
+  m_Name: Kunai Stackable Set
+  m_EditorClassIdentifier: 
+  setName: Kunai Stackable Set
+  thresholds:
+  - requiredPieces: 3
+    effects:
+    - trigger: 0
+      effect: {fileID: 11400000, guid: e77f47a9a02444641b7abbb6516d3615, type: 2}
+      procChance: 1
+  setEffectIcon: {fileID: 0}
