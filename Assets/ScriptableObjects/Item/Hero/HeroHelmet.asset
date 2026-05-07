@@ -23,7 +23,7 @@ MonoBehaviour:
     ModType: 0
     value: 15
   itemName: Hero Helmet
-  description: 
+  description: Belong to "Hero" set
   icon: {fileID: 21300000, guid: 35a7cdad391d58d4288c789e17ecdc32, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
@@ -33,39 +33,19 @@ MonoBehaviour:
   equipmentSets:
   - {fileID: 11400000, guid: 69e6310f70077d44bb034b53488d1c1e, type: 2}
   pieceWeight: 1
-  basePrice: 0
-  canBeUpgraded: 0
-  normal:
-    magnitudeMultiplier: 0
-    durationBonus: 0
-    additionalEffect: {fileID: 0}
-    procChanceMultiplier: 0
-    bonusUsagePerBattle: 0
-    bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
+  basePrice: 50
+  canBeUpgraded: 1
   gold:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   diamond:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
-  normalTint: {r: 1, g: 1, b: 1, a: 1}
-  goldTint: {r: 1, g: 0.92, b: 0.38, a: 1}
-  diamondTint:
-    serializedVersion: 2
-    rgba: 4289885011
   goldDescription: 
   diamondDescription: 

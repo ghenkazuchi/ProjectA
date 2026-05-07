@@ -36,6 +36,7 @@ public class EquipmentEffectInfo : MonoBehaviour
 		if (equipmentData != null)
 		{
 			equipmentNameText.text = equipmentData.itemName;
+			equipmentNameText.color = titleTint;
 
 			for (int i = 0; i < equipmentStatBonusesText.Count; i++)
 			{

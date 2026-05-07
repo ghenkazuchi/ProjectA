@@ -29,7 +29,6 @@ public class ToastUI : MonoBehaviour
 
 	public void Awake()
 	{
-		// Store the off-screen starting position so it can bounce back
 		initialPos = toastTransform.anchoredPosition;
 		Hide();
 	}
@@ -38,22 +37,18 @@ public class ToastUI : MonoBehaviour
 	{
 		toastText.text = message;
 		
-		// 1. Immediately kill any ongoing toast animation (fixes double-clock glitching)
 		currentTween?.Kill();
-		
-		// 2. Reset position and visibility before starting
+
 		toastTransform.anchoredPosition = initialPos;
 		Show();
-
-		// 3. Create the perfect Toast sequence
 		Sequence sequence = DOTween.Sequence().SetLink(gameObject);
 		sequence.Append(toastTransform.DOAnchorPos(Vector2.zero, fadeDuration).SetEase(Ease.OutCubic));
-		sequence.AppendInterval(1.2f); // Let the player actually read the toast
-		sequence.Append(toastCanvasGroup.DOFade(0f, 0.25f)); // Smooth fade out
+		sequence.AppendInterval(1.2f); 
+		sequence.Append(toastCanvasGroup.DOFade(0f, 0.25f)); 
 		sequence.OnComplete(() =>
 		{
 			Hide();
-			toastTransform.anchoredPosition = initialPos; // Reset safely behind the scenes
+			toastTransform.anchoredPosition = initialPos; 
 		});
 		
 		currentTween = sequence;

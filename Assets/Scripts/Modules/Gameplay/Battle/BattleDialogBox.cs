@@ -12,7 +12,7 @@ public class BattleDialogBox : MonoBehaviour
 	public List<TextMeshProUGUI> actionTexts;
 	public List<SkillUI> skillUI;
 	[SerializeField] float minDisplayTimePerDialog = 1.0f;
-	[SerializeField] float delayBetweenDialogs = 0.5f;
+	[SerializeField] float delayBetweenDialogs = 0.75f;
 	private Queue<string> dialogQueue = new Queue<string>();
 	private Coroutine dialogCoroutine;
 	public bool IsDialogTyping { get; private set; } = false;
@@ -25,20 +25,20 @@ public class BattleDialogBox : MonoBehaviour
 		dialogText.text = dialog;
 	}
 
-	private void ShowTurnEntityInfo()
+	public void ShowTurnEntityInfo()
 	{
 		turnEntityInfo.alpha = 1f;
 		turnEntityInfo.interactable = true;
 		turnEntityInfo.blocksRaycasts = true;
 
 	}
-	private void HideTurnEntityInfo()
+	public void HideTurnEntityInfo()
 	{
 		turnEntityInfo.alpha = 0f;
 		turnEntityInfo.interactable = false;
 		turnEntityInfo.blocksRaycasts = false;
 	}
-	public IEnumerator TypeDialog(string dialog)
+	public IEnumerator TypeDialog(string dialog, bool autoShowTurnEntityInfo = true)
 	{
 		HideTurnEntityInfo();
 		IsDialogTyping = true;
@@ -59,7 +59,10 @@ public class BattleDialogBox : MonoBehaviour
 		}
 
 		IsDialogTyping = false;
-		ShowTurnEntityInfo();
+		if (autoShowTurnEntityInfo)
+		{
+			ShowTurnEntityInfo();
+		}
 	}
 
 	public void EnableDialogText(bool enabled)
@@ -143,7 +146,7 @@ public class BattleDialogBox : MonoBehaviour
 		{
 			string dialog = dialogQueue.Dequeue();
 			yield return TypeDialog(dialog);
-			yield return new WaitForSeconds(delayBetweenDialogs); // Delay after each dialog
+			yield return new WaitForSeconds(delayBetweenDialogs); 
 		}
 		dialogCoroutine = null;
 	}

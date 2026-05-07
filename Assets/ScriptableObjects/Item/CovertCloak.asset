@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: CovertCloak
   m_EditorClassIdentifier: 
-  EquipableStatBonus: []
+  EquipableStatBonus:
+  - Stat: 9
+    ModType: 0
+    value: 10
+  - Stat: 10
+    ModType: 0
+    value: 10
   itemName: Cover Cloak
   description: Owner immunity to one "Bound" debuff one per battle
   icon: {fileID: 21300000, guid: 5681e33c6f172bb4b861e98372c742dc, type: 3}
@@ -22,43 +28,25 @@ MonoBehaviour:
   effectData:
   - trigger: 11
     effect: {fileID: 11400000, guid: 8345340d7be0ac54f99294f81cd1e73a, type: 2}
-    condition: {fileID: 0}
+    procChance: 1
+    targetMode: 0
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 0}
+  equipmentSets:
+  - {fileID: 0}
   pieceWeight: 1
-  basePrice: 12
+  basePrice: 30
   canBeUpgraded: 0
-  normal:
-    magnitudeMultiplier: 0
-    durationBonus: 0
-    additionalEffect: {fileID: 0}
-    procChanceMultiplier: 0
-    bonusUsagePerBattle: 0
-    bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   gold:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   diamond:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
-  normalTint: {r: 1, g: 1, b: 1, a: 1}
-  goldTint: {r: 1, g: 0.92, b: 0.38, a: 1}
-  diamondTint:
-    serializedVersion: 2
-    rgba: 4289885011
   goldDescription: 
   diamondDescription: 

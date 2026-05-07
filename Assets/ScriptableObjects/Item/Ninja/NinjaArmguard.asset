@@ -20,7 +20,7 @@ MonoBehaviour:
     ModType: 0
     value: 2
   itemName: Ninja Armguard
-  description: 
+  description: Belong to "Ninja" set
   icon: {fileID: 21300000, guid: da6bf28a806542e4180002e4eb744c9a, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
@@ -32,37 +32,17 @@ MonoBehaviour:
   pieceWeight: 1
   basePrice: 240
   canBeUpgraded: 1
-  normal:
-    magnitudeMultiplier: 0
-    durationBonus: 0
-    additionalEffect: {fileID: 0}
-    procChanceMultiplier: 0
-    bonusUsagePerBattle: 0
-    bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   gold:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   diamond:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
-  normalTint: {r: 1, g: 1, b: 1, a: 1}
-  goldTint: {r: 1, g: 0.92, b: 0.38, a: 1}
-  diamondTint:
-    serializedVersion: 2
-    rgba: 4289885011
   goldDescription: 
   diamondDescription: 

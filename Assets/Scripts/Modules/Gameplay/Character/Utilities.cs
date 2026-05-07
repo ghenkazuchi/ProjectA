@@ -42,7 +42,7 @@ public enum MonsterType
 	Undead,
 	MagicalBeast,
 	Insect,
-	Spirit
+	Spirit,
 }
 public enum MonsterTypeName
 {
@@ -61,7 +61,6 @@ public enum MonsterTypeName
 	DragonFly,
 	HeadlessHorseman,
 	ZombieWolf,
-
 }
 public enum MonsterRank
 {
@@ -360,6 +359,12 @@ public enum EquipEffectTrigger
 	OnEvade
 }
 
+public enum EquipEffectTargetMode
+{
+	Self,
+	Target
+}
+
 [System.Serializable] 
 public struct EquipableStatBonus
 {
@@ -380,15 +385,16 @@ public class ThresholdBonus
 [System.Serializable]
 public struct GradeTunning
 {
-	public float magnitudeMultiplier;
+	[Tooltip("Extra duration added to effects granted by this item at this grade.")]
 	public int durationBonus;
+	[Tooltip("An additional effect unlocked at this grade (e.g. extend buff duration).")]
 	public EffectData additionalEffect;
+	[Tooltip("Bonus proc chance added to equipment effects at this grade.")]
 	public float procChanceMultiplier;
+	[Tooltip("Extra uses per battle granted at this grade.")]
 	public int bonusUsagePerBattle;
+	[Tooltip("Extra uses per lifecycle granted at this grade.")]
 	public int bonusUsagePerLifeCycle;
-
-	public float gearFlatMultiplier;	
-	public float gearPercentMultiplier;
 }
 
 [System.Serializable]
@@ -513,24 +519,26 @@ public sealed class DamageContext
 	public float SplitPercent;
 
 	public bool BlockFurtherSharing;
+	public string SkillName = "";
 	//Damage Element
 
-	public float defenseIgnorePercentage;
-	public float attackIncreasePercentage;
-	public float propertyDamagePercentage;
+	public float defenseIgnorePercentage = 0f;
+	public float attackIncreasePercentage = 1f;
+	public float propertyDamagePercentage = 0f;
 
 	// Critical hit bonuses (from skill modifiers, equipment, buffs)
-	public float BonusCritChance;
-	public float BonusCritMultiplier;
+	public float BonusCritChance = 0f;
+	public float BonusCritMultiplier = 0f;
 
 
-	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, bool isEffect = false)
+	public void Reset(EntityBase src, EntityBase tgt, int damage, SkillDefinition origin, string skillName = "", bool isEffect = false)
 	{
 		Source = src;
 		Target = tgt;
 		BaseDamage = damage;
 		EffectiveDamage = damage;
 		this.Origin = origin;
+		this.SkillName = skillName;
 		isEffectDamage = isEffect;
 		CancleApply = false;
 		ReflectAmount = 0;

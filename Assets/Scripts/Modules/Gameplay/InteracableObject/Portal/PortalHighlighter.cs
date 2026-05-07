@@ -16,7 +16,15 @@ public class PortalHighlighter : MonoBehaviour
 
 		if (highlightObject != null)
 		{
-			highlightObject.SetActive(false);
+			if (highlightObject == gameObject)
+			{
+				Debug.LogWarning("[PortalHighlighter] Highlight Object is assigned to the Portal itself! Clearing it to prevent bugs.");
+				highlightObject = null;
+			}
+			else
+			{
+				highlightObject.SetActive(false);
+			}
 		}
 	}
 
@@ -45,7 +53,7 @@ public class PortalHighlighter : MonoBehaviour
 		if (isMapView)
 		{
 			// Scale up so portal is visible from zoomed-out view
-			transform.localScale = originalScale * highlightScale;
+			transform.localScale = new Vector3(highlightScale, highlightScale, originalScale.z);
 
 			if (highlightObject != null)
 			{

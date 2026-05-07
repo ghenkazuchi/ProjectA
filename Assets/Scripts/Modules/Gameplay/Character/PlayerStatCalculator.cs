@@ -79,10 +79,13 @@ public class PlayerStatCalculator : IStatCalculator
             if (it == null || it.itemBaseData == null) continue;
             var bonuses = it.itemBaseData.EquipableStatBonus;
             if (bonuses == null) continue;
+            float gradeMult = ItemGradeConfig.Instance != null
+                ? ItemGradeConfig.Instance.GetStatMultiplier(it.currentItemGrade)
+                : 1f;
             foreach (var b in bonuses)
             {
                 if (b.Stat != statToCalculate) continue;
-                float v = b.value;
+                float v = b.value * gradeMult;
                 if (b.ModType == ModType.Flat) gearRaw += v;
                 else gearPercentSum += v;
             }

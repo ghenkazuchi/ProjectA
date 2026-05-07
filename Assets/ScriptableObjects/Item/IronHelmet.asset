@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: IronHelmet
   m_EditorClassIdentifier: 
+  EquipableStatBonus: []
   itemName: IronHelmet
   description: When taking damage restore 20% hp. Can be used up to 2 time per battle
   icon: {fileID: 21300000, guid: 44f1c19736820e346a065d72ebf3e9fc, type: 3}
@@ -19,7 +20,26 @@ MonoBehaviour:
   maxUsePerBattle: 0
   itemRarity: 0
   effectData:
-  - trigger: 5
-    effect: {fileID: 11400000, guid: a653948ac9e4d3646b869f62b5b35219, type: 2}
-    condition: {fileID: 11400000, guid: 410e0cfa193d6c64180d8ea0eed7bdd4, type: 2}
+  - trigger: 6
+    effect: {fileID: 11400000, guid: a9a10686230330a44b19a8c4468076af, type: 2}
+    procChance: 1
+    targetMode: 0
+  canDuplicateTrigger: 0
+  equipmentSets: []
+  pieceWeight: 1
+  basePrice: 0
   canBeUpgraded: 0
+  gold:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  diamond:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  goldDescription: 
+  diamondDescription: 

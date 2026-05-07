@@ -12,12 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: HermetBoot
   m_EditorClassIdentifier: 
+  EquipableStatBonus:
+  - Stat: 11
+    ModType: 0
+    value: 10
   itemName: HermetBoot
-  description: HermetBoot
+  description: 'Boost owner action speed '
   icon: {fileID: 21300000, guid: aa20785e0b0ce5d4591dd55a651543ed, type: 3}
+  maxUsePerLifeCyle: 0
+  maxUsePerBattle: 0
   itemRarity: 0
-  effectData:
-  - trigger: 2
-    effect: {fileID: 11400000, guid: 32dd565e791dbd245b40ec27d3bf1a20, type: 2}
-    condition: {fileID: 0}
-  canBeUpgraded: 0
+  effectData: []
+  canDuplicateTrigger: 0
+  equipmentSets: []
+  pieceWeight: 1
+  basePrice: 30
+  canBeUpgraded: 1
+  gold:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  diamond:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  goldDescription: 
+  diamondDescription: 

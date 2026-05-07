@@ -29,6 +29,9 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 	[Header("Toast")]
 	[SerializeField] private ToastUI toastUI;
 
+	[Header("Tooltip")]
+	[SerializeField] private EquipmentContextMenu tooltip;
+
 	private void Awake()
 	{
 		UICanvasGroup.alpha = 0f;
@@ -43,6 +46,14 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 			goldRewardCanvasGroup.alpha = 0f;
 			goldRewardCanvasGroup.interactable = false;
 			goldRewardCanvasGroup.blocksRaycasts = false;
+		}
+		
+		if (tooltip != null && chestItemSlots != null)
+		{
+			foreach (var slot in chestItemSlots)
+			{
+				slot.BindTooltip(tooltip);
+			}
 		}
 	}
 

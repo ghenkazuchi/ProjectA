@@ -15,7 +15,8 @@ public class PassiveSkillRunner
 
 	public IEnumerator Trigger(PassiveTrigger trigger, params object[] args)
 	{
-		foreach (var skill in owner.activePassiveSkills)
+		var snapshot = new List<PassiveSkill>(owner.activePassiveSkills);
+		foreach (var skill in snapshot)
 		{
 			var data = skill.PassiveSkillData;
 			if (data == null || data.trigger != trigger) continue;

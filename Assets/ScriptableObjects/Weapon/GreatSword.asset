@@ -14,17 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EquipableStatBonus:
   - Stat: 3
-    ModType: 1
-    value: 0.15
+    ModType: 0
+    value: 35
   itemName: GreatSword
-  description: 
+  description: Like a chunk of metal, It boost owner damage by a lot
   icon: {fileID: 21300000, guid: e9a0b59b7608405458c819b4771b3bef, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
   itemRarity: 1
   effectData: []
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 11400000, guid: 1836e794a8c89754cb5245d0ee113eec, type: 2}
+  equipmentSets: []
   pieceWeight: 1
+  basePrice: 200
   weaponType: 2
   requirement: 0
+  canPierceBackRow: 0
+  isStackable: 0
+  maxStack: 1

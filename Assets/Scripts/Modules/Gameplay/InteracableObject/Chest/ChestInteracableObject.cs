@@ -48,6 +48,7 @@ public class ChestInteracableObject : Interacable, IChestInteracable
 			if (pick is ItemBaseData) grade = RollGrade();
 
 			generatedItems.Add(new ChestLootEntry(pick, grade));
+			availableItems.RemoveAt(randomIndex);
 		}
 	}
 

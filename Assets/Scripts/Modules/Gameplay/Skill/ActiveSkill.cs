@@ -103,6 +103,8 @@ public class ActiveSkill
 						{
 							Source = context.Owner,
 							Target = entity,
+							Origin = SkillData.skillDefinition,
+							SkillName = SkillData.skillName
 						};
 						yield return beforeDealingDamage.OnBeforeDealingDamage(damageCtx);
 					}
@@ -149,6 +151,8 @@ public class ActiveSkill
 						Source = skillContext.Owner,
 						Target = entity,
 						EffectiveDamage = skillContext.totalDamageDeal,
+						Origin = SkillData.skillDefinition,
+						SkillName = SkillData.skillName
 					};
 					yield return onDealingDamage.OnDealingDamage(damageCtx);
 				}

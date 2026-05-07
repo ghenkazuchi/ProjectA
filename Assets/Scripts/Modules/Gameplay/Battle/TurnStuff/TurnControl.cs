@@ -10,7 +10,8 @@ public enum ActionBan : int
 	Defense = 1 << 0,
 	BasicAttack = 1 << 1,
 	SpellSkill = 1 << 2,
-	BattleArtSkill = 1 << 3,	
+	BattleArtSkill = 1 << 3,
+	Switch = 1 << 4,
 }
 
 public enum ForcedActionKind

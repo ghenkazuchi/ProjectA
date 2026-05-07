@@ -27,6 +27,7 @@ public class ShopEquipmentSlotUI : MonoBehaviour, IPointerClickHandler
 	public void SetupItem(Item item, int slotCost, System.Action<bool> onChanged)
 	{
 		icon.sprite = item.itemBaseData.icon;
+		icon.color = item.itemBaseData.GetTint(item.currentItemGrade);
 		Bind(onChanged);
 	}
 

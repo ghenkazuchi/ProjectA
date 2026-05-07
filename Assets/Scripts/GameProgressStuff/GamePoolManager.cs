@@ -6,11 +6,13 @@ using UnityEngine;
 
 public class GamePoolManager : Singleton<GamePoolManager>
 {
+	[Header("Active Pools (set by RunProgressionManager)")]
 	public MonsterPoolDatabase monsterPool;
 	public RecruitabeCharacterPool recruitableCharacterPool;
 
+	[Header("Current Game Time (set by RunProgressionManager)")]
 	[SerializeField]
-	public GameTime CurrentGameTinme = new GameTime(GameDay.Day1,TimeOfDay.Morning);
+	public GameTime CurrentGameTime = new GameTime(GameDay.Day1, TimeOfDay.Morning);
 
 	/// <summary>
 	/// Templates that have been claimed by an interactable this session.
@@ -24,27 +26,43 @@ public class GamePoolManager : Singleton<GamePoolManager>
 	/// </summary>
 	private HashSet<RecruitableCharacterTemplate> recruitedTemplates = new HashSet<RecruitableCharacterTemplate>();
 
-	private void Awake()
+	/// <summary>
+	/// Swaps the active pool databases. Called by RunProgressionManager when a new loop starts.
+	/// </summary>
+	public void SetPools(MonsterPoolDatabase monsters, RecruitabeCharacterPool recruits)
 	{
-		Debug.Log(CurrentGameTinme.day.ToString() + " " + CurrentGameTinme.time.ToString());	
+		monsterPool = monsters;
+		recruitableCharacterPool = recruits;
+		Debug.Log($"[GamePoolManager] Pools updated. Monster: {(monsters != null ? monsters.name : "null")}, Recruit: {(recruits != null ? recruits.name : "null")}");
 	}
+
 	public void SetGameTime(GameDay day, TimeOfDay time)
 	{
-		CurrentGameTinme = new GameTime(day, time);
+		CurrentGameTime = new GameTime(day, time);
+		Debug.Log($"[GamePoolManager] Game time set to: {day} - {time}");
 	}
+
 	public List<MonsterSpawnData> GetCurrentMonsterPool()
 	{
-		var pool = monsterPool.GetMonster(CurrentGameTinme.day, CurrentGameTinme.time);
-		foreach(var monster in pool)
+		if (monsterPool == null)
 		{
-			Debug.Log($"[GamePoolManager] Monster: {monster.monsterData.name}, Level: {monster.level}");
-		}	
+			Debug.LogWarning("[GamePoolManager] Monster pool is null.");
+			return new List<MonsterSpawnData>();
+		}
+
+		var pool = monsterPool.GetMonster(CurrentGameTime.day, CurrentGameTime.time);
 		return pool;
 	}
 
 	public List<RecruitableCharacterTemplate> GetCurrentRecruitablePool()
 	{
-		var allAvailable = recruitableCharacterPool.GetAvailableCharacters(CurrentGameTinme.day, CurrentGameTinme.time);
+		if (recruitableCharacterPool == null)
+		{
+			Debug.LogWarning("[GamePoolManager] Recruit pool is null.");
+			return new List<RecruitableCharacterTemplate>();
+		}
+
+		var allAvailable = recruitableCharacterPool.GetAvailableCharacters(CurrentGameTime.day, CurrentGameTime.time);
 
 		// Filter out already-claimed and already-recruited templates
 		return allAvailable
@@ -73,8 +91,8 @@ public class GamePoolManager : Singleton<GamePoolManager>
 	}
 
 	/// <summary>
-	/// Resets session claims. Call this when entering a new exploration session
-	/// or when the day/time changes, so un-interacted templates can re-enter the pool.
+	/// Resets session claims. Call this when entering a new loop,
+	/// so un-interacted templates can re-enter the pool.
 	/// Already-recruited templates remain permanently excluded.
 	/// </summary>
 	public void ResetSessionClaims()

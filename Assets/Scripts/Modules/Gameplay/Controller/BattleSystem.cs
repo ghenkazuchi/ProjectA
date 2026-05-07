@@ -101,6 +101,7 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		uiController.Hide();
 	}
+	//Setting up
 
 	private Dictionary<EntityBase, DefenseState> entityDefenseStates = new Dictionary<EntityBase, DefenseState>();
 
@@ -222,9 +223,9 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	}
 	public IEnumerator HandleEntityTakeDamage(
 		EntityBase target, int finalDamage, EntityBase source,
-		SkillDefinition origin, bool isEffectDamage = false, string flavor = null)
+		SkillDefinition origin, string skillName = "", bool isEffectDamage = false, string flavor = null)
 	{
-		yield return StartCoroutine(actionExecutor.HandleEntityTakeDamage(target, finalDamage, source, origin, isEffectDamage, flavor));
+		yield return StartCoroutine(actionExecutor.HandleEntityTakeDamage(target, finalDamage, source, origin, skillName, isEffectDamage, flavor));
 	}
 
 	public IEnumerator HandleEntityGotHeal(HealingContext healingContext)
@@ -276,15 +277,14 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		}
 	}
 
-
-
-	public void OnActionSelect(int actionIndex) => inputHandler.OnActionSelect(actionIndex);
-	public void OnActionConfirm() => inputHandler.OnActionConfirm();
+	
+	//public void OnActionSelect(int actionIndex) => inputHandler.OnActionSelect(actionIndex);
+	//public void OnActionConfirm() => inputHandler.OnActionConfirm();
 	public void ExecuteSwitchPosition(int indexA, int indexB) => inputHandler.ExecuteSwitchPosition(indexA, indexB);
 	public void SyncPlayerBattleUnitsFromPartySlots() => UnitRegistry.SyncPlayerBattleUnitsFromPartySlots();
-	public void OnSkillSelect(int skillIndex) => inputHandler.OnSkillSelect(skillIndex);
-	public void OnSkillConfirm() => inputHandler.OnSkillConfirm();
-	public void OnSkillCancel() => inputHandler.OnSkillCancel();
+	//public void OnSkillSelect(int skillIndex) => inputHandler.OnSkillSelect(skillIndex);
+	//public void OnSkillConfirm() => inputHandler.OnSkillConfirm();
+	//public void OnSkillCancel() => inputHandler.OnSkillCancel();
 
 	public void SetEntityDefenseState(EntityBase entity, DefenseState state)
 	{

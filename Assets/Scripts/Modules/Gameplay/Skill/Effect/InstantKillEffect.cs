@@ -32,7 +32,7 @@ public class InstantKillEffect : EffectBase, IOnDealingDamage
 			ctx.Target.TakeDamage(executeDamage, ctx.Source);
 			
 			string executionerName = ctx.Source != null ? ctx.Source.entityData.EntityName : "The attacker";
-			yield return BattleSystem.Instance.ShowDialog($"{executionerName} dealt {executeDamage} True Damage!\n{ctx.Target.entityData.EntityName} was EXECUTED!");
+			yield return BattleSystem.Instance.ShowDialog($"The attack was fatal, {ctx.Target.entityData.EntityName} die!");
 		}
 	}
 }

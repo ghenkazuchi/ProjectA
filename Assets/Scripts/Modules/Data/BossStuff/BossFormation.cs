@@ -9,15 +9,14 @@ public class BossFormation : ScriptableObject
 	public string formationName;
 	public List<Member> members = new();
 	public Sprite bossIcon;
+}
+[System.Serializable]
+public class Member
+{
+	public MonsterData monster;
+	public MonsterRankData rank;
+	public MonsterRaceData race;
+	public int level;
 
-	[System.Serializable]
-	public class Member
-	{
-		public MonsterData monster;
-		public MonsterRankData rank;
-		public MonsterRaceData race;
-		public int level;
-
-		public GridPosition position = new GridPosition(0, 0);
-	}
+	public GridPosition position = new GridPosition(0, 0);
 }

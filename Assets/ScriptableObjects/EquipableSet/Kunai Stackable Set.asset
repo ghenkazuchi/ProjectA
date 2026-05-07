@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   setName: Kunai Stackable Set
   thresholds:
-  - requiredPieces: 3
+  - requiredPieces: 2
     effects:
-    - trigger: 0
+    - trigger: 5
       effect: {fileID: 11400000, guid: e77f47a9a02444641b7abbb6516d3615, type: 2}
       procChance: 1
+      targetMode: 1
   setEffectIcon: {fileID: 0}

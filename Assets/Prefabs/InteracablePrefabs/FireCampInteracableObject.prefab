@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 0000000003819490b391b5f9c93960fd
+  m_ApplyToSortingLayers: 0000000003819490bb377109997ef66bb391b5f9
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -134,9 +134,11 @@ MonoBehaviour:
   mpHeal: 0.3
   spHeal: 0.3
   playerParty: {fileID: 0}
-  destroyAfterRest: 1
+  destroyAfterRest: 0
   dayColor: {r: 0.45, g: 0.45, b: 0.45, a: 0.8}
   nightColor: {r: 1, g: 1, b: 1, a: 1}
+  daySortingLayer: Spawnable
+  nightSortingLayer: TopOverlay
   campLight: {fileID: 5382646512036345486}
   nightOuterRadius: 4
   nightInnerRadius: 1.2

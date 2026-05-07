@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: MediumPotion
   m_EditorClassIdentifier: 
+  EquipableStatBonus:
+  - Stat: 0
+    ModType: 0
+    value: 10
   itemName: Medium Potion
   description: In Battle, when owner HP is lower than 30%, restore for 30% of max
     HP. Can be triggered one per battle
@@ -22,5 +26,24 @@ MonoBehaviour:
   effectData:
   - trigger: 5
     effect: {fileID: 11400000, guid: a4f3be8379cbeaa45a476528236269ec, type: 2}
-    condition: {fileID: 11400000, guid: ff6dd4b40b445974c879a3136a1259d4, type: 2}
-  canBeUpgraded: 0
+    procChance: 1
+    targetMode: 0
+  canDuplicateTrigger: 0
+  equipmentSets: []
+  pieceWeight: 1
+  basePrice: 30
+  canBeUpgraded: 1
+  gold:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  diamond:
+    durationBonus: 0
+    additionalEffect: {fileID: 0}
+    procChanceMultiplier: 0
+    bonusUsagePerBattle: 0
+    bonusUsagePerLifeCycle: 0
+  goldDescription: 
+  diamondDescription: 

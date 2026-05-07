@@ -101,8 +101,14 @@ public class PlayerCreationUITest : MonoBehaviour
 
 	private void SetUpSelectionPreview()
 	{
-		raceDropdown.onValueChanged.AddListener(_ => RefreshCharacterPreview());
-		classDropdown.onValueChanged.AddListener(_ => RefreshCharacterPreview());
+		raceDropdown.onValueChanged.AddListener(_ => {
+			RefreshCharacterPreview();
+			SetListTrait();
+		});
+		classDropdown.onValueChanged.AddListener(_ => {
+			RefreshCharacterPreview();
+			SetListTrait();
+		});
 		RefreshCharacterPreview();
 	}
 
@@ -119,13 +125,28 @@ public class PlayerCreationUITest : MonoBehaviour
 	}
 	void SetListTrait()
 	{
+		CharacterRaceData selectedRace = GetSelectedRace();
+		ClassData selectedClass = GetSelectedClass();
+
 		Trait[] traits = (Trait[])System.Enum.GetValues(typeof(Trait));
 		for (int i = 0; i < traitTexts.Length; i++)
 		{
 			Trait trait = traits[i];
 			int baseValue = playerCharacterData.BaseTraits.ContainsKey(trait) ? playerCharacterData.BaseTraits[trait] : 0;
 			int currentValue = currentTraitValues[trait];
-			if (currentValue > baseValue)
+			
+			int raceBonus = 0;
+			if (selectedRace != null && selectedRace.traitBonuses != null && selectedRace.traitBonuses.ContainsKey(trait))
+				raceBonus = selectedRace.traitBonuses[trait];
+				
+			int classBonus = 0;
+			if (selectedClass != null && selectedClass.traitBonuses != null && selectedClass.traitBonuses.ContainsKey(trait))
+				classBonus = selectedClass.traitBonuses[trait];
+
+			int totalBonus = raceBonus + classBonus;
+			int finalValue = currentValue + totalBonus;
+
+			if (currentValue > baseValue || totalBonus != 0)
 			{
 				traitTexts[i].color = Color.red;
 			}
@@ -133,7 +154,19 @@ public class PlayerCreationUITest : MonoBehaviour
 			{
 				traitTexts[i].color = Color.black;
 			}
-			traitTexts[i].text = $"{trait}: {currentValue}";
+			
+			if (totalBonus > 0)
+			{
+				traitTexts[i].text = $"{trait}: {finalValue} <color=#006400>(+{totalBonus})</color>";
+			}
+			else if (totalBonus < 0)
+			{
+				traitTexts[i].text = $"{trait}: {finalValue} <color=#8B0000>({totalBonus})</color>";
+			}
+			else
+			{
+				traitTexts[i].text = $"{trait}: {finalValue}";
+			}
 		}
 		bonusPointText.text = $"Bonus Points: {bonusTraitPoints}";
 	}

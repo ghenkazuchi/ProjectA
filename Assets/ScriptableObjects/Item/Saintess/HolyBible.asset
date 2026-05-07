@@ -23,7 +23,7 @@ MonoBehaviour:
     ModType: 0
     value: 10
   itemName: Holy Bible
-  description: 
+  description: Belong to "Saintess" set
   icon: {fileID: 21300000, guid: 6d8ae6e686dc3e34c8a4868ef9832f1c, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
   equipmentSets:
   - {fileID: 11400000, guid: 1b258835bb72a4443bd1a11acb9586e6, type: 2}
   pieceWeight: 1
-  basePrice: 300
+  basePrice: 100
   weaponType: 3
   requirement: 1
   canPierceBackRow: 0

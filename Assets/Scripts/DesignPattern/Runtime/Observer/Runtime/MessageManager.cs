@@ -94,7 +94,7 @@ namespace HaKien
     }
     public class MessageManager : Singleton<MessageManager>, ISerializationCallbackReceiver
     {
-        // private static MessageManager instance = null;
+
 
         //Stores information when Serialize data in the subcribers-Dictionary
         [HideInInspector] public List<MessageType> _keys = new List<MessageType>();

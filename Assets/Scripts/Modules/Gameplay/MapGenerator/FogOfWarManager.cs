@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class FogOfWarManager : MonoBehaviour
 {
@@ -66,8 +67,10 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
+    private HashSet<Vector3Int> fadingTiles = new HashSet<Vector3Int>();
+
     /// <summary>
-    /// Clears the fog tile around the given grid center position within the visionRadius.
+    /// Clears the fog tile around the given grid center position within the visionRadius with a square shape.
     /// </summary>
     public void RevealArea(Vector2Int centerGridPos)
     {
@@ -77,13 +80,39 @@ public class FogOfWarManager : MonoBehaviour
         {
             for (int y = centerGridPos.y - visionRadius; y <= centerGridPos.y + visionRadius; y++)
             {
-                // Create a rough circular reveal (or blocky, depending on the distance check)
-                // Use manhattan or euclidean distance. We'll use euclidean for a rounded square/circle blocky feel.
-                if (Vector2.Distance(centerGridPos, new Vector2(x, y)) <= visionRadius)
+                Vector3Int tilePos = new Vector3Int(x, y, 0);
+                
+                // If there's a tile here and it's not already fading
+                if (fogTilemap.HasTile(tilePos) && !fadingTiles.Contains(tilePos))
                 {
-                    fogTilemap.SetTile(new Vector3Int(x, y, 0), null);
+                    StartCoroutine(FadeTileOut(tilePos));
                 }
             }
         }
+    }
+
+    private System.Collections.IEnumerator FadeTileOut(Vector3Int pos)
+    {
+        fadingTiles.Add(pos);
+
+        // We must remove the LockColor flag from the tile instance to allow color changing
+        fogTilemap.SetTileFlags(pos, TileFlags.None);
+
+        float duration = 0.3f; // seconds to fade
+        float elapsed = 0f;
+        Color startColor = Color.white;
+        Color targetColor = new Color(1, 1, 1, 0);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            fogTilemap.SetColor(pos, Color.Lerp(startColor, targetColor, t));
+            yield return null;
+        }
+
+        // Fully remove the tile once faded
+        fogTilemap.SetTile(pos, null);
+        fadingTiles.Remove(pos);
     }
 }

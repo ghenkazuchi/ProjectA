@@ -18,7 +18,7 @@ public class AnvilUpgradeItem : MonoBehaviour
 	private int index2 = -1;
 
 	private PlayerCharacter currentCharacter;
-	//private System.Action onCombined;
+
 	private System.Action<Item> onCombined;
 
 	private void Awake()

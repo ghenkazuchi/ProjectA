@@ -37,14 +37,32 @@ public class TargetSelectionController : MonoBehaviour
 
 		if (currentTargetType == TargetType.Enemy)
 		{
-			currentAvailableTargets = enemyUnits.Where(unit => unit.IsAlive()).ToList();
-			// Single-target Damage skills can't hit protected back-row units (unless weapon pierces)
-			if (currentSkillRange == SkillRange.SingleTarget && skillToUSe.SkillData.activeSkillType == ActiveSkillType.Damage)
+			if (callingEntity != null && callingEntity.TauntedBy != null && callingEntity.TauntedBy.GetCurrentHP() > 0)
 			{
-				var pp = BattleSystem.Instance.playerParty;
-				var mp = BattleSystem.Instance.monsterParty;
-				currentAvailableTargets.RemoveAll(unit =>
-					unit.character != null && !BattleGridUtils.IsTargetable(unit.character, pp, mp, callingEntity));
+				BattleUnit taunterUnit = enemyUnits.FirstOrDefault(u => u.character == callingEntity.TauntedBy);
+				if (taunterUnit != null)
+				{
+					currentAvailableTargets.Add(taunterUnit);
+				}
+				else
+				{
+					// This case might happen if a player taunts a player, but usually taunt is across parties
+					taunterUnit = playerUnits.FirstOrDefault(u => u.character == callingEntity.TauntedBy);
+					if (taunterUnit != null) currentAvailableTargets.Add(taunterUnit);
+				}
+			}
+
+			if (currentAvailableTargets.Count == 0) // No taunt or taunter not found, use normal logic
+			{
+				currentAvailableTargets = enemyUnits.Where(unit => unit.IsAlive() && (unit.character == null || !unit.character.IsStealthed)).ToList();
+				// Single-target Damage skills can't hit protected back-row units (unless weapon pierces)
+				if (currentSkillRange == SkillRange.SingleTarget && skillToUSe.SkillData.activeSkillType == ActiveSkillType.Damage)
+				{
+					var pp = BattleSystem.Instance.playerParty;
+					var mp = BattleSystem.Instance.monsterParty;
+					currentAvailableTargets.RemoveAll(unit =>
+						unit.character != null && !BattleGridUtils.IsTargetable(unit.character, pp, mp, callingEntity));
+				}
 			}
 		}
 		else if (currentTargetType == TargetType.Ally)

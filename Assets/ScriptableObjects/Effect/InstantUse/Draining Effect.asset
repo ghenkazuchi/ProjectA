@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 573639f94b82db74883fee906fb010b6, type: 3}
+  m_Name: Draining Effect
+  m_EditorClassIdentifier: 
+  EffectType: 0
+  Effect: 5
+  Name: Draining
+  MaxDuration: 0
+  CanBeRemoved: 0
+  Stackable: 0
+  MaxStack: 1
+  isInstantEffect: 1
+  isPassiveEquipmentEffect: 0
+  tags: 0
+  effectIcon: {fileID: 0}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  drainingPercentage: 0.2

@@ -2,6 +2,7 @@ using HaKien;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class PortalManager : Singleton<PortalManager>
 {
@@ -11,6 +12,12 @@ public class PortalManager : Singleton<PortalManager>
 	private bool isMapViewActive = false;
 	private bool isSelectingPortal = false;
 	private PortalInteracableObject sourcePortal;
+
+	// Lighting override for map view visibility
+	private DayNightCycleController dayNightController;
+	private float savedLightIntensity;
+	private Color savedLightColor;
+	private bool hasLightOverride = false;
 
 	public bool IsMapViewActive => isMapViewActive;
 	public bool IsSelectingPortal => isSelectingPortal;
@@ -70,6 +77,7 @@ public class PortalManager : Singleton<PortalManager>
 		if (!isMapViewActive)
 		{
 			isMapViewActive = true;
+			OverrideLightForMapView();
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnMapViewOpen));
 			OnMapViewToggled?.Invoke(true);
 		}
@@ -114,6 +122,7 @@ public class PortalManager : Singleton<PortalManager>
 		if (isMapViewActive)
 		{
 			isMapViewActive = false;
+			RestoreLightFromMapView();
 			OnMapViewToggled?.Invoke(false);
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnMapViewClose));
 		}
@@ -145,6 +154,46 @@ public class PortalManager : Singleton<PortalManager>
 			MessageManager.Instance.SendMessage(new Message(MessageType.OnMapViewClose));
 		}
 
+		if (isMapViewActive)
+			OverrideLightForMapView();
+		else
+			RestoreLightFromMapView();
+
 		OnMapViewToggled?.Invoke(isMapViewActive);
+	}
+
+	// --- Lighting helpers ---
+
+	private void OverrideLightForMapView()
+	{
+		if (hasLightOverride) return;
+
+		if (dayNightController == null)
+			dayNightController = FindAnyObjectByType<DayNightCycleController>();
+
+		if (dayNightController != null && dayNightController.globalLight != null)
+		{
+			Light2D light = dayNightController.globalLight;
+			savedLightIntensity = light.intensity;
+			savedLightColor = light.color;
+
+			// Set to full daylight so the entire map is visible
+			light.intensity = dayNightController.dayAmbient;
+			light.color = Color.white;
+			hasLightOverride = true;
+		}
+	}
+
+	private void RestoreLightFromMapView()
+	{
+		if (!hasLightOverride) return;
+
+		if (dayNightController != null && dayNightController.globalLight != null)
+		{
+			Light2D light = dayNightController.globalLight;
+			light.intensity = savedLightIntensity;
+			light.color = savedLightColor;
+		}
+		hasLightOverride = false;
 	}
 }

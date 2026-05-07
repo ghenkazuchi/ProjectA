@@ -19,3 +19,11 @@ MonoBehaviour:
     - trigger: 2
       effect: {fileID: 11400000, guid: 64418266fda68d446ab1c7f40cf55f91, type: 2}
       procChance: 1
+      targetMode: 0
+  - requiredPieces: 4
+    effects:
+    - trigger: 5
+      effect: {fileID: 11400000, guid: 55fb35c75e865174388a7dbb05b1a936, type: 2}
+      procChance: 1
+      targetMode: 0
+  setEffectIcon: {fileID: 0}

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EquipableStatBonus:
   - Stat: 3
-    ModType: 1
-    value: 0.1
+    ModType: 0
+    value: 20
   - Stat: 6
-    ModType: 1
-    value: 0.2
+    ModType: 0
+    value: 15
   itemName: Long Bow Of Mytris
   description: Add dark element to owner Battle Art attack and skill
   icon: {fileID: 21300000, guid: 531c17c96525b984790f8d7f1d561791, type: 3}
@@ -29,10 +29,14 @@ MonoBehaviour:
   - trigger: 0
     effect: {fileID: 11400000, guid: 8da91c890c509f348826508c86ff57df, type: 2}
     procChance: 1
+    targetMode: 0
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 0}
+  equipmentSets:
+  - {fileID: 0}
   pieceWeight: 1
   basePrice: 30
   weaponType: 5
   requirement: 0
   canPierceBackRow: 1
+  isStackable: 0
+  maxStack: 1

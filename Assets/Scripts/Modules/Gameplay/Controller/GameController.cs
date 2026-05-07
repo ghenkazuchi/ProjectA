@@ -24,8 +24,7 @@ public class GameController : Singleton<GameController>,IMessageHandle
 	[SerializeField] PlayerParty playerParty;
 	
 	public GameState currentState;
-	public GameDay currentGameDay;
-	public Time currentTime;
+
 	private void Awake()
 	{
 

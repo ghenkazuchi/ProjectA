@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aa80b84903c1544b08bcb15ad5d514, type: 3}
   m_Name: LargePotion
   m_EditorClassIdentifier: 
-  EquipableStatBonus: []
+  EquipableStatBonus:
+  - Stat: 0
+    ModType: 0
+    value: 10
   itemName: Large Potion
   description: In Battle, when owner HP is lower than 30%, restore for 50% of max
     HP. Can be triggered one per battle
@@ -24,42 +27,24 @@ MonoBehaviour:
   - trigger: 5
     effect: {fileID: 11400000, guid: a9a10686230330a44b19a8c4468076af, type: 2}
     procChance: 1
+    targetMode: 0
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 0}
+  equipmentSets:
+  - {fileID: 0}
   pieceWeight: 1
-  basePrice: 10
+  basePrice: 50
   canBeUpgraded: 1
-  normal:
-    magnitudeMultiplier: 0
-    durationBonus: 0
-    additionalEffect: {fileID: 0}
-    procChanceMultiplier: 0
-    bonusUsagePerBattle: 0
-    bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   gold:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
   diamond:
-    magnitudeMultiplier: 0
     durationBonus: 0
     additionalEffect: {fileID: 0}
     procChanceMultiplier: 0
     bonusUsagePerBattle: 0
     bonusUsagePerLifeCycle: 0
-    gearFlatMultiplier: 0
-    gearPercentMultiplier: 0
-  normalTint: {r: 1, g: 1, b: 1, a: 1}
-  goldTint: {r: 1, g: 0.92, b: 0.38, a: 1}
-  diamondTint:
-    serializedVersion: 2
-    rgba: 4289885011
   goldDescription: 
   diamondDescription: 

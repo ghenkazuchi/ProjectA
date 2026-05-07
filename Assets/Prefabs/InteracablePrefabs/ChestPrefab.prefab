@@ -148,9 +148,9 @@ MonoBehaviour:
   unlockableChestPool: {fileID: 11400000, guid: 5e6eba7b056daad40ac3a39d5cf03431,
     type: 2}
   itemContain: 3
-  normalRate: 1
-  goldRate: 0
-  diamondRate: 0
+  normalRate: 0.5
+  goldRate: 0.3
+  diamondRate: 0.2
   goldDropChance: 0.5
   minGold: 10
   maxGold: 30

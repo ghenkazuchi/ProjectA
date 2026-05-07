@@ -8,7 +8,7 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 	[SerializeField] CanvasGroup characterCreationCanvasGroup;
 	[SerializeField] CanvasGroup battleCanvasGroup;
 	[SerializeField] CanvasGroup recruitCharacterCanvasGroup;
-	[SerializeField] CanvasGroup gameLoseUICanvasGroup;
+	[SerializeField] GameOverUIController gameLoseUI;
 	[SerializeField] CanvasGroup partyMenuCanvasGroup;
 	[SerializeField] private OverWorldUI overworldUIController;
 	[SerializeField] private RecruitUIController recruitUIController;
@@ -127,9 +127,11 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 				partyMenuCanvasGroup.interactable = false;
 				break;
 			case MessageType.OnGameLose:
-				gameLoseUICanvasGroup.alpha = 1f;
-				gameLoseUICanvasGroup.interactable = true;
-				gameLoseUICanvasGroup.blocksRaycasts = true;
+				overworldUIController.Hide();
+				battleCanvasGroup.alpha = 0f;
+				battleCanvasGroup.interactable = false;
+				battleCanvasGroup.blocksRaycasts = false;
+				gameLoseUI.Show();
 				break;
 			case MessageType.OnBattleOver:
 				overworldUIController.Show();
@@ -142,7 +144,7 @@ public class IngameUIManager : Singleton<IngameUIManager>, IMessageHandle
 
 	private static bool ShouldKeepOverworldVisible(Interacable interactable)
 	{
-		if (interactable is CampInteracableObject)
+		if (interactable is CampInteracableObject || interactable is PortalInteracableObject)
 		{
 			return true;
 		}

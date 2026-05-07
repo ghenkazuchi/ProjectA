@@ -146,6 +146,11 @@ public class BattleInputHandler : MonoBehaviour
                 StartCoroutine(HandleBasicAttackSelection());
                 break;
             case BattleAction.Switch:
+                if ((sys.currentTurnEntity.TurnControl.Bans & ActionBan.Switch) != 0)
+                {
+                    StartCoroutine(ShowBannedActionDialog("swap positions"));
+                    break;
+                }
                 StartCoroutine(HandleSwitchPosition());
                 break;
         }
@@ -287,6 +292,22 @@ public class BattleInputHandler : MonoBehaviour
         sys.uiController.battleDialogBox.EnableAttackSelector(true);
         sys.uiController.battleDialogBox.EnableActionSelector(true);
         sys.uiController.battleDialogBox.UpdateSkillSelection(currentSkill);
+    }
+
+    private IEnumerator ShowBannedActionDialog(string actionName)
+    {
+        sys.battleState = BattleState.ShowingDialog;
+        sys.uiController.currentPlayerCharacterInfo.EnableBattleHud(false);
+        sys.uiController.battleDialogBox.EnableActionSelector(false);
+        sys.uiController.battleDialogBox.EnableDialogText(true);
+        yield return StartCoroutine(sys.uiController.battleDialogBox.TypeDialog($"{sys.currentTurnEntity.entityData.EntityName} can't {actionName}!", false));
+        yield return new WaitForSeconds(1.5f); // Small delay to let the player read
+        sys.uiController.battleDialogBox.EnableDialogText(false);
+        sys.uiController.battleDialogBox.ShowTurnEntityInfo();
+        sys.battleState = BattleState.ActionSelection;
+        sys.uiController.currentPlayerCharacterInfo.EnableBattleHud(true);
+        sys.uiController.battleDialogBox.EnableActionSelector(true);
+        sys.uiController.battleDialogBox.UpdateActionSelection(currentAction);
     }
 
     private IEnumerator HandleTargetSelection(ActiveSkill skillToUse)

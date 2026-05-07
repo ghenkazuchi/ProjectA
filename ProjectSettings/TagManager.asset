@@ -50,3 +50,9 @@ TagManager:
   - name: Player
     uniqueID: 4250941897
     locked: 0
+  - name: FogOfWar
+    uniqueID: 158414779
+    locked: 0
+  - name: TopOverlay
+    uniqueID: 1811316377
+    locked: 0

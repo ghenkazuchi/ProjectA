@@ -9,7 +9,7 @@ public class DayNightCycleController : MonoBehaviour
 	public Light2D globalLight;
 
 	[Header("Cycle Settings")]
-	[Tooltip("Tổng số bước cho 1 chu kỳ Day+Night. Nếu bật \"Fixed Day/Night Steps\" thì giá trị này sẽ tự = daySteps + nightSteps.")]
+	[Tooltip("Total steps for one Day+Night cycle. If 'Fixed Day/Night Steps' is enabled, this value will automatically equal daySteps + nightSteps.")]
 	public int stepsPerDay = 200;
 	public int currentStep = 0;
 	[Range(0f, 1f)] public float time01 = 0f;
@@ -76,7 +76,7 @@ public class DayNightCycleController : MonoBehaviour
 		nightSteps = Mathf.Max(1, nightSteps);
 		stepsPerDay = daySteps + nightSteps;
 
-		// Night = phần cuối chu kỳ: [dayEnd..1)
+		// Night = end of the cycle: [dayEnd..1)
 		nightWindowStart = Mathf.Clamp01((float)daySteps / Mathf.Max(1, stepsPerDay));
 		nightWindowEnd = 1f;
 	}
@@ -103,7 +103,7 @@ public class DayNightCycleController : MonoBehaviour
     void UpdateNightState(bool fireEvent)
     {
 		bool nightNow;
-		// Hỗ trợ cả window không-wrap (start < end) lẫn wrap (start > end)
+		// Supports both non-wrap windows (start < end) and wrap windows (start > end)
 		if (nightWindowStart <= nightWindowEnd)
 		{
 			nightNow = (time01 >= nightWindowStart) && (time01 < nightWindowEnd);
@@ -122,7 +122,7 @@ public class DayNightCycleController : MonoBehaviour
             isNight = nightNow;
         }
 
-		// Nhảy màu và ánh sáng đột ngột, bỏ gradient chuyển đổi theo time01
+		// Jump color and light abruptly, skip gradient transition based on time01
 		if (globalLight != null)
 		{
 			globalLight.intensity = isNight ? nightAmbient : dayAmbient;

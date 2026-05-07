@@ -9,16 +9,19 @@ public class CampInteracableObject : Interacable, ICampInteracable
 {
 	public float hpHeal = 0.4f; 
 	public float mpHeal = 0.3f;  
+
 	public float spHeal = 0.3f;  
 
 	public PlayerParty playerParty;
 
-	public bool destroyAfterRest = true;
+	public bool destroyAfterRest = false;
 
 	[Header("Visual")]
 
 	public Color dayColor = new Color(0.45f, 0.45f, 0.45f, 0.8f);
 	public Color nightColor = Color.white;
+	public string daySortingLayer = "Default";
+	public string nightSortingLayer = "TopOverlay";
 
 	[Header("Light2D")]
 	public Light2D campLight;
@@ -85,6 +88,7 @@ public class CampInteracableObject : Interacable, ICampInteracable
 		{
 			var tint = isNight ? nightColor : dayColor;
 			spriteRenderer.color = tint;
+			spriteRenderer.sortingLayerName = isNight ? nightSortingLayer : daySortingLayer;
 		}
 
 		if (campLight != null)

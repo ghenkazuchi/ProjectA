@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Ancient Monster
   entitySprite: {fileID: 21300000, guid: b36ce437253cd324b82be303c5a77e6c, type: 3}
-  entityPortrait: {fileID: 21300000, guid: b36ce437253cd324b82be303c5a77e6c, type: 3}
+  entityPortrait: {fileID: 21300000, guid: ca18da91ec5175349b9541e14f480709, type: 3}
   entityElement: 3
   baseTraits:
     reorderableList:

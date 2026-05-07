@@ -16,14 +16,14 @@ MonoBehaviour:
   - day: 0
     timeOfDay: 0
     monsters:
+    - monsterData: {fileID: 11400000, guid: fa7771b1959e0164a8c47a34207102db, type: 2}
+      rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
+      raceData: {fileID: 11400000, guid: bf0c51f884772ec4d8cdc0ef3f58b47e, type: 2}
+      level: 1
     - monsterData: {fileID: 11400000, guid: d9a5654d4685dc44ca792b71ac374418, type: 2}
       rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
       raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
-      level: 4
-    - monsterData: {fileID: 11400000, guid: a0c634b57b171bc4dbede7cf16d96790, type: 2}
-      rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
-      raceData: {fileID: 11400000, guid: 08810b71e3f948d42ab6426b5be03d7a, type: 2}
-      level: 4
+      level: 1
   - day: 0
     timeOfDay: 1
     monsters:
@@ -31,3 +31,59 @@ MonoBehaviour:
       rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
       raceData: {fileID: 11400000, guid: 45b593e5d5212ee4eacaa39151fac1b0, type: 2}
       level: 3
+    - monsterData: {fileID: 11400000, guid: 3d1d9644f9eed9f47850acf0314e9bcd, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 00734c8972325b348b71de97a3f8fbd3, type: 2}
+      level: 3
+  - day: 1
+    timeOfDay: 0
+    monsters:
+    - monsterData: {fileID: 11400000, guid: c1f04cfd2d2dbb04a910550ae3f620c7, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+      level: 3
+    - monsterData: {fileID: 11400000, guid: a0c634b57b171bc4dbede7cf16d96790, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 08810b71e3f948d42ab6426b5be03d7a, type: 2}
+      level: 3
+  - day: 1
+    timeOfDay: 1
+    monsters:
+    - monsterData: {fileID: 11400000, guid: 14d75fe2c49b1c84392626122c8d5503, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 45b593e5d5212ee4eacaa39151fac1b0, type: 2}
+      level: 4
+    - monsterData: {fileID: 11400000, guid: a13484c5d3d998d44a96be88f8b346bd, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: f7630720315e4ff4aa274c9ddd236ef7, type: 2}
+      level: 4
+  - day: 2
+    timeOfDay: 0
+    monsters:
+    - monsterData: {fileID: 11400000, guid: 8b3b63602ceb0f44f9b3acf2567ed501, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 64350f663f2d9db4b9d39c71b9622f4e, type: 2}
+      level: 5
+    - monsterData: {fileID: 11400000, guid: c1f04cfd2d2dbb04a910550ae3f620c7, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+      level: 5
+    - monsterData: {fileID: 11400000, guid: d30d42a6b27c8664a8a23c2f8cd5fb12, type: 2}
+      rankData: {fileID: 11400000, guid: 45483a5a7f2fc79448b6cae45022296d, type: 2}
+      raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+      level: 5
+  - day: 2
+    timeOfDay: 1
+    monsters:
+    - monsterData: {fileID: 11400000, guid: 3d1d9644f9eed9f47850acf0314e9bcd, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 00734c8972325b348b71de97a3f8fbd3, type: 2}
+      level: 6
+    - monsterData: {fileID: 11400000, guid: 14d75fe2c49b1c84392626122c8d5503, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 11400000, guid: 45b593e5d5212ee4eacaa39151fac1b0, type: 2}
+      level: 6
+    - monsterData: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+      rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+      raceData: {fileID: 0}
+      level: 0

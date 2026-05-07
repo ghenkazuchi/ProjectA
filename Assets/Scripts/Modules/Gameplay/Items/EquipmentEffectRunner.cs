@@ -172,7 +172,7 @@ public class EquipmentEffectRunner
 	{
 		effect = null;
 		usageTracker = null;
-		effectTarget = overrideTarget ?? owner;
+		effectTarget = (binding.targetMode == EquipEffectTargetMode.Self) ? owner : (overrideTarget ?? owner);
 		
 		float chance = Mathf.Clamp01(binding.procChance);
 		if (source is Item item)

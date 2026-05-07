@@ -20,7 +20,7 @@ MonoBehaviour:
     ModType: 0
     value: 4
   itemName: Kunai
-  description: 
+  description: Belong to "Ninja" set. This weapon can stack up to 3 times
   icon: {fileID: 21300000, guid: 2ab79596b8b6a354da268f222b23d651, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
@@ -29,6 +29,7 @@ MonoBehaviour:
   - trigger: 5
     effect: {fileID: 11400000, guid: 66f386e5d840a554aa78276f4d1159d1, type: 2}
     procChance: 0.7
+    targetMode: 1
   canDuplicateTrigger: 0
   equipmentSets:
   - {fileID: 11400000, guid: 6f9499d96a4c41f4cbf3fb901bc0509d, type: 2}

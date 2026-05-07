@@ -42,6 +42,12 @@ public abstract class EntityBase
 	[SerializeReference] public List<EffectBase> currentActiveBuffs = new List<EffectBase>();
 	[SerializeReference] public List<EffectBase> currentActiveDebuffs = new List<EffectBase>();
 	[SerializeReference] public List<EffectBase> passiveEquipmentEffects = new List<EffectBase>();
+	
+	public int stealthCount = 0;
+	public bool IsStealthed => stealthCount > 0;
+
+	public EntityBase TauntedBy { get; set; }
+	
 	[Header("Traits and Stats")]
 	[SerializeField]
 	protected SerializableDictionaryBase<Trait, int> currentTraits = new SerializableDictionaryBase<Trait, int>();

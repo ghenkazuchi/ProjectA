@@ -71,7 +71,7 @@ MonoBehaviour:
   exclusiveActiveSkill: {fileID: 0}
   exclusivePassiveSkill: {fileID: 0}
   dominantTrait: 0
-  dominantWeight: 1
+  dominantWeight: 3.71
   baseExp: 20
   aiStrategy: 0
   aiBehavior:

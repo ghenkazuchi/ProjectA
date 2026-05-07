@@ -14,6 +14,7 @@ public class ActiveSkillData : BaseSkillData
 	public int baseMpCost;
 	public int baseSkillDamage;
 	public float baseHitChance;
+	public int hitCount = 1;
 	public Element skillElement;
 	public ActiveSkillType activeSkillType;
 	[Header("Scaling")]

@@ -3,7 +3,7 @@ using TMPro;
 
 public class OverWorldUI : MonoBehaviour
 {
-	[Header("Day/Night - dùng cho thanh progression")]
+	[Header("Day/Night - Used for progression bar")]
 	[SerializeField] private DayNightCycleController dayNightController;
 	[SerializeField] private OverworldGameProgressUI gameProgressUI;
 	[SerializeField] private CanvasGroup overWorldCanvasgroup;
@@ -11,6 +11,8 @@ public class OverWorldUI : MonoBehaviour
 	[Header("Currency Display")]
 	[SerializeField] private TextMeshProUGUI goldText;
 	[SerializeField] private TextMeshProUGUI soulDuskText;
+	[Header("Toasts")]
+	[SerializeField] private ToastUI toastUI;
 
 	private void OnEnable()
 	{
@@ -80,5 +82,18 @@ public class OverWorldUI : MonoBehaviour
 		overWorldCanvasgroup.alpha = 1f;
 		overWorldCanvasgroup.interactable = true;
 		overWorldCanvasgroup.blocksRaycasts = true;
+	}
+
+	public void ShowToast(string message)
+	{
+		Debug.Log($"[OverWorldUI] ShowToast called with message: {message}");
+		if (toastUI != null)
+		{
+			toastUI.ShowToast(message);
+		}
+		else
+		{
+			Debug.LogError("[OverWorldUI] toastUI reference is missing! Please assign it in the inspector.");
+		}
 	}
 }

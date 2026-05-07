@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public static class BattleEventManager
 {
-    
-    public static IEnumerator TriggerBeforeDealingDamage(EntityBase attacker, EntityBase target, DamageContext ctx)
+	//Event bus for battle-related events
+	public static IEnumerator TriggerBeforeDealingDamage(EntityBase attacker, EntityBase target, DamageContext ctx)
     {
         yield return attacker.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnBeforeDealingDamage, target, ctx);
         var allEffect = attacker.GetAllEffect();
@@ -51,6 +51,26 @@ public static class BattleEventManager
                 if (eff is IOnDealingDamage hook)
                 {
                     yield return hook.OnDealingDamage(ctx);
+                }
+            }
+        }
+
+        List<EntityBase> allies = (attacker is PlayerCharacter) 
+            ? BattleSystem.Instance.playerParty.GetAllEntitiesInParty() 
+            : BattleSystem.Instance.monsterParty.GetAllEntitiesInParty();
+            
+        foreach (var ally in allies)
+        {
+            if (ally == attacker || ally.GetCurrentHP() <= 0) continue;
+            var allyEffects = ally.GetAllEffect();
+            if (allyEffects != null)
+            {
+                for (int i = 0; i < allyEffects.Count; i++)
+                {
+                    if (allyEffects[i] is IOnAllyDealingDamage allyHook)
+                    {
+                        yield return allyHook.OnAllyDealingDamage(attacker, target, ctx);
+                    }
                 }
             }
         }

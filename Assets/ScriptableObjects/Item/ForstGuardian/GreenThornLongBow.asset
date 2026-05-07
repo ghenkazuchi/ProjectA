@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EquipableStatBonus: []
   itemName: Green Thorn Long Bow
-  description: 
+  description: Belong to "Forest Guardian" set
   icon: {fileID: 21300000, guid: 918b17b67a7a22948ad7ffa4bd7fd605, type: 3}
   maxUsePerLifeCyle: 0
   maxUsePerBattle: 0
@@ -23,6 +23,7 @@ MonoBehaviour:
   - trigger: 0
     effect: {fileID: 11400000, guid: c8df9f2be75b748408cf5d21543d7c49, type: 2}
     procChance: 1
+    targetMode: 0
   canDuplicateTrigger: 0
   equipmentSets:
   - {fileID: 11400000, guid: 1f10f97702ac52140aaa3079945e849c, type: 2}

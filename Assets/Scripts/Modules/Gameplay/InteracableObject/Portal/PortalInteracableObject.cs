@@ -41,18 +41,50 @@ public class PortalInteracableObject : Interacable
 		PortalManager.Instance?.EnterPortalSelection(this);
 	}
 
-	/// <summary>
-	/// Called when this portal is clicked during map view portal selection.
-	/// </summary>
-	private void OnMouseDown()
+	private void Update()
 	{
-		if (PortalManager.Instance == null) return;
-		if (!PortalManager.Instance.IsSelectingPortal) return;
-		if (!hasBeenDiscovered) return;
+		// Fallback for OnMouseDown using manual Physics2D overlap check
+		if (Input.GetMouseButtonDown(0))
+		{
+			if (PortalManager.Instance == null || !PortalManager.Instance.IsSelectingPortal) return;
+			
+			Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D col = GetComponent<Collider2D>();
+			
+			if (col != null && col.OverlapPoint(mouseWorldPos))
+			{
+				Debug.Log($"[Portal] Clicked on portal {portalDisplayName}. hasBeenDiscovered: {hasBeenDiscovered}, isSourcePortal: {PortalManager.Instance.SourcePortal == this}");
 
-		// Don't allow selecting the portal you're standing on
-		if (PortalManager.Instance.SourcePortal == this) return;
+				if (!hasBeenDiscovered)
+				{
+					OverWorldUI overworldUI = FindObjectOfType<OverWorldUI>();
+					if (overworldUI != null)
+					{
+						overworldUI.ShowToast("This portal hasn't been discovered yet!");
+					}
+					else
+					{
+						Debug.Log("[Portal] Cannot teleport: Destination portal is undiscovered!");
+					}
+					return;
+				}
+				if (PortalManager.Instance.SourcePortal == this)
+				{
+					Debug.Log("[Portal] Cannot teleport: You are already standing on this portal!");
+					return;
+				}
 
-		PortalManager.Instance.SelectDestination(this);
+				if (UnityEngine.EventSystems.EventSystem.current != null && 
+					UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+				{
+					Debug.Log("[Portal] Click intercepted by UI! IsPointerOverGameObject is true.");
+					// Commenting out the return so we can see if UI is blocking it
+					// return; 
+				}
+
+				Debug.Log($"[Portal] Attempting to teleport to {portalDisplayName}...");
+				PortalManager.Instance.SelectDestination(this);
+			}
+		}
 	}
 }

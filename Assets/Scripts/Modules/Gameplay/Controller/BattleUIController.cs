@@ -37,11 +37,11 @@ public class BattleUIController : MonoBehaviour
         }
     }
 
-    public IEnumerator TypeDialog(string text)
+    public IEnumerator TypeDialog(string text, bool autoShowTurnEntityInfo = true)
     {
         if (battleDialogBox != null)
         {
-            yield return battleDialogBox.TypeDialog(text);
+            yield return battleDialogBox.TypeDialog(text, autoShowTurnEntityInfo);
         }
     }
 }

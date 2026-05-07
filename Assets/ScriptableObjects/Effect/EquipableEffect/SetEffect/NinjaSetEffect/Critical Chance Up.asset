@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Critical Chance Up
   m_EditorClassIdentifier: 
   EffectType: 0
-  Effect: 0
-  Name: 
+  Effect: 1
+  Name: Critical Up
   MaxDuration: 0
   CanBeRemoved: 0
   Stackable: 0
-  MaxStack: 0
+  MaxStack: 1
   isInstantEffect: 0
-  isPassiveEquipmentEffect: 0
+  isPassiveEquipmentEffect: 1
   tags: 0
   effectIcon: {fileID: 0}
   applyVfx:
@@ -39,5 +39,5 @@ MonoBehaviour:
     frames: []
     fps: 30
     fadeOut: 0.25
-  criticalChanceIncrease: 0
+  criticalChanceIncrease: 0.3
   criticalDamageMultiplierIncrease: 0

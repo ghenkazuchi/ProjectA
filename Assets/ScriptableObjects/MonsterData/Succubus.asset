@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 894b54a31adb29b4cb0a00cbf1300d41, type: 3}
   m_Name: Succubus
   m_EditorClassIdentifier: 
-  entityName: 'Succubus '
+  entityName: Succubus
   entitySprite: {fileID: 21300000, guid: c336826582791ee46b7f92b89cb75694, type: 3}
   entityPortrait: {fileID: 21300000, guid: 5f9f48c53156aa442bf98f23813bfe4f, type: 3}
-  entityElement: 4
+  entityElement: 6
   baseTraits:
     reorderableList:
       canAdd: 0
@@ -70,7 +70,8 @@ MonoBehaviour:
     _values: 1e00000014000000140000000a000000
   exclusiveActiveSkill: {fileID: 11400000, guid: b9b4acb823b76ef40a7ef6de76d9f489,
     type: 2}
-  exclusivePassiveSkill: {fileID: 0}
+  exclusivePassiveSkill: {fileID: 11400000, guid: 889e04c4d07211f46a63d863835c26b3,
+    type: 2}
   dominantTrait: 1
   dominantWeight: 4
   baseExp: 100

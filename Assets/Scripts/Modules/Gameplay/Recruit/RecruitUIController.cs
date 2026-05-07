@@ -15,7 +15,7 @@ public class RecruitUIController : MonoBehaviour
 	[SerializeField] TextMeshProUGUI raceText;
 	[SerializeField] TextMeshProUGUI ElementText;
 	[SerializeField] TextMeshProUGUI[] traitTexts;
-	//[SerializeField] TextMeshProUGUI costText;
+
 	[Header("Skills Display")]
 	[SerializeField] ScrollRect skillScrollRect;
 	[SerializeField] Transform skillsContent;

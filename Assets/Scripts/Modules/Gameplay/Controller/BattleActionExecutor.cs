@@ -37,26 +37,13 @@ public class BattleActionExecutor : MonoBehaviour
             yield return skillToUse.ExecuteEffect(contextCast, EffectActiveTiming.OnCast);
         }
         
-        // OnHit
+        // OnHit Initialization
         List<EntityBase> targetsGotHit = new List<EntityBase>();
         if (skillToUse.SkillData.activeSkillType == ActiveSkillType.Damage)
         {
             foreach (var e in targetEntites)
             {
-                float chance, roll;
-                bool hit = DamageCalculator.CheckHit(sourceEntity, e, skillToUse, out chance, out roll);
-                if (hit)
-                {
-                    targetsGotHit.Add(e);
-                }
-                else
-                {
-                    yield return StartCoroutine(sys.ShowDialog($"{sourceEntity.entityData.EntityName} missed attack on {e.entityData.EntityName}!"));
-                    
-                    // Trigger OnEvade Passives and Equipment Effects on the target who successfully dodged
-                    yield return e.PassiveSkillRunner.Trigger(PassiveTrigger.OnEvade, sourceEntity);
-                    yield return e.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnEvade, sourceEntity);
-                }
+                targetsGotHit.Add(e); 
             }
         }
         else
@@ -67,17 +54,33 @@ public class BattleActionExecutor : MonoBehaviour
         //DealingDamagePhase
         if (skillToUse.SkillData.activeSkillType == ActiveSkillType.Damage)
         {
+            int extraHitsFromBuffs = 0;
+            for (int i = sourceEntity.currentActiveBuffs.Count - 1; i >= 0; i--)
+            {
+                var buff = sourceEntity.currentActiveBuffs[i];
+                if (buff is IBonusHitCountModifier modifier)
+                {
+                    extraHitsFromBuffs += modifier.GetBonusHitCount();
+                    yield return modifier.Consume();
+                    if (buff.CurrentDuration <= 0)
+                    {
+                        yield return sourceEntity.RemoveEffectCoroutine(buff);
+                    }
+                }
+            }
+
+            List<EntityBase> actualHitTargets = new List<EntityBase>();
+
             foreach (var target in targetsGotHit)
             {
+                int hitsToPerform = Mathf.Max(1, skillToUse.SkillData.hitCount) + extraHitsFromBuffs;
+                bool hitAtLeastOnce = false;
+
                 Sprite[] frames = null;
                 float fps = 0f;
                 bool hasVfx = sys.vfxLib.TryGetSpellVFX(skillToUse.SkillData.skillDefinition, skillToUse.element, out frames, out fps);
                 var targetUnit = sys.FindBattleUnitForEntityPublic(target);
-                var anim = targetUnit?.GetAnimator();
-                if (anim != null)
-                    yield return anim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
-                int damage = CalculateDamage(sourceEntity, skillToUse, target);
-                totalDamagDeal += damage;
+                
                 var skillContext = new SkillContext
                 {
                     Owner = sourceEntity,
@@ -86,16 +89,55 @@ public class BattleActionExecutor : MonoBehaviour
                     totalDamageDeal = 0,
                 };
                 yield return skillToUse.ExecuteBeforeDealingDamageEffect(skillContext);
-                yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition);
-                yield return new WaitForSeconds(0.2f);
+
+                for (int h = 0; h < hitsToPerform; h++)
+                {
+                    float chance, roll;
+                    bool hit = DamageCalculator.CheckHit(sourceEntity, target, skillToUse, out chance, out roll);
+
+                    if (hit)
+                    {
+                        hitAtLeastOnce = true;
+                        var anim = targetUnit?.GetAnimator();
+                        if (anim != null)
+                            yield return anim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
+                            
+                        int damage = CalculateDamage(sourceEntity, skillToUse, target);
+                        totalDamagDeal += damage;
+                        
+                        yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition, skillName: skillToUse.SkillData.skillName);
+                    }
+                    else
+                    {
+                        yield return StartCoroutine(sys.ShowDialog($"{sourceEntity.entityData.EntityName} missed!"));
+                        // Trigger OnEvade
+                        yield return target.PassiveSkillRunner.Trigger(PassiveTrigger.OnEvade, sourceEntity);
+                        yield return target.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnEvade, sourceEntity);
+                    }
+                    
+                    if (hitsToPerform > 1 && h < hitsToPerform - 1)
+                    {
+                        yield return new WaitForSeconds(0.15f); // Fast multi-hit pause
+                    }
+                    else 
+                    {
+                        yield return new WaitForSeconds(0.2f); // Normal final hit pause
+                    }
+                }
+
+                if (hitAtLeastOnce)
+                {
+                    actualHitTargets.Add(target);
+                }
             }
+
             if (skillToUse.SkillData.effectsToApply.Count > 0)
             {
                 var contextHit = new SkillContext
                 {
                     Owner = sourceEntity,
                     AllTarget = targetEntites,
-                    HitTarget = targetsGotHit,
+                    HitTarget = actualHitTargets,
                     totalDamageDeal = totalDamagDeal,
                 };
                 yield return skillToUse.ExecuteOnDealingDamageEffect(contextHit);
@@ -143,6 +185,26 @@ public class BattleActionExecutor : MonoBehaviour
                 yield return afterHook.OnAfterSkillUsed(skillUseCtx);
         }
 
+        List<EntityBase> allies = (sourceEntity is PlayerCharacter) 
+            ? sys.playerParty.GetAllEntitiesInParty() 
+            : sys.monsterParty.GetAllEntitiesInParty();
+            
+        foreach (var ally in allies)
+        {
+            if (ally == sourceEntity || ally.GetCurrentHP() <= 0) continue;
+            var allyEffects = ally.GetAllEffect();
+            if (allyEffects != null)
+            {
+                for (int i = 0; i < allyEffects.Count; i++)
+                {
+                    if (allyEffects[i] is IOnAllyAfterSkillUsed allyAfterHook)
+                    {
+                        yield return allyAfterHook.OnAllyAfterSkillUsed(skillUseCtx, targetsGotHit);
+                    }
+                }
+            }
+        }
+
         yield return new WaitForSeconds(0.5f);
         sys.timelineManager.UpdateEntityTimeline(sourceEntity);
         sys.UpdateTimelineUI();
@@ -152,7 +214,7 @@ public class BattleActionExecutor : MonoBehaviour
     public IEnumerator ApplyEffectDamage(EntityBase target, int amount, EntityBase source, string reason = null)
     {
         BattleUnit targetUnit = sys.FindBattleUnitForEntityPublic(target);
-        yield return HandleEntityTakeDamage(target, amount, source, SkillDefinition.Almighty, true, flavor: reason);
+        yield return HandleEntityTakeDamage(target, amount, source, SkillDefinition.Almighty, skillName: reason, isEffectDamage: true, flavor: reason);
     }
 
     public IEnumerator HandleEntityGotHeal(HealingContext healingContext)
@@ -167,17 +229,17 @@ public class BattleActionExecutor : MonoBehaviour
         else
         {
             int damage = Mathf.Abs(healingContext.FinalHealing);
-            yield return HandleEntityTakeDamage(healingContext.Target, damage, healingContext.Healer, SkillDefinition.Almighty, true, "reverse healing");
+            yield return HandleEntityTakeDamage(healingContext.Target, damage, healingContext.Healer, SkillDefinition.Almighty, skillName: "reverse healing", isEffectDamage: true, flavor: "reverse healing");
         }
     }
 
     public IEnumerator HandleEntityTakeDamage(
         EntityBase target, int finalDamage, EntityBase source,
-        SkillDefinition origin, bool isEffectDamage = false, string flavor = null)
+        SkillDefinition origin, string skillName = "", bool isEffectDamage = false, string flavor = null)
     {
         var originalTarget = target;
 
-        _ctx.Reset(source, target, finalDamage, origin, isEffectDamage);
+        _ctx.Reset(source, target, finalDamage, origin, skillName, isEffectDamage);
 
         yield return BattleEventManager.TriggerBeforeDealingDamage(source, _ctx.Target, _ctx);
         yield return BattleEventManager.TriggerBeforeTakingDamage(_ctx.Target, _ctx);
@@ -230,7 +292,7 @@ public class BattleActionExecutor : MonoBehaviour
                 int sharePct = Mathf.RoundToInt(_ctx.SplitPercent * 100f);
 
                 var shareCtx = new DamageContext();
-                shareCtx.Reset(_ctx.Source, protector, toProtector, _ctx.Origin, false);
+                shareCtx.Reset(_ctx.Source, protector, toProtector, _ctx.Origin, skillName: _ctx.SkillName, isEffect: false);
                 shareCtx.BlockFurtherSharing = true;
                 yield return BattleEventManager.TriggerBeforeDealingDamage(_ctx.Source, protector, shareCtx);
                 yield return BattleEventManager.TriggerBeforeTakingDamage(protector, shareCtx);
@@ -297,6 +359,22 @@ public class BattleActionExecutor : MonoBehaviour
 
     public IEnumerator ForceBasicAttack(EntityBase attacker, EntityBase target)
     {
+        BattleUnit attackerUnit = sys.FindBattleUnitForEntityPublic(attacker);
+        attackerUnit?.GetAnimator().PlayAttackAnimation(attackerUnit.GetOffSet());
+        
+        yield return new WaitForSeconds(0.4f); // Short delay to match swing visual
+        
+        Sprite[] frames = null;
+        float fps = 0f;
+        bool hasVfx = sys.vfxLib.TryGetSpellVFX(sys.basicAttack.SkillData.skillDefinition, sys.basicAttack.element, out frames, out fps);
+        
+        BattleUnit targetUnit = sys.FindBattleUnitForEntityPublic(target);
+        var targetAnim = targetUnit?.GetAnimator();
+        if (targetAnim != null)
+        {
+            yield return targetAnim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
+        }
+
         int damage = CalculateDamage(attacker, sys.basicAttack, target);
         yield return StartCoroutine(ApplyEffectDamage(target, damage, attacker, $"by {attacker.entityData.EntityName} attack"));
     }
@@ -312,6 +390,7 @@ public class BattleActionExecutor : MonoBehaviour
         ctx.Source = source;
         ctx.Target = target;
         ctx.Origin = skill.SkillData.skillDefinition;
+        ctx.SkillName = skill.SkillData.skillName;
         ctx.attackIncreasePercentage = 1f;
         ctx.defenseIgnorePercentage = 0f;
         sys.ApplySkillModifiersPreview(skill, ref ctx);

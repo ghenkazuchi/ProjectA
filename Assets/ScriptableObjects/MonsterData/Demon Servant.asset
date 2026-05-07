@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 894b54a31adb29b4cb0a00cbf1300d41, type: 3}
   m_Name: Demon Servant
   m_EditorClassIdentifier: 
-  entityName: 
-  entitySprite: {fileID: 0}
+  entityName: Demon Servant
+  entitySprite: {fileID: 21300000, guid: 312a55241ffeb8b4693d2760bb66108e, type: 3}
   entityPortrait: {fileID: 0}
   entityElement: 0
   baseTraits:

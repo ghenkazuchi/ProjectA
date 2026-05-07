@@ -35,11 +35,13 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 0
-    _keyValues: 
-    _keys: 
-    _values: 
+    _keyValues: 00000000010000000200000003000000040000000500000006000000
+    _keys: 00000000010000000200000003000000040000000500000006000000
+    _values: 00000000020000000100000000000000020000000000000001000000
   monsterTypeDefinition: 0
   type: 0
   skillSet:
-  - skill: {fileID: 11400000, guid: 28fa2d597234c05459a34fa38d4d718f, type: 2}
+  - skill: {fileID: 11400000, guid: 4cec5d760c158d643991897f367098c7, type: 2}
+    levelRequirements: 1
+  - skill: {fileID: 11400000, guid: b9b4acb823b76ef40a7ef6de76d9f489, type: 2}
     levelRequirements: 1

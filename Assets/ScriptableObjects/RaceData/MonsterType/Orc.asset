@@ -43,3 +43,7 @@ MonoBehaviour:
   skillSet:
   - skill: {fileID: 11400000, guid: bb89f81f1d53e0346a8fe1bcc5f8aebe, type: 2}
     levelRequirements: 1
+  - skill: {fileID: 11400000, guid: dc4d57556be500b4b9d17787a3401603, type: 2}
+    levelRequirements: 1
+  - skill: {fileID: 11400000, guid: c18f6976aeaffe94db7812bc710b5777, type: 2}
+    levelRequirements: 1

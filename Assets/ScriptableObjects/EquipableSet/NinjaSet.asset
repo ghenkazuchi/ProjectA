@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3d1f337747c8f4c803eaebb42ba6ab, type: 3}
   m_Name: NinjaSet
   m_EditorClassIdentifier: 
-  setName: 
-  thresholds: []
+  setName: Ninja Set
+  thresholds:
+  - requiredPieces: 1
+    effects:
+    - trigger: 8
+      effect: {fileID: 11400000, guid: c0257c5b3b6992246855c6a583da82c9, type: 2}
+      procChance: 1
+  setEffectIcon: {fileID: 0}

@@ -7,5 +7,6 @@ public class EquipEffectBinding
 {
 	public EquipEffectTrigger trigger;
 	public EffectData effect;
-	public float procChance = 1f;	
+	public float procChance = 1f;
+	public EquipEffectTargetMode targetMode = EquipEffectTargetMode.Self;
 }

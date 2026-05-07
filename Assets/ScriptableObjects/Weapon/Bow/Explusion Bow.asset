@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69851fd65081a5249b847b108badce72, type: 3}
   m_Name: Explusion Bow
   m_EditorClassIdentifier: 
-  EquipableStatBonus: []
+  EquipableStatBonus:
+  - Stat: 3
+    ModType: 0
+    value: 20
+  - Stat: 3
+    ModType: 0
+    value: 15
   itemName: Explusion Bow
   description: When equipped, all battle art element change to Light Element
   icon: {fileID: 21300000, guid: f17d45111e01a404091f1c48397a9df6, type: 3}
@@ -23,10 +29,14 @@ MonoBehaviour:
   - trigger: 0
     effect: {fileID: 11400000, guid: 03c01b5189f26824f9ac3edda2119b0d, type: 2}
     procChance: 1
+    targetMode: 0
   canDuplicateTrigger: 0
-  equipmentSet: {fileID: 0}
+  equipmentSets:
+  - {fileID: 0}
   pieceWeight: 1
   basePrice: 0
   weaponType: 5
   requirement: 0
   canPierceBackRow: 0
+  isStackable: 0
+  maxStack: 1

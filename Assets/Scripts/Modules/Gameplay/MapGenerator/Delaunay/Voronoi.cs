@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
@@ -196,7 +196,7 @@ namespace csDelaunay {
 				if (newSite != null &&
 				    (heap.Empty() || CompareByYThenX(newSite, newIntStar) < 0)) {
 					// New site is smallest
-					//Debug.Log("smallest: new site " + newSite);
+
 
 					// Step 8:
 					lbnd = edgeList.EdgeListLeftNeighbor(newSite.Coord);	// The halfedge just to the left of newSite

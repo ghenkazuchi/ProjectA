@@ -68,6 +68,8 @@ public static class BattleGridUtils
     /// </summary>
     public static bool IsTargetable(EntityBase target, PlayerParty playerParty, MonsterParty monsterParty, EntityBase attacker = null)
     {
+        if (target != null && target.IsStealthed) return false;
+
         if (!HasAliveFrontAlly(target, playerParty, monsterParty))
             return true;
 

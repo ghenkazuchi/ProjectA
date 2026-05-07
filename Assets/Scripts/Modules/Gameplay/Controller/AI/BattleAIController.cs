@@ -52,12 +52,19 @@ public static class BattleAIController
 
 		if (skill.SkillData.targetType == TargetType.Enemy)
 		{
-			var alive = playerParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0);
-			// Single-target damage skills can't hit protected back-row units
-			if (skill.SkillData.skillRange == SkillRange.SingleTarget && skill.SkillData.activeSkillType == ActiveSkillType.Damage)
-				alive.RemoveAll(e => !BattleGridUtils.IsTargetable(e, playerParty, monsterParty));
-			
-			availableTargets.AddRange(alive);
+			if (aiEntity.TauntedBy != null && aiEntity.TauntedBy.GetCurrentHP() > 0)
+			{
+				availableTargets.Add(aiEntity.TauntedBy);
+			}
+			else
+			{
+				var alive = playerParty.GetAllEntitiesInParty().FindAll(e => e != null && e.GetCurrentHP() > 0 && !e.IsStealthed);
+				// Single-target damage skills can't hit protected back-row units
+				if (skill.SkillData.skillRange == SkillRange.SingleTarget && skill.SkillData.activeSkillType == ActiveSkillType.Damage)
+					alive.RemoveAll(e => !BattleGridUtils.IsTargetable(e, playerParty, monsterParty));
+
+				availableTargets.AddRange(alive);
+			}
 		}
 		else if (skill.SkillData.targetType == TargetType.Ally || skill.SkillData.targetType == TargetType.SelfOrAllies)
 		{
@@ -215,6 +222,10 @@ public static class BattleAIController
 	public static int EstimateDamage(EntityBase source, ActiveSkill skill, EntityBase target, BattleSystem sys)
 	{
 		var ctx = new DamageContext();
+		ctx.Source = source;
+		ctx.Target = target;
+		ctx.Origin = skill.SkillData.skillDefinition;
+		ctx.SkillName = skill.SkillData.skillName;
 		sys.ApplySkillModifiersPreview(skill, ref ctx);
 		return DamageCalculator.CalculateDamageWithContext(
 			source, skill, target, ctx, sys,
