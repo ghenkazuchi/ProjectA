@@ -1,0 +1,317 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807daa54bf09fe84a98e1805f786e1c7, type: 3}
+  m_Name: TutorialScenario
+  m_EditorClassIdentifier: 
+  scenarioTitle: 'Basic '
+  scenarioDescription: 
+  scenarioIcon: {fileID: 0}
+  fixedPlayerCharacters:
+  - template: {fileID: 11400000, guid: 484579341c845c44c90f59dffd423021, type: 2}
+    level: 1
+    position:
+      x: 0
+      y: 0
+    startingHPPercent: 100
+    startingEffects: []
+  fixedMonsters:
+  - monsterData: {fileID: 11400000, guid: c1f04cfd2d2dbb04a910550ae3f620c7, type: 2}
+    rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
+    raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+    level: 1
+    position:
+      x: 0
+      y: 0
+    startingHPPercent: 0
+    startingEffects: []
+  - monsterData: {fileID: 11400000, guid: c1f04cfd2d2dbb04a910550ae3f620c7, type: 2}
+    rankData: {fileID: 11400000, guid: e89d573bd5a90374e84ac5b53c89affe, type: 2}
+    raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+    level: 1
+    position:
+      x: 0
+      y: 1
+    startingHPPercent: 0
+    startingEffects: []
+  steps:
+  - guidanceText: Welcome to Training! Your party is on the left, enemies on the
+      right. Press Z to continue
+    timing: 0
+    pointerTarget: 0
+    pointerDirection: 0
+    pointerOffset: 60
+    frameShape: 2
+    customFrameSize: {x: 300, y: 1000}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 100, y: 150}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: "This is the Timeline. It shows who acts next.\t"
+    timing: 0
+    pointerTarget: 4
+    pointerDirection: 3
+    pointerOffset: 250
+    frameShape: 2
+    customFrameSize: {x: 210, y: 813}
+    customFrameOffset: {x: 15, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 100, y: 150}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Your party allocated on the left side
+    timing: 0
+    pointerTarget: 14
+    pointerDirection: 3
+    pointerOffset: 480
+    frameShape: 2
+    customFrameSize: {x: 650, y: 830}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 100, y: 150}
+    hideTextPanel: 0
+    customTextPosition: {x: 460, y: 170}
+    customTextPanelSize: {x: 460, y: 170}
+    customFontSize: 40
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: 'On you unit turn, you are given 4 action to choose from. You can
+      switch between the action by pressing "UP ARROW" or "DOWN ARROW" '
+    timing: 2
+    pointerTarget: 1
+    pointerDirection: 2
+    pointerOffset: 400
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: -180, y: -407}
+    customTextPanelSize: {x: 600, y: 265}
+    customFontSize: 38
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: '"Skill" action allow you to choose one skill to use'
+    timing: 2
+    pointerTarget: 8
+    pointerDirection: 0
+    pointerOffset: 120
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: -180, y: -407}
+    customTextPanelSize: {x: 600, y: 265}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: '"Attack" action allow your character to perform "basic attack"
+      on a target'
+    timing: 2
+    pointerTarget: 9
+    pointerDirection: 0
+    pointerOffset: 120
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: -402.7, y: -407.5619}
+    customTextPanelSize: {x: 1111.704, y: 265}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: '"Defense" action, put your character in defensive poise, reduce
+      damage they taken until the start of their next turn'
+    timing: 2
+    pointerTarget: 10
+    pointerDirection: 2
+    pointerOffset: 240
+    frameShape: 2
+    customFrameSize: {x: 240, y: 90}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: -402.7, y: -407.5619}
+    customTextPanelSize: {x: 1111.704, y: 265}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: '"Switch" action allow your character swap/goes into new position
+      and end their turn'
+    timing: 2
+    pointerTarget: 11
+    pointerDirection: 2
+    pointerOffset: 240
+    frameShape: 2
+    customFrameSize: {x: 240, y: 90}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: -402.7, y: -407.5619}
+    customTextPanelSize: {x: 1111.704, y: 265}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Confim using "Skill" action by pressing Z while the text is highlighted
+      by blue color
+    timing: 2
+    pointerTarget: 8
+    pointerDirection: 0
+    pointerOffset: 180
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: 523, y: -143}
+    customTextPanelSize: {x: 857, y: 265}
+    customFontSize: 0
+    interactionMode: 1
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Select the first skill to see how thing goes
+    timing: 2
+    pointerTarget: 12
+    pointerDirection: 3
+    pointerOffset: 360
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: 475, y: -405}
+    customTextPanelSize: {x: 960, y: 264}
+    customFontSize: 36
+    interactionMode: 1
+    requiredActionType: 0
+    requireSpecificSkill: 1
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: 'Select this target! '
+    timing: 2
+    pointerTarget: 7
+    pointerDirection: 0
+    pointerOffset: 200
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 1
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 1
+    requiredTargetIndex: 0
+    targetSpecificUnit: 1
+    targetUnitSide: 1
+    targetUnitSlotIndex: 2
+    preventPlayerDeath: 0
+  monsterDirectives: []
+  completionMessage: 

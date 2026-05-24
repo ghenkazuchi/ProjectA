@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aad2988c1e3068c408befb1e70b35965, type: 3}
+  m_Name: Mapping
+  m_EditorClassIdentifier: 
+  mappings:
+    reorderableList:
+      canAdd: 0
+      canRemove: 0
+      draggable: 0
+      expandable: 0
+      multipleSelection: 0
+      isExpanded: 0
+      label:
+        m_Text: 
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 0
+      footerHeight: 0
+      slideEasing: 0
+      verticalSpacing: 0
+      showDefaultBackground: 0
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 0
+    _keyValues: 0f0000001f0000003f0000003d0000003c000000
+    _keys: 0f0000001f0000003f0000003d0000003c000000
+    _values:
+    - {fileID: 11400000, guid: 66b299bacba17724f8b92612eec73f70, type: 2}
+    - {fileID: 11400000, guid: f44877694699ace4f98b580d5d187ee9, type: 2}
+    - {fileID: 11400000, guid: c235c9d48addc604fb5422e6f2957fe8, type: 2}
+    - {fileID: 11400000, guid: d4611f0e893f4274ebe3279a0f3f7be8, type: 2}
+    - {fileID: 11400000, guid: f6594c42cab73b4439b2d253b3419391, type: 2}

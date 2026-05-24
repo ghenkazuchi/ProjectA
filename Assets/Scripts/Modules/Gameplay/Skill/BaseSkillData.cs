@@ -8,4 +8,9 @@ public abstract class BaseSkillData : ScriptableObject
 	public string skillName;
 	[TextArea] public string skillDescription;
 	public SkillType skillType;
+
+	[Header("Audio")]
+	[SerializeField] private AudioConfig customCastSFX;
+
+	public AudioConfig CustomCastSFX => customCastSFX;
 }

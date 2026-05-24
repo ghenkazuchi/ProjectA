@@ -136,12 +136,34 @@ namespace HaKien
 
                 if (currentTurnEntity is PlayerCharacter)
                 {
+                    if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+                        yield return battleSystem.StartCoroutine(
+                            TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.BeforePlayerTurn));
+
                     yield return battleSystem.StartCoroutine(battleSystem.HandlePlayerTurnPublic(currentTurnEntity));
+
+                    if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+                    {
+                        TutorialSequenceRunner.Instance.OnPlayerActionCompleted();
+                        yield return battleSystem.StartCoroutine(
+                            TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.AfterPlayerAction));
+                    }
                 }
                 else
                 {
+                    if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+                        yield return battleSystem.StartCoroutine(
+                            TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.BeforeMonsterTurn));
+
                     yield return battleSystem.StartCoroutine(battleSystem.HandleMonsterTurnPublic(currentTurnEntity));
+
+                    if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+                        yield return battleSystem.StartCoroutine(
+                            TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.AfterMonsterAction));
                 }
+
+                if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+                    TutorialSequenceRunner.Instance.OnTurnAdvanced();
                 
                 if (battleSystem.battleOver) break;
                 yield return battleSystem.StartCoroutine(currentTurnEntity.ProcessEffectOnTurnEnd());

@@ -35,6 +35,10 @@ public class ToastUI : MonoBehaviour
 
 	public void ShowToast(string message)
 	{
+		if (HaKien.MessageManager.Instance != null)
+		{
+			HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnToastShown));
+		}
 		toastText.text = message;
 		
 		currentTween?.Kill();

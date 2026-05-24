@@ -96,6 +96,7 @@ public class EquipmentManager
             {
                 RefreshSetBonuses();
                 Debug.Log($"Stacked weapon: {weaponToEquip.WeaponBaseData.itemName} (now {player.weapon.CurrentStack}/{player.weapon.WeaponBaseData.maxStack})");
+                HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnEquipmentEquipped));
                 return true;
             }
         }
@@ -122,6 +123,7 @@ public class EquipmentManager
         player.EquipmentEffectRunner.RegisterEffectBinding(weaponToEquip, weaponToEquip.WeaponBaseData.effectData);
         RefreshSetBonuses();
         Debug.Log("Equipped weapon: " + weaponToEquip.WeaponBaseData.name);
+        HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnEquipmentEquipped));
         return true;
     }
 
@@ -164,12 +166,14 @@ public class EquipmentManager
         player.items.Add(item);
         if (hasSameBase && item.itemBaseData.canDuplicateTrigger == false)
         {
+            HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnEquipmentEquipped));
             return true;
         }
         player.storedEquipmentBindings.AddRange(item.itemBaseData.effectData);
         player.EquipmentEffectRunner.RegisterEffectBinding(item, item.itemBaseData.effectData);
         RefreshSetBonuses();
         Debug.Log("Added item: " + item.itemBaseData.itemName);
+        HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnEquipmentEquipped));
         return true;
     }
 

@@ -62,6 +62,10 @@ public class DayNightCycleController : MonoBehaviour
 			currentStep = 0;
 		}
 		UpdateNightState(true);
+		if (HaKien.MessageManager.Instance != null)
+		{
+			HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnTimeChanged, new object[] { isNight }));
+		}
 	}
 
 	private void OnValidate()
@@ -115,7 +119,14 @@ public class DayNightCycleController : MonoBehaviour
         if (nightNow != isNight)
         {
             isNight = nightNow;
-            if (fireEvent) OnNightStateChanged?.Invoke(isNight);
+            if (fireEvent)
+            {
+                OnNightStateChanged?.Invoke(isNight);
+                if (HaKien.MessageManager.Instance != null)
+                {
+                    HaKien.MessageManager.Instance.SendMessage(new HaKien.Message(HaKien.MessageType.OnTimeChanged, new object[] { isNight }));
+                }
+            }
         }
         else
         {

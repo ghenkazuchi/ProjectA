@@ -205,7 +205,14 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	public IEnumerator ShowInitialDialog()
 	{
 		battleState = BattleState.ShowingDialog;
-		if (currentBattleType == BattleType.RoamingMoster)
+		if (currentBattleType == BattleType.Tutorial)
+		{
+			// Tutorial: run OnBattleStart steps via the overlay, not the battle dialog
+			if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+				yield return StartCoroutine(
+					TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.OnBattleStart));
+		}
+		else if (currentBattleType == BattleType.RoamingMoster)
 		{
 			yield return StartCoroutine(uiController.TypeDialog("Player run into wild monster"));
 		}
@@ -255,6 +262,10 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		battleState = BattleState.ActionSelection;
 		uiController.battleDialogBox.EnableActionSelector(true);
 		inputHandler.ResetActionSelection();
+
+		if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
+			yield return StartCoroutine(TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.DuringPlayerTurn));
+
 		yield return new WaitUntil(() => battleState == BattleState.RunningTurn || battleState == BattleState.BattleOver);
 
 		uiController.battleDialogBox.EnableActionSelector(false);
@@ -264,7 +275,14 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		battleState = BattleState.RunningTurn;
 
 		yield return waitHalf;
-		var decision = BattleAIController.ChooseAction(entity, this);
+
+		// Tutorial: use scripted monster behavior if active
+		AIDecision decision;
+		var tut = TutorialSequenceRunner.Instance;
+		if (tut != null && tut.IsTutorialActive)
+			decision = tut.GetScriptedMonsterDecision(entity, this);
+		else
+			decision = BattleAIController.ChooseAction(entity, this);
 
 		if (decision.IsValid)
 		{

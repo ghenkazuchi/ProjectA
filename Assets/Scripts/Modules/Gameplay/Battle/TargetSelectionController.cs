@@ -10,6 +10,7 @@ public class TargetSelectionController : MonoBehaviour
 	public List<BattleUnit> playerUnits;
 	[SerializeReference] private List<BattleUnit> currentAvailableTargets;
 	private int currentIndex = 0;
+	public int CurrentIndex => currentIndex;
 	private int currentLineIndex = 0; 
 	private bool isActive = false;
 	private Action<List<EntityBase>> onTargetsConfirmed;
@@ -97,6 +98,7 @@ public class TargetSelectionController : MonoBehaviour
 	private void Update()
 	{
 		if (!isActive) return;
+		if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsInputBlocked) return;
 
 		if (currentSkillRange == SkillRange.SingleTarget || currentSkillRange == SkillRange.SingleAlly)
 		{
@@ -109,8 +111,24 @@ public class TargetSelectionController : MonoBehaviour
 			if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) MoveLineSelection(1);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Z)) Confirm();
-		if (Input.GetKeyDown(KeyCode.X)) CancelSelection();
+		if (Input.GetKeyDown(KeyCode.Z))
+		{
+			// Silently block confirming if this target is not allowed by the tutorial
+			var tut = TutorialSequenceRunner.Instance;
+			if (tut != null && tut.IsTutorialActive && (!tut.IsTargetAllowed(currentIndex) || tut.IsTransitioning))
+				return;
+				
+			Confirm();
+		}
+		if (Input.GetKeyDown(KeyCode.X))
+		{
+			// Block backing out if there is an active tutorial restriction or transitioning
+			var tut = TutorialSequenceRunner.Instance;
+			if (tut != null && (tut.HasActiveRestriction || tut.IsTransitioning))
+				return;
+				
+			CancelSelection();
+		}
 	}
 
 	private void Move(int direction)

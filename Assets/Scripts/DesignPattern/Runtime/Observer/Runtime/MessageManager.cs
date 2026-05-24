@@ -70,7 +70,11 @@ namespace HaKien
 		OnPortalClose,
 		OnMapViewOpen,
 		OnMapViewClose,
-
+		OnMainMenuEnter,
+		OnChestOpenAnimationComplete,
+		OnChestGoldReward,
+		OnEquipmentEquipped,
+		OnToastShown,
 	}
     public class Message
     {
@@ -102,17 +106,17 @@ namespace HaKien
 
 
         private Dictionary<MessageType, List<IMessageHandle>> subcribers = new Dictionary<MessageType, List<IMessageHandle>>();
-        /*public static MessageManager Instance { get { return instance; } }
-        void Start()
-        {
-            if (instance == null)
-            {
-                instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-                Destroy(gameObject);
-        }*/
+
+
+
+
+
+
+
+
+
+
+
         public void AddSubcriber(MessageType type, IMessageHandle handle)
         {
             if (!subcribers.ContainsKey(type))

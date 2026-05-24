@@ -198,7 +198,8 @@ public enum InteracableGroup
 public enum BattleType
 {
 	Boss,
-	RoamingMoster
+	RoamingMoster,
+	Tutorial
 }
 
 public enum PassiveTrigger

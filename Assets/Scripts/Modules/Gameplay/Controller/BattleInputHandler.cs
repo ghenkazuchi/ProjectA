@@ -46,6 +46,7 @@ public class BattleInputHandler : MonoBehaviour
     {
         if (GameController.Instance.currentState != GameState.Battle) return;
         if (battleDialogBox != null && battleDialogBox.IsDialogTyping) return;
+        if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsInputBlocked) return;
 
         BattleState currentState = sys.battleState;
 
@@ -59,41 +60,45 @@ public class BattleInputHandler : MonoBehaviour
         }
     }
 
-    private void HandleActionSelectionInput()
-    {
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            NavigateActionSelection(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-        {
-            NavigateActionSelection(-1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Z))
-        {
-            OnActionConfirm();
-        }
-    }
+	private void HandleActionSelectionInput()
+	{
+		if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+		{
+			NavigateActionSelection(1);
+		}
+		else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+		{
+			NavigateActionSelection(-1);
+		}
+		else if (Input.GetKeyDown(KeyCode.Z))
+		{
+			OnActionConfirm();
+		}
+	}
 
-    private void HandleSkillSelectionInput()
-    {
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            NavigateSkillSelection(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-        {
-            NavigateSkillSelection(-1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Z))
-        {
-            OnSkillConfirm();
-        }
-        else if (Input.GetKeyDown(KeyCode.X))
-        {
-            OnSkillCancel();
-        }
-    }
+	private void HandleSkillSelectionInput()
+	{
+		if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+		{
+			NavigateSkillSelection(1);
+		}
+		else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+		{
+			NavigateSkillSelection(-1);
+		}
+		else if (Input.GetKeyDown(KeyCode.Z))
+		{
+			OnSkillConfirm();
+		}
+		else if (Input.GetKeyDown(KeyCode.X))
+		{
+			// Block backing out if there is an active tutorial restriction
+			if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.HasActiveRestriction)
+				return;
+				
+			OnSkillCancel();
+		}
+	}
 
     public void NavigateActionSelection(int direction)
     {
@@ -130,6 +135,13 @@ public class BattleInputHandler : MonoBehaviour
     {
         if (sys.battleState != BattleState.ActionSelection) return;
 
+        // Tutorial: block disallowed actions
+        var tut = TutorialSequenceRunner.Instance;
+        if (tut != null && tut.IsTutorialActive && !tut.IsActionAllowed((BattleAction)currentAction))
+        {
+            return;
+        }
+
         string uiLabel = (currentAction >= 0 && currentAction < sys.uiController.battleDialogBox.actionTexts.Count)
             ? sys.uiController.battleDialogBox.actionTexts[currentAction].text : "???";
         Debug.Log($"[InputHandler] Confirm: index={currentAction}, enum={(BattleAction)currentAction}, UILabel='{uiLabel}'");
@@ -137,12 +149,15 @@ public class BattleInputHandler : MonoBehaviour
         switch ((BattleAction)currentAction)
         {
             case BattleAction.Skill:
+                if (tut != null && tut.IsTutorialActive) tut.AdvanceIfRestrictionMet();
                 StartCoroutine(HandleSkillSelection());
                 break;
             case BattleAction.Defend:
+                if (tut != null && tut.IsTutorialActive) tut.AdvanceIfRestrictionMet();
                 StartCoroutine(HandleDefend());
                 break;
             case BattleAction.BasicAttack:
+                if (tut != null && tut.IsTutorialActive) tut.AdvanceIfRestrictionMet();
                 StartCoroutine(HandleBasicAttackSelection());
                 break;
             case BattleAction.Switch:
@@ -151,6 +166,7 @@ public class BattleInputHandler : MonoBehaviour
                     StartCoroutine(ShowBannedActionDialog("swap positions"));
                     break;
                 }
+                if (tut != null && tut.IsTutorialActive) tut.AdvanceIfRestrictionMet();
                 StartCoroutine(HandleSwitchPosition());
                 break;
         }
@@ -169,12 +185,22 @@ public class BattleInputHandler : MonoBehaviour
     {
         if (sys.battleState == BattleState.SkillSelection)
         {
+            // Tutorial: block disallowed skills
+            var tut = TutorialSequenceRunner.Instance;
+            if (tut != null && tut.IsTutorialActive && !tut.IsSkillAllowed(currentSkill))
+            {
+                return;
+            }
+
             selectedSkill = sys.currentTurnEntity.usableSkills[currentSkill];
             if (!IsSkillUseAllowed(sys.currentTurnEntity, selectedSkill))
             {
                 StartCoroutine(HandleUnusableSkillConfirm(selectedSkill));
                 return;
             }
+
+            if (tut != null && tut.IsTutorialActive) tut.AdvanceIfRestrictionMet();
+
             cancelTargetReturnState = BattleState.SkillSelection;
             sys.battleState = BattleState.TargetSelection;
             StartCoroutine(HandleTargetSelection(selectedSkill));
@@ -324,6 +350,12 @@ public class BattleInputHandler : MonoBehaviour
         {
             if (targets != null && targets.Count > 0)
             {
+                var tut = TutorialSequenceRunner.Instance;
+                if (tut != null && tut.IsTutorialActive)
+                {
+                    tut.AdvanceIfRestrictionMet();
+                }
+
                 sys.StartCoroutine(sys.PerformSkillAction(sys.currentTurnEntity, targets, skillToUse));
             }
             else

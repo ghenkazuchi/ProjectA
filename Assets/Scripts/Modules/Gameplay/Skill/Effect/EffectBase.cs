@@ -87,9 +87,26 @@ public abstract class EffectBase
 		return false;
 	}
 
+	public void PlayApplySFX()
+	{
+		if (sourceData != null && sourceData.isPassiveEquipmentEffect)
+			return;
+
+		if (sourceData != null && sourceData.applySFX != null)
+		{
+			AudioManager.Instance.PlaySFX(sourceData.applySFX);
+		}
+		else
+		{
+			AudioManager.Instance.PlayDefaultStatusApplySFX(Name);
+		}
+	}
+
 	public virtual IEnumerator ApplyEffect()
 	{
 		RequestVfx(EffectVfxTrigger.Apply);
+		// Note: Central status apply SFX is played by EntityBase (AddEffect / TriggerEffectDirectly)
+		// to avoid double playing or playing during equipment rebuild/loading phases.
 		yield return BattleSystem.Instance.ShowDialog($"{Name} applied to {Target.entityData.EntityName}!");
 	}
 

@@ -24,6 +24,16 @@ public class BattleActionExecutor : MonoBehaviour
         yield return BattleSystem.waitHalf;
         BattleUnit attacker = sys.FindBattleUnitForEntityPublic(sourceEntity);
         attacker?.GetAnimator().PlayAttackAnimation(attacker.GetOffSet());
+
+        // Play cast SFX
+        if (skillToUse.SkillData.CustomCastSFX != null)
+        {
+            AudioManager.Instance.PlaySFX(skillToUse.SkillData.CustomCastSFX);
+        }
+        else
+        {
+            AudioManager.Instance.PlayDefaultCastSFX(skillToUse.SkillData.skillDefinition, skillToUse.element);
+        }
         
         // OnCast
         if (skillToUse.SkillData.effectsToApply.Count > 0)
@@ -74,7 +84,6 @@ public class BattleActionExecutor : MonoBehaviour
             foreach (var target in targetsGotHit)
             {
                 int hitsToPerform = Mathf.Max(1, skillToUse.SkillData.hitCount) + extraHitsFromBuffs;
-                bool hitAtLeastOnce = false;
 
                 Sprite[] frames = null;
                 float fps = 0f;
@@ -97,7 +106,7 @@ public class BattleActionExecutor : MonoBehaviour
 
                     if (hit)
                     {
-                        hitAtLeastOnce = true;
+
                         var anim = targetUnit?.GetAnimator();
                         if (anim != null)
                             yield return anim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
@@ -105,7 +114,12 @@ public class BattleActionExecutor : MonoBehaviour
                         int damage = CalculateDamage(sourceEntity, skillToUse, target);
                         totalDamagDeal += damage;
                         
-                        yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition, skillName: skillToUse.SkillData.skillName);
+                        yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition, skillName: skillToUse.SkillData.skillName, element: skillToUse.element);
+
+                        // Track who actually received the damage (may differ from original target due to ProtectAlly redirect)
+                        var actualReceiver = _ctx.Target;
+                        if (!actualHitTargets.Contains(actualReceiver))
+                            actualHitTargets.Add(actualReceiver);
                     }
                     else
                     {
@@ -123,11 +137,6 @@ public class BattleActionExecutor : MonoBehaviour
                     {
                         yield return new WaitForSeconds(0.2f); // Normal final hit pause
                     }
-                }
-
-                if (hitAtLeastOnce)
-                {
-                    actualHitTargets.Add(target);
                 }
             }
 
@@ -235,7 +244,8 @@ public class BattleActionExecutor : MonoBehaviour
 
     public IEnumerator HandleEntityTakeDamage(
         EntityBase target, int finalDamage, EntityBase source,
-        SkillDefinition origin, string skillName = "", bool isEffectDamage = false, string flavor = null)
+        SkillDefinition origin, string skillName = "", bool isEffectDamage = false, string flavor = null,
+        Element element = Element.None)
     {
         var originalTarget = target;
 
@@ -320,6 +330,9 @@ public class BattleActionExecutor : MonoBehaviour
         }
         BattleUnit targetBattleUnit = sys.FindBattleUnitForEntityPublic(_ctx.Target);
         string critical = _ctx.IsCritical ? " It's a critical hit!" : "";
+
+
+
         _ctx.Target.TakeDamage(_ctx.EffectiveDamage, _ctx.Source);
 
         string msg = string.IsNullOrEmpty(flavor)
@@ -362,6 +375,9 @@ public class BattleActionExecutor : MonoBehaviour
         BattleUnit attackerUnit = sys.FindBattleUnitForEntityPublic(attacker);
         attackerUnit?.GetAnimator().PlayAttackAnimation(attackerUnit.GetOffSet());
         
+        // Play physical cast sound for basic attack
+        AudioManager.Instance.PlayDefaultCastSFX(sys.basicAttack.SkillData.skillDefinition, sys.basicAttack.element);
+
         yield return new WaitForSeconds(0.4f); // Short delay to match swing visual
         
         Sprite[] frames = null;
@@ -373,6 +389,7 @@ public class BattleActionExecutor : MonoBehaviour
         if (targetAnim != null)
         {
             yield return targetAnim.PlayHitAnimation(playDefaultVfx: hasVfx, overrideFrames: frames, overideFps: fps);
+
         }
 
         int damage = CalculateDamage(attacker, sys.basicAttack, target);

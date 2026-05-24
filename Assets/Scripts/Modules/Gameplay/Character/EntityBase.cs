@@ -158,6 +158,10 @@ public abstract class EntityBase
 	{
 		return currentHP;
 	}
+	public void SetCurrentHP(int value)
+	{
+		currentHP = Mathf.Clamp(value, 0, maxHP);
+	}
 	public int GetCurrentSP()
 	{
 		return currentSP;
@@ -228,11 +232,39 @@ public abstract class EntityBase
 			finalDamage = DamageModifier(this, finalDamage);
 		}
 
+		// Tutorial: prevent player death if tutorial step requires it
+		if (this is PlayerCharacter
+			&& TutorialSequenceRunner.Instance != null
+			&& TutorialSequenceRunner.Instance.ShouldPreventDeath())
+		{
+			finalDamage = Mathf.Min(finalDamage, currentHP - 1);
+			if (finalDamage < 0) finalDamage = 0;
+		}
+
 		currentHP -= finalDamage;
 		currentHP = Mathf.Max(currentHP, 0);
 		if(currentHP == 0)
 		{
+			if (entityData != null && entityData.CustomDeathSFX != null)
+			{
+				AudioManager.Instance.PlaySFX(entityData.CustomDeathSFX);
+			}
+			else
+			{
+				AudioManager.Instance.PlayDefaultDeathSFX();
+			}
 			OnEntityDead?.Invoke(this);
+		}
+		else
+		{
+			if (entityData != null && entityData.CustomDamageSFX != null)
+			{
+				AudioManager.Instance.PlaySFX(entityData.CustomDamageSFX);
+			}
+			else
+			{
+				AudioManager.Instance.PlayDefaultDamageSFX();
+			}
 		}
 	}
 
@@ -340,6 +372,10 @@ public abstract class EntityBase
 			effect.OnChanged += handler;
 			Debug.Log("Effect added: " + effect.Name + " to " + entityData.EntityName);
 			OnEffectAdded?.Invoke(this, effect);
+			if (effect != null)
+			{
+				effect.PlayApplySFX();
+			}
 			yield return effect.ApplyEffect();
 		}
 		if (effect.Effect == Effect.StatModifier)
@@ -409,6 +445,10 @@ public abstract class EntityBase
 	}
 	public IEnumerator TriggerEffectDirectly(EffectBase effect)
 	{
+		if (effect != null)
+		{
+			effect.PlayApplySFX();
+		}
 		yield return effect.ApplyEffect();
 	}
 	private IEnumerator RunEffectPhase(List<EffectBase> source,bool isStartPhase)

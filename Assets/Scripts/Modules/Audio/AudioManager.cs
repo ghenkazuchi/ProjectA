@@ -7,23 +7,58 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 {
 	[Header("BGM")]
 	[SerializeField] private AudioSource bgmSource;
-	[SerializeField] private AudioClip roamingBGM;
+	[SerializeField] private AudioClip roamingDayBGM;
+	[SerializeField] private AudioClip roamingNightBGM;
 	[SerializeField] private AudioClip characterCreationBGM;
 	[SerializeField] private AudioClip battleBgm;
 	[SerializeField] private AudioClip campBgm;
 	[SerializeField] private AudioClip shopBgm;
+	[SerializeField] private AudioClip mainMenuBGM;
 
-	[Header("SFX")]
-	[SerializeField] private AudioSource sfxSource;
-	[SerializeField] private AudioClip buttonClickSfx;
-	[SerializeField] private AudioClip chestOpenSfx;
-	[SerializeField] private AudioClip itemGetSfx;
-	[SerializeField] private AudioClip shopOpenSfx;
-	[SerializeField] private AudioClip shopCloseSfx;
-	[SerializeField] private AudioClip battleStartSfx;
-	[SerializeField] private AudioClip skillCastSfx;
-	[SerializeField] private AudioClip gameWinSfx;
-	[SerializeField] private AudioClip gameLoseSfx;
+	[Header("Sound Event Mapping")]
+	[SerializeField] private SoundEventMap eventMap;
+
+	[Header("SFX Polyphonic Pool Settings")]
+	[SerializeField] private AudioSource sfxSource; // Fallback source
+	[SerializeField] private int maxPoolSize = 16;
+	private List<AudioSource> sfxPool = new List<AudioSource>();
+
+	private enum BGMState
+	{
+		None,
+		MainMenu,
+		CharacterCreation,
+		Roaming,
+		Battle,
+		Camp,
+		Shop
+	}
+	private BGMState currentBGMState = BGMState.None;
+	private bool isNight = false;
+
+	[Header("Battle Cast SFX Defaults")]
+	[SerializeField] private AudioConfig defaultPhysCastSFX;
+	[SerializeField] private AudioConfig defaultSpellCastSFX;
+	[SerializeField] private AudioConfig fireCastSFX;
+	[SerializeField] private AudioConfig waterCastSFX;
+	[SerializeField] private AudioConfig windCastSFX;
+	[SerializeField] private AudioConfig earthCastSFX;
+	[SerializeField] private AudioConfig lightCastSFX;
+	[SerializeField] private AudioConfig darkCastSFX;
+
+
+
+	[Header("Battle General SFX Defaults")]
+	[SerializeField] private AudioConfig defaultDamageTakenSFX;
+	[SerializeField] private AudioConfig defaultDeathSFX;
+
+	[Header("Status Effect SFX Defaults")]
+	[SerializeField] private AudioConfig poisonApplySFX;
+	[SerializeField] private AudioConfig sleepApplySFX;
+	[SerializeField] private AudioConfig charmApplySFX;
+	[SerializeField] private AudioConfig stunApplySFX;
+	[SerializeField] private AudioConfig burnApplySFX;
+	[SerializeField] private AudioConfig bleedApplySFX;
 
 	[Header("Volume")]
 	[Range(0f, 1f)] public float bgmVolume = 0.6f;
@@ -33,6 +68,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 
 	private void Awake()
 	{
+		DontDestroyOnLoad(gameObject);
 		if (bgmSource != null) bgmSource.loop = true;
 		ApplyVolume();
 	}
@@ -53,13 +89,21 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 		mm.AddSubcriber(MessageType.OnShopClose, this);
 		mm.AddSubcriber(MessageType.OnInteract, this);
 		mm.AddSubcriber(MessageType.OnSkillActive, this);
-		mm.AddSubcriber(MessageType.OnInteractEnd,this);
+		mm.AddSubcriber(MessageType.OnInteractEnd, this);
 		mm.AddSubcriber(MessageType.OnFireCampPopupOpen, this);
+
+		mm.AddSubcriber(MessageType.OnMainMenuEnter, this);
+		mm.AddSubcriber(MessageType.OnTimeChanged, this);
+		mm.AddSubcriber(MessageType.OnChestOpenAnimationComplete, this);
+		mm.AddSubcriber(MessageType.OnChestGoldReward, this);
+		mm.AddSubcriber(MessageType.OnEquipmentEquipped, this);
+		mm.AddSubcriber(MessageType.OnToastShown, this);
 	}
 
 	private void OnDisable()
 	{
 		var mm = MessageManager.Instance;
+		if (mm == null) return;
 
 		mm.RemoveSubcriber(MessageType.OnCharacterCreationEnter, this);
 		mm.RemoveSubcriber(MessageType.OnGameStart, this);
@@ -76,6 +120,13 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 		mm.RemoveSubcriber(MessageType.OnSkillActive, this);
 		mm.RemoveSubcriber(MessageType.OnInteractEnd, this);
 		mm.RemoveSubcriber(MessageType.OnFireCampPopupOpen, this);
+
+		mm.RemoveSubcriber(MessageType.OnMainMenuEnter, this);
+		mm.RemoveSubcriber(MessageType.OnTimeChanged, this);
+		mm.RemoveSubcriber(MessageType.OnChestOpenAnimationComplete, this);
+		mm.RemoveSubcriber(MessageType.OnChestGoldReward, this);
+		mm.RemoveSubcriber(MessageType.OnEquipmentEquipped, this);
+		mm.RemoveSubcriber(MessageType.OnToastShown, this);
 	}
 
 	#endregion
@@ -84,63 +135,52 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 
 	public void Handle(Message message)
 	{
+		// 1. Manage BGM changes
 		switch (message.type)
 		{
 			case MessageType.OnCharacterCreationEnter:
-				PlayBGM(characterCreationBGM);
+				PlayBGMState(BGMState.CharacterCreation);
 				break;
 			case MessageType.OnGameStart:
-				PlayBGM(roamingBGM);
+				PlayBGMState(BGMState.Roaming);
 				break;
-
 			case MessageType.OnBattleStart:
-				PlayBGM(battleBgm);
-				PlaySFX(battleStartSfx);
+				PlayBGMState(BGMState.Battle);
 				break;
-
 			case MessageType.OnBattleOver:
-				PlayBGM(campBgm);
+				PlayBGMState(BGMState.Camp);
 				break;
-
-			case MessageType.OnGameWin:
-				PlaySFX(gameWinSfx);
-				break;
-
-			case MessageType.OnGameLose:
-				PlaySFX(gameLoseSfx);
-				break;
-
-			case MessageType.OnButtonClick:
-				PlaySFX(buttonClickSfx);
-				break;
-
-			case MessageType.OnChestOpen:
-				PlaySFX(chestOpenSfx);
-				break;
-
 			case MessageType.OnShopOpen:
-				PlaySFX(shopOpenSfx);
-				PlayBGM(shopBgm);
+				PlayBGMState(BGMState.Shop);
 				break;
-
 			case MessageType.OnShopClose:
-				PlaySFX(shopCloseSfx);
-				PlayBGM(campBgm);
-				break;
-
-			case MessageType.OnSkillActive:
-				PlaySFX(skillCastSfx);
-				break;
-
-			case MessageType.OnInteract:
-				PlaySFX(itemGetSfx);
+				PlayBGMState(BGMState.Camp);
 				break;
 			case MessageType.OnInteractEnd:
-				PlayBGM(roamingBGM);
+				PlayBGMState(BGMState.Roaming);
 				break;
 			case MessageType.OnFireCampPopupOpen:
-				PlayBGM(campBgm);
+				PlayBGMState(BGMState.Camp);
 				break;
+			case MessageType.OnMainMenuEnter:
+				PlayBGMState(BGMState.MainMenu);
+				break;
+			case MessageType.OnTimeChanged:
+				if (message.data != null && message.data.Length > 0 && message.data[0] is bool nightState)
+				{
+					isNight = nightState;
+					if (currentBGMState == BGMState.Roaming)
+					{
+						PlayBGMState(BGMState.Roaming);
+					}
+				}
+				break;
+		}
+
+		// 2. Play event-mapped SFX
+		if (eventMap != null && eventMap.TryGetConfig(message.type, out AudioConfig sfxConfig))
+		{
+			PlaySFX(sfxConfig);
 		}
 	}
 
@@ -158,20 +198,151 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 	public void SetSfxVolume(float value)
 	{
 		sfxVolume = Mathf.Clamp01(value);
-		if (sfxSource != null)
-			sfxSource.volume = sfxVolume;
+		ApplyVolume();
 	}
+
+	public void PlaySFX(AudioConfig config)
+	{
+		if (config == null) return;
+		AudioClip clip = config.GetRandomClip();
+		if (clip == null) return;
+
+		AudioSource source = GetAvailableAudioSource();
+		if (source != null)
+		{
+			source.clip = clip;
+			source.volume = config.GetRandomVolume() * sfxVolume;
+			source.pitch = config.GetRandomPitch();
+			source.spatialBlend = 0f; // Force 2D in this game
+			source.loop = false;
+			source.Play();
+		}
+	}
+
+	public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
+	{
+		if (clip == null) return;
+
+		AudioSource source = GetAvailableAudioSource();
+		if (source != null)
+		{
+			source.clip = clip;
+			source.volume = volume * sfxVolume;
+			source.pitch = pitch;
+			source.spatialBlend = 0f; // Force 2D in this game
+			source.loop = false;
+			source.Play();
+		}
+	}
+
+	#region Battle SFX Fallback Triggers
+
+	public void PlayDefaultCastSFX(SkillDefinition definition, Element element)
+	{
+		if (definition == SkillDefinition.Spell)
+		{
+			AudioConfig config = element switch
+			{
+				Element.Fire => fireCastSFX,
+				Element.Water => waterCastSFX,
+				Element.Wind => windCastSFX,
+				Element.Earth => earthCastSFX,
+				Element.Light => lightCastSFX,
+				Element.Dark => darkCastSFX,
+				_ => defaultSpellCastSFX
+			};
+			PlaySFX(config != null ? config : defaultSpellCastSFX);
+		}
+		else
+		{
+			PlaySFX(defaultPhysCastSFX);
+		}
+	}
+
+
+
+	public void PlayDefaultDamageSFX()
+	{
+		PlaySFX(defaultDamageTakenSFX);
+	}
+
+	public void PlayDefaultDeathSFX()
+	{
+		PlaySFX(defaultDeathSFX);
+	}
+
+	public void PlayDefaultStatusApplySFX(string effectName)
+	{
+		if (string.IsNullOrEmpty(effectName)) return;
+
+		string lowerName = effectName.ToLower();
+		AudioConfig config = null;
+
+		if (lowerName.Contains("poison")) config = poisonApplySFX;
+		else if (lowerName.Contains("sleep")) config = sleepApplySFX;
+		else if (lowerName.Contains("charm")) config = charmApplySFX;
+		else if (lowerName.Contains("stun")) config = stunApplySFX;
+		else if (lowerName.Contains("burn")) config = burnApplySFX;
+		else if (lowerName.Contains("bleed")) config = bleedApplySFX;
+
+		if (config != null)
+		{
+			PlaySFX(config);
+		}
+	}
+
+	#endregion
 
 	#endregion
 
 	#region Internal helpers
 
+	private AudioSource GetAvailableAudioSource()
+	{
+		// Clean up null references
+		sfxPool.RemoveAll(source => source == null);
+
+		foreach (var source in sfxPool)
+		{
+			if (!source.isPlaying)
+			{
+				return source;
+			}
+		}
+
+		if (sfxPool.Count < maxPoolSize)
+		{
+			GameObject go = new GameObject("PooledAudioSource");
+			go.transform.SetParent(this.transform);
+			AudioSource newSource = go.AddComponent<AudioSource>();
+			newSource.playOnAwake = false;
+			sfxPool.Add(newSource);
+			return newSource;
+		}
+
+		// Fallback: return the first one or the default sfxSource
+		if (sfxPool.Count > 0)
+		{
+			return sfxPool[0];
+		}
+		return sfxSource;
+	}
+
 	private void ApplyVolume()
 	{
 		if (bgmSource != null)
 			bgmSource.volume = bgmVolume;
+		
 		if (sfxSource != null)
 			sfxSource.volume = sfxVolume;
+
+		foreach (var source in sfxPool)
+		{
+			if (source != null)
+			{
+				source.volume = sfxVolume;
+			}
+		}
 	}
 
 	private void PlayBGM(AudioClip clip)
@@ -180,7 +351,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 			return;
 
 		if (bgmSource.clip == clip && bgmSource.isPlaying)
-			return; 
+			return;
 
 		bgmSource.clip = clip;
 		bgmSource.volume = bgmVolume;
@@ -188,14 +359,22 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 		bgmSource.Play();
 	}
 
-	private void PlaySFX(AudioClip clip)
+	private void PlayBGMState(BGMState state)
 	{
-		if (clip == null || sfxSource == null)
-			return;
-
-		sfxSource.volume = sfxVolume;
-		sfxSource.PlayOneShot(clip);
+		currentBGMState = state;
+		AudioClip clipToPlay = state switch
+		{
+			BGMState.MainMenu => mainMenuBGM,
+			BGMState.CharacterCreation => characterCreationBGM,
+			BGMState.Roaming => isNight ? roamingNightBGM : roamingDayBGM,
+			BGMState.Battle => battleBgm,
+			BGMState.Camp => campBgm,
+			BGMState.Shop => shopBgm,
+			_ => null
+		};
+		PlayBGM(clipToPlay);
 	}
 
 	#endregion
+
 }

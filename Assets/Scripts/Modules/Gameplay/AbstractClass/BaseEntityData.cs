@@ -20,7 +20,14 @@ public abstract class BaseEntityData : ScriptableObject
 	public PassiveSkillData exclusivePassiveSkill;
 
 	public ActiveSkillData ExclusiveActiveSkill => exclusiveActiveSkill;
-	public PassiveSkillData ExclusivePassiveSkill => exclusivePassiveSkill;		
+	public PassiveSkillData ExclusivePassiveSkill => exclusivePassiveSkill;
+
+	[Header("Audio Overrides")]
+	[SerializeField] private AudioConfig customDamageSFX;
+	[SerializeField] private AudioConfig customDeathSFX;
+
+	public AudioConfig CustomDamageSFX => customDamageSFX;
+	public AudioConfig CustomDeathSFX => customDeathSFX;
 	public string EntityName
 	{
 		get => entityName;

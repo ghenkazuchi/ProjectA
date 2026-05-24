@@ -15,10 +15,30 @@ MonoBehaviour:
   EffectType: 0
   Effect: 5
   Name: Fleeting Step
+  Description: Upon taking fatal damage, if have 35% or lower hp, remove this effect
+    to evade the incoming attack
   MaxDuration: 100000000
   CanBeRemoved: 1
   Stackable: 0
   MaxStack: 1
   isInstantEffect: 0
+  isPassiveEquipmentEffect: 0
+  tags: 0
   effectIcon: {fileID: 21300000, guid: 61141920e7abc754290362accfd2b162, type: 3}
-  evasionCurrentHpThreshold: 0.5
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  evasionCurrentHpThreshold: 0.35

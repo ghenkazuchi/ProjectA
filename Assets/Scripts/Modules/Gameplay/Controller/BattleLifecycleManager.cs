@@ -109,6 +109,24 @@ public class BattleLifecycleManager
 		bool allMonsterDefeated = !monsterBattleUnits.Exists(u => u != null && u.character != null && u.IsAlive());
 		bool allAllyDefeated = !playerBattleUnits.Exists(u => u != null && u.character != null && u.IsAlive());
 
+		// Tutorial: prevent game over, run tutorial completion on monster defeat
+		if (sys.currentBattleType == BattleType.Tutorial)
+		{
+			if (allAllyDefeated)
+			{
+				// Safety net: don't end the battle, tutorial death prevention should handle this
+				return false;
+			}
+			if (allMonsterDefeated)
+			{
+				sys.battleOver = true;
+				sys.uiController.battleDialogBox.EnableDialogText(false);
+				HandleTutorialComplete();
+				return true;
+			}
+			return false;
+		}
+
 		if (allAllyDefeated)
 		{
 			sys.battleOver = true;
@@ -300,6 +318,24 @@ public class BattleLifecycleManager
 			if (entity == null || entity.GetCurrentHP() <= 0) continue;
 			if (entity.EquipmentEffectRunner != null)
 				yield return entity.EquipmentEffectRunner.Trigger(EquipEffectTrigger.OnBattleEnd, entity);
+		}
+	}
+
+	/// <summary>
+	/// Tutorial-specific end: skip EXP/loot, reset effects, run completion flow.
+	/// </summary>
+	private void HandleTutorialComplete()
+	{
+		// Reset effects on all entities
+		var allEntities = new List<EntityBase>();
+		foreach (var s in sys.playerParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+		foreach (var s in sys.monsterParty.partySlots) if (s.entity != null) allEntities.Add(s.entity);
+		BattleEventManager.ResetEffectOnEntities(allEntities);
+
+		// Run tutorial completion via the runner
+		if (TutorialSequenceRunner.Instance != null)
+		{
+			sys.StartCoroutine(TutorialSequenceRunner.Instance.RunCompletionFlow());
 		}
 	}
 }

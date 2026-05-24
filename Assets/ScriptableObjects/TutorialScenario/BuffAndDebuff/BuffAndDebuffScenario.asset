@@ -1,0 +1,231 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807daa54bf09fe84a98e1805f786e1c7, type: 3}
+  m_Name: BuffAndDebuffScenario
+  m_EditorClassIdentifier: 
+  scenarioTitle: Checking unit active effect
+  scenarioDescription: 
+  scenarioIcon: {fileID: 0}
+  fixedPlayerCharacters:
+  - template: {fileID: 11400000, guid: 9123bff24146df84dabd1357cb943493, type: 2}
+    level: 1
+    position:
+      x: 0
+      y: 0
+    startingHPPercent: 27
+    startingEffects: []
+  fixedMonsters:
+  - monsterData: {fileID: 11400000, guid: 0b066b711c12c5746970e71c52049a91, type: 2}
+    rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
+    raceData: {fileID: 11400000, guid: c26971d14af84b0488387aa27b9c9363, type: 2}
+    level: 1
+    position:
+      x: 0
+      y: 0
+    startingHPPercent: 0
+    startingEffects: []
+  steps:
+  - guidanceText: During battle, unit can have various of buff/debuff
+    timing: 2
+    pointerTarget: 0
+    pointerDirection: 0
+    pointerOffset: 60
+    frameShape: 0
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: At the start of battle, this unit have a passive that grant them
+      special effect. Let's check what it does
+    timing: 2
+    pointerTarget: 7
+    pointerDirection: 3
+    pointerOffset: 200
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 2
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 1
+    targetUnitSide: 0
+    targetUnitSlotIndex: 5
+    preventPlayerDeath: 0
+  - guidanceText: 'List of character active effects are shown here '
+    timing: 2
+    pointerTarget: 15
+    pointerDirection: 2
+    pointerOffset: 550
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: -607.0464, y: -241.65}
+    customTextPanelSize: {x: 520.4521, y: 596.7}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: 'Exit the menu by pressing the exit button. '
+    timing: 2
+    pointerTarget: 16
+    pointerDirection: 0
+    pointerOffset: 200
+    frameShape: 2
+    customFrameSize: {x: 50, y: 50}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 262, y: 0}
+    customTextPanelSize: {x: 1191, y: 1080}
+    customFontSize: 0
+    interactionMode: 3
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Character can gain effect through various methods.
+    timing: 2
+    pointerTarget: 0
+    pointerDirection: 0
+    pointerOffset: 0
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 0, y: 0}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Try gaining buff by using character skill
+    timing: 2
+    pointerTarget: 0
+    pointerDirection: 0
+    pointerOffset: 60
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Confirm "Skill" action
+    timing: 2
+    pointerTarget: 8
+    pointerDirection: 0
+    pointerOffset: 120
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 60, y: 90}
+    hideTextPanel: 0
+    customTextPosition: {x: -180, y: -407}
+    customTextPanelSize: {x: 600, y: 265}
+    customFontSize: 0
+    interactionMode: 1
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  - guidanceText: Confirm using this skill
+    timing: 2
+    pointerTarget: 12
+    pointerDirection: 3
+    pointerOffset: 360
+    frameShape: 2
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 475, y: -405}
+    customTextPanelSize: {x: 960, y: 264}
+    customFontSize: 36
+    interactionMode: 1
+    requiredActionType: 0
+    requireSpecificSkill: 1
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
+  monsterDirectives: []
+  completionMessage: 

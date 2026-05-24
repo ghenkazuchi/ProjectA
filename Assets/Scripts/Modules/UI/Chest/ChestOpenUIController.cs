@@ -176,6 +176,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 		Sequence sequence = DOTween.Sequence().SetLink(gameObject);
 		sequence.Append(chestRect.DOAnchorPos(chestIntendedPos, 0.75f).SetEase(Ease.OutBounce));
 		sequence.Append(DOVirtual.Int(0, frames.Length - 1, 0.35f, i => chestImage.sprite = frames[i]));
+		sequence.AppendCallback(() => MessageManager.Instance.SendMessage(new Message(MessageType.OnChestOpenAnimationComplete)));
 		
 		if (!reward.isGold)
 		{
@@ -229,6 +230,7 @@ public class ChestOpenUIController : Singleton<ChestOpenUIController>, IMessageH
 
 	private void SpawnGoldAnimation(int amount)
 	{
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnChestGoldReward));
 		if (goldRewardCanvasGroup == null || goldRewardText == null)
 		{
 			CloseChestUI();
