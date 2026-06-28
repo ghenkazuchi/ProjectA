@@ -207,7 +207,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 		battleState = BattleState.ShowingDialog;
 		if (currentBattleType == BattleType.Tutorial)
 		{
-			// Tutorial: run OnBattleStart steps via the overlay, not the battle dialog
 			if (TutorialSequenceRunner.Instance != null && TutorialSequenceRunner.Instance.IsTutorialActive)
 				yield return StartCoroutine(
 					TutorialSequenceRunner.Instance.RunStepsForPhase(TutorialStepTiming.OnBattleStart));
@@ -228,13 +227,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			entityDefenseStates[entity] = DefenseState.None;
 		}
 	}
-	public IEnumerator HandleEntityTakeDamage(
-		EntityBase target, int finalDamage, EntityBase source,
-		SkillDefinition origin, string skillName = "", bool isEffectDamage = false, string flavor = null)
-	{
-		yield return StartCoroutine(actionExecutor.HandleEntityTakeDamage(target, finalDamage, source, origin, skillName, isEffectDamage, flavor));
-	}
-
 	public IEnumerator HandleEntityGotHeal(HealingContext healingContext)
 	{
 		yield return StartCoroutine(actionExecutor.HandleEntityGotHeal(healingContext));
@@ -244,8 +236,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 	{
 		yield return StartCoroutine(actionExecutor.ApplyEffectDamage(target, amount, source, reason));
 	}
-	public void NavigateActionSelection(int direction) => inputHandler.NavigateActionSelection(direction);
-	public void NavigateSkillSelection(int direction) => inputHandler.NavigateSkillSelection(direction);
 
 	public void UpdateTimelineUI()
 	{
@@ -276,7 +266,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 
 		yield return waitHalf;
 
-		// Tutorial: use scripted monster behavior if active
 		AIDecision decision;
 		var tut = TutorialSequenceRunner.Instance;
 		if (tut != null && tut.IsTutorialActive)
@@ -360,15 +349,6 @@ public class BattleSystem : HaKien.Singleton<BattleSystem>
 			default:
 				yield break;
 		}
-	}
-
-
-
-	public void CleanupBattle()
-	{
-		lifecycleManager.CleanupBattle(allEntities);
-		entityDefenseStates.Clear();
-		Hide();
 	}
 
 	public bool IsDefending(EntityBase entity)

@@ -15,18 +15,33 @@ MonoBehaviour:
   EffectType: 1
   Effect: 4
   Name: 'Burn '
+  Description: Reduce owner physical attack by half. At the end of turn, deal 5%
+    of owner max HP
   MaxDuration: 3
   CanBeRemoved: 1
   Stackable: 0
   MaxStack: 1
-  AppliesTo: 1
   isInstantEffect: 0
-  hasLimitedUsage: 0
-  maxUsePerBattle: 0
-  maxUSePerLifeCycle: 0
-  timing: 1
-  requiredHit: 1
+  isPassiveEquipmentEffect: 0
+  tags: 2
   effectIcon: {fileID: 21300000, guid: 02b521efd08b7f648a5d275362df99b4, type: 3}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  applySFX: {fileID: 0}
   burnDamage: 0.15
   reducedStats: 3
   reducedStatPercent: 0.25

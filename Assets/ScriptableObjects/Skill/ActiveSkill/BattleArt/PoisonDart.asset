@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: PoisonDart
   m_EditorClassIdentifier: 
   skillName: Poison Dart
-  skillDescription: On cast 100% apply poison to target
+  skillDescription: On cast 70% chance to apply poison to target.
   skillType: 0
+  customCastSFX: {fileID: 0}
   skillDefinition: 1
   targetType: 1
   skillRange: 0
@@ -22,6 +23,7 @@ MonoBehaviour:
   baseMpCost: 0
   baseSkillDamage: 40
   baseHitChance: 1
+  hitCount: 1
   skillElement: 0
   activeSkillType: 0
   scalingStatAndMutiply:
@@ -65,7 +67,7 @@ MonoBehaviour:
     - 0
   effectsToApply:
   - effectData: {fileID: 11400000, guid: 764cd1d452ec27040914f88b578e25a0, type: 2}
-    procChance: 0.25
+    procChance: 0.7
     turnDuration: 3
     activeTiming: 0
   modifiers: []

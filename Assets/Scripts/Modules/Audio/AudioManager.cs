@@ -19,7 +19,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 	[SerializeField] private SoundEventMap eventMap;
 
 	[Header("SFX Polyphonic Pool Settings")]
-	[SerializeField] private AudioSource sfxSource; // Fallback source
+	[SerializeField] private AudioSource sfxSource; 
 	[SerializeField] private int maxPoolSize = 16;
 	private List<AudioSource> sfxPool = new List<AudioSource>();
 
@@ -68,6 +68,11 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 
 	private void Awake()
 	{
+		if (Instance != this)
+		{
+			Destroy(gameObject);
+			return;
+		}
 		DontDestroyOnLoad(gameObject);
 		if (bgmSource != null) bgmSource.loop = true;
 		ApplyVolume();
@@ -81,6 +86,8 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 		mm.AddSubcriber(MessageType.OnGameWin, this);
 		mm.AddSubcriber(MessageType.OnGameLose, this);
 		mm.AddSubcriber(MessageType.OnBattleStart, this);
+		mm.AddSubcriber(MessageType.OnBattleWin, this);
+		mm.AddSubcriber(MessageType.OnBattleLose, this);
 		mm.AddSubcriber(MessageType.OnBattleOver, this);
 
 		mm.AddSubcriber(MessageType.OnButtonClick, this);
@@ -110,6 +117,8 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 		mm.RemoveSubcriber(MessageType.OnGameWin, this);
 		mm.RemoveSubcriber(MessageType.OnGameLose, this);
 		mm.RemoveSubcriber(MessageType.OnBattleStart, this);
+		mm.RemoveSubcriber(MessageType.OnBattleWin, this);
+		mm.RemoveSubcriber(MessageType.OnBattleLose, this);
 		mm.RemoveSubcriber(MessageType.OnBattleOver, this);
 
 		mm.RemoveSubcriber(MessageType.OnButtonClick, this);
@@ -148,7 +157,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 				PlayBGMState(BGMState.Battle);
 				break;
 			case MessageType.OnBattleOver:
-				PlayBGMState(BGMState.Camp);
+				PlayBGMState(BGMState.Roaming);
 				break;
 			case MessageType.OnShopOpen:
 				PlayBGMState(BGMState.Shop);
@@ -213,7 +222,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 			source.clip = clip;
 			source.volume = config.GetRandomVolume() * sfxVolume;
 			source.pitch = config.GetRandomPitch();
-			source.spatialBlend = 0f; // Force 2D in this game
+			source.spatialBlend = 0f;
 			source.loop = false;
 			source.Play();
 		}
@@ -229,7 +238,7 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 			source.clip = clip;
 			source.volume = volume * sfxVolume;
 			source.pitch = pitch;
-			source.spatialBlend = 0f; // Force 2D in this game
+			source.spatialBlend = 0f;
 			source.loop = false;
 			source.Play();
 		}
@@ -299,7 +308,6 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 
 	private AudioSource GetAvailableAudioSource()
 	{
-		// Clean up null references
 		sfxPool.RemoveAll(source => source == null);
 
 		foreach (var source in sfxPool)
@@ -320,7 +328,6 @@ public class AudioManager : Singleton<AudioManager>, IMessageHandle
 			return newSource;
 		}
 
-		// Fallback: return the first one or the default sfxSource
 		if (sfxPool.Count > 0)
 		{
 			return sfxPool[0];

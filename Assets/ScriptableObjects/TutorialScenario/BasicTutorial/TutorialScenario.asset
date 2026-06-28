@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 807daa54bf09fe84a98e1805f786e1c7, type: 3}
   m_Name: TutorialScenario
   m_EditorClassIdentifier: 
-  scenarioTitle: 'Basic '
-  scenarioDescription: 
+  scenarioTitle: Basic Turn- based Tutorial
+  scenarioDescription: Teach player the combat interface, how to select action and
+    select target
   scenarioIcon: {fileID: 0}
   fixedPlayerCharacters:
   - template: {fileID: 11400000, guid: 484579341c845c44c90f59dffd423021, type: 2}
@@ -313,5 +314,30 @@ MonoBehaviour:
     targetUnitSide: 1
     targetUnitSlotIndex: 2
     preventPlayerDeath: 0
+  - guidanceText: Continue and killing the other monster!
+    timing: 0
+    pointerTarget: 0
+    pointerDirection: 0
+    pointerOffset: 60
+    frameShape: 0
+    customFrameSize: {x: 0, y: 0}
+    customFrameOffset: {x: 0, y: 0}
+    highlightPadding: {x: 20, y: 20}
+    customFingerSize: {x: 0, y: 0}
+    hideTextPanel: 0
+    customTextPosition: {x: 0, y: 0}
+    customTextPanelSize: {x: 0, y: 0}
+    customFontSize: 0
+    interactionMode: 0
+    requiredActionType: 0
+    requireSpecificSkill: 0
+    requiredSkillIndex: 0
+    requireSpecificTarget: 0
+    requiredTargetIndex: 0
+    targetSpecificUnit: 0
+    targetUnitSide: 0
+    targetUnitSlotIndex: 0
+    preventPlayerDeath: 0
   monsterDirectives: []
-  completionMessage: 
+  completionMessage: Well done, you grasp the fundamental basic combat element of
+    the game! Continue leaning more through other tutorial stage

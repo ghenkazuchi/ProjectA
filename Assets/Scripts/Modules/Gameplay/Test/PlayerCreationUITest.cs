@@ -323,6 +323,7 @@ public class PlayerCreationUITest : MonoBehaviour
 		runtimeData.SetTraits(currentTraitValues);
 		runtimeData.EntityElement = chosenElement;
 		PlayerCharacter newCharacter = new PlayerCharacter(cls, race,1,runtimeData);
+		newCharacter.IsCreatedCharacter = true;
 		newCharacter.InitializeEntity(1);
 
 		PlayerParty party = playerObject.GetComponent<PlayerParty>();

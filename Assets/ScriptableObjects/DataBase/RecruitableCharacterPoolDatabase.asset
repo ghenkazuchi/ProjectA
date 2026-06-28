@@ -18,15 +18,14 @@ MonoBehaviour:
     minLevel: 1
     maxLevel: 3
     characters:
-    - {fileID: 11400000, guid: 5e61fcff3feff2f468b7a8f867c00a98, type: 2}
     - {fileID: 11400000, guid: 484579341c845c44c90f59dffd423021, type: 2}
+    - {fileID: 11400000, guid: c9af2c953608dd9419e8911b209a38d6, type: 2}
   - day: 0
     timeOfDay: 1
     minLevel: 1
     maxLevel: 3
     characters:
     - {fileID: 11400000, guid: c9af2c953608dd9419e8911b209a38d6, type: 2}
-    - {fileID: 11400000, guid: 5e61fcff3feff2f468b7a8f867c00a98, type: 2}
     - {fileID: 11400000, guid: 9123bff24146df84dabd1357cb943493, type: 2}
   - day: 1
     timeOfDay: 0

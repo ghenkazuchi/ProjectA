@@ -16,20 +16,34 @@ public class PartymemberUIComponent : MonoBehaviour
 	private Action<int, BattleUnit> onClick;
 	private bool selected;
 
+	private BattleUnit CurrentBattleUnit
+	{
+		get
+		{
+			if (BattleSystem.Instance != null)
+			{
+				return BattleSystem.Instance.GetBattleUnitAt(index);
+			}
+			return battleUnit;
+		}
+	}
+
 	public void Bind(int index, Action<int, BattleUnit> onClick)
 	{
 		this.index = index;
 		this.onClick = onClick;
 
-		Debug.Log($"[PMUI] Bind slot={index} button={(button ? button.name : "NULL")} battleUnit={(battleUnit ? battleUnit.name : "NULL")}", this);
+		var currentUnit = CurrentBattleUnit;
+		Debug.Log($"[PMUI] Bind slot={index} button={(button ? button.name : "NULL")} battleUnit={(currentUnit ? currentUnit.name : "NULL")}", this);
 
 		if (button != null)
 		{
 			button.onClick.RemoveAllListeners();
 			button.onClick.AddListener(() =>
 			{
-				Debug.Log($"[PMUI] CLICK slot={this.index} battleUnit={(battleUnit ? battleUnit.name : "NULL")} hasChar={(battleUnit && battleUnit.character != null)}", this);
-				this.onClick?.Invoke(this.index, this.battleUnit);
+				var unit = CurrentBattleUnit;
+				Debug.Log($"[PMUI] CLICK slot={this.index} battleUnit={(unit ? unit.name : "NULL")} hasChar={(unit && unit.character != null)}", this);
+				this.onClick?.Invoke(this.index, unit);
 			});
 		}
 		else
@@ -44,13 +58,21 @@ public class PartymemberUIComponent : MonoBehaviour
 
 	public void Refresh()
 	{
-		if(battleUnit == null || battleUnit.character == null)
+		var unit = CurrentBattleUnit;
+		if (unit == null || unit.character == null)
 		{
-			//characterSprite.enabled = false;
+			if (characterSprite != null)
+			{
+				characterSprite.enabled = false;
+			}
 			return;
 		}
-		//characterSprite.enabled = true;
-		//characterSprite.sprite = battleUnit.character.entityData.EntityPortrait;
+		
+		if (characterSprite != null)
+		{
+			characterSprite.enabled = true;
+			characterSprite.sprite = unit.character.entityData.EntityPortrait;
+		}
 	}
 
 	public void SetSelected(bool value)

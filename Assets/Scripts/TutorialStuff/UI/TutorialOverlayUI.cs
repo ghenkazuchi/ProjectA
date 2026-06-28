@@ -36,14 +36,14 @@ public class TutorialOverlayUI : MonoBehaviour
 	[SerializeField] private RectTransform[] actionButtonRects; // Skill, Attack, Defend, Switch
 	[SerializeField] private RectTransform[] skillButtonRects;  // 4 skill slots
 
-	[Header("Battle Unit References (assign in Inspector)")]
+	[Header("Battle Unit References")]
 	[SerializeField] private BattleUnit[] playerBattleUnits;   // 6 slots
 	[SerializeField] private BattleUnit[] monsterBattleUnits;  // 6 slots
 
 	public BattleUnit[] PlayerBattleUnits => playerBattleUnits;
 	public BattleUnit[] MonsterBattleUnits => monsterBattleUnits;
 
-	[Header("Active Effect UI References (assign in Inspector)")]
+	[Header("Active Effect UI References")]
 	[SerializeField] private RectTransform activeEffectContainerRect;
 	[SerializeField] private RectTransform activeEffectExitButtonRect;
 
@@ -92,11 +92,6 @@ public class TutorialOverlayUI : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-	/// <summary>
-	/// Show the overlay for a tutorial step.
-	/// For TapToContinue steps, this coroutine waits for player input then fades out.
-	/// For WaitForCorrectAction steps, overlay stays visible until HideOverlay() is called.
-	/// </summary>
 	public IEnumerator ShowStep(TutorialStepData step)
 	{
 		gameObject.SetActive(true);
@@ -136,9 +131,6 @@ public class TutorialOverlayUI : MonoBehaviour
 		}
 		if (guidanceText != null && !step.hideTextPanel)
 		{
-			// If auto-size is enabled, setting fontSize directly won't override it unless we disable auto-size, 
-			// but we can assume if they provide a custom size, we just set the fontSize property.
-			// Ideally they turn off auto-size if they plan to manually control fontSize via this script.
 			guidanceText.fontSize = step.customFontSize > 0 ? step.customFontSize : defaultFontSize;
 		}
 
@@ -158,12 +150,9 @@ public class TutorialOverlayUI : MonoBehaviour
 		{
 			overlayState = TutorialOverlayState.WaitingForCorrectAction;
 		}
-		// WaitForCorrectAction: overlay stays visible, runner will call HideOverlay()
+		// yield return null;
 	}
 
-	/// <summary>
-	/// Hides the overlay. Called by TutorialSequenceRunner after the player performs the correct action.
-	/// </summary>
 	public IEnumerator HideOverlay()
 	{
 		overlayState = TutorialOverlayState.FadingOut;
@@ -173,7 +162,7 @@ public class TutorialOverlayUI : MonoBehaviour
 		overlayState = TutorialOverlayState.Hidden;
 	}
 
-	// ─── Target Resolution ──────────────────────────────────────────
+	//Target Resolution
 
 	private RectTransform ResolveTarget(TutorialStepData step)
 	{
@@ -235,16 +224,12 @@ public class TutorialOverlayUI : MonoBehaviour
 		return skillButtonRects[index];
 	}
 
-	// ─── Positioning ────────────────────────────────────────────────
+	//Positioning
 
-	/// <summary>
-	/// Calculates the true world-space center of a RectTransform, ignoring its Pivot.
-	/// </summary>
 	private Vector3 GetTrueCenter(RectTransform rect)
 	{
 		Vector3[] corners = new Vector3[4];
 		rect.GetWorldCorners(corners);
-		// corners: 0=BottomLeft, 1=TopLeft, 2=TopRight, 3=BottomRight
 		return (corners[0] + corners[2]) / 2f;
 	}
 
@@ -252,7 +237,7 @@ public class TutorialOverlayUI : MonoBehaviour
 	{
 		if (target == null) return;
 
-		// 1. Swap the sprite
+		// Swap the sprite
 		if (highlightFrameImage != null)
 		{
 			highlightFrameImage.sprite = step.frameShape switch
@@ -263,7 +248,7 @@ public class TutorialOverlayUI : MonoBehaviour
 			};
 		}
 
-		// 2. Size and position
+		//Size and position
 		Vector3 trueCenter = GetTrueCenter(target);
 		highlightFrame.position = trueCenter + (Vector3)step.customFrameOffset;
 		if (step.customFrameSize != Vector2.zero)
@@ -313,7 +298,7 @@ public class TutorialOverlayUI : MonoBehaviour
 		fingerBasePos = fingerIconRoot.localPosition;
 	}
 
-	// ─── Animation ──────────────────────────────────────────────────
+	//Animation
 
 	private void StartFingerAnimation()
 	{
@@ -367,12 +352,12 @@ public class TutorialOverlayUI : MonoBehaviour
 		overlayCanvasGroup.alpha = 0f;
 	}
 
-	// ─── Input ──────────────────────────────────────────────────────
+	//Input
 
 	private IEnumerator WaitForTap()
 	{
 		waitingForTap = true;
-		// Small delay to prevent accidental immediate dismiss
+		// Small delay
 		yield return new WaitForSeconds(0.2f);
 		yield return new WaitUntil(() => !waitingForTap);
 	}

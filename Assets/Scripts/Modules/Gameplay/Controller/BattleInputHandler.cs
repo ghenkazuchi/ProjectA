@@ -33,7 +33,7 @@ public class BattleInputHandler : MonoBehaviour
         if (sys == null) sys = GetComponent<BattleSystem>();
         if (battleDialogBox == null) battleDialogBox = FindFirstObjectByType<BattleDialogBox>();
 
-        // Always log how many instances exist
+        // log how many instances exist
         var allHandlers = FindObjectsByType<BattleInputHandler>(FindObjectsSortMode.None);
         Debug.Log($"[InputHandler] Awake on '{gameObject.name}', total instances found: {allHandlers.Length}");
         foreach (var h in allHandlers)
@@ -243,7 +243,7 @@ public class BattleInputHandler : MonoBehaviour
         }
     }
 
-    // --- Coroutines ---
+    //Coroutines
 
     private IEnumerator HandleSwitchPosition()
     {
@@ -286,7 +286,7 @@ public class BattleInputHandler : MonoBehaviour
 
     private IEnumerator HandleSkillSelection()
     {
-        yield return null; // Wait 1 frame so the lingering 'Z' keydown input from ActionConfirm doesn't bleed into SkillConfirm
+        yield return null; // Wait 1 frame
         sys.battleState = BattleState.SkillSelection;
         sys.uiController.battleDialogBox.EnableAttackSelector(true);
         sys.uiController.battleDialogBox.SetAttackName(sys.currentTurnEntity.usableSkills);
@@ -327,7 +327,7 @@ public class BattleInputHandler : MonoBehaviour
         sys.uiController.battleDialogBox.EnableActionSelector(false);
         sys.uiController.battleDialogBox.EnableDialogText(true);
         yield return StartCoroutine(sys.uiController.battleDialogBox.TypeDialog($"{sys.currentTurnEntity.entityData.EntityName} can't {actionName}!", false));
-        yield return new WaitForSeconds(1.5f); // Small delay to let the player read
+        yield return new WaitForSeconds(1.5f); // Small delay 
         sys.uiController.battleDialogBox.EnableDialogText(false);
         sys.uiController.battleDialogBox.ShowTurnEntityInfo();
         sys.battleState = BattleState.ActionSelection;
@@ -390,7 +390,7 @@ public class BattleInputHandler : MonoBehaviour
         sys.targetSelectionController.gameObject.SetActive(false);
     }
 
-    // --- Helpers ---
+    //Helpers
 
     public bool IsSkillUseAllowed(EntityBase actor, ActiveSkill skill)
     {

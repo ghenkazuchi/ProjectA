@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CoinPickUP
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 4d3c88bcf90ea2745be9c3d9dd5f841b, type: 3}
   volume: 1
   volumeVariance: 0
   pitch: 1

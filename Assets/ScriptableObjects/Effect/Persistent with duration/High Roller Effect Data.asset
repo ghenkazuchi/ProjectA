@@ -15,10 +15,30 @@ MonoBehaviour:
   EffectType: 0
   Effect: 5
   Name: HighRoller
+  Description: Increase owner other activation chance
   MaxDuration: -1
   CanBeRemoved: 0
   Stackable: 0
   MaxStack: 1
   isInstantEffect: 0
+  isPassiveEquipmentEffect: 0
+  tags: 0
   effectIcon: {fileID: 21300000, guid: 000d55a3d71236c4fa5cb3af0cff23d1, type: 3}
+  applyVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnStartVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  turnEndVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  expireVfx:
+    frames: []
+    fps: 30
+    fadeOut: 0.25
+  applySFX: {fileID: 0}
   increasedProcChance: 0.15

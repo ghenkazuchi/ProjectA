@@ -22,6 +22,8 @@ namespace HaKien
         OnSkillActive,
         OnGameRestart,
         OnBattleStart,
+        OnBattleWin,
+        OnBattleLose,
         OnTargetSelection,
         OnBattleOver,
         OnRecruitEnter,

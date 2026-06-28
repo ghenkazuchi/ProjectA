@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-/// <summary>
-/// Manages the lifecycle of a battle: setup, win/lose, cleanup, and end-condition checks.
-/// Extracted from BattleSystem to keep the orchestrator focused on turn flow.
-/// </summary>
 public class BattleLifecycleManager
 {
 	private readonly BattleSystem sys;
@@ -16,10 +12,7 @@ public class BattleLifecycleManager
 	{
 		sys = battleSystem;
 	}
-
-	/// <summary>
-	/// Initializes all BattleUnits from party slots, wires up timeline and target selection.
-	/// </summary>
+	
 	public void SetUpBattle(
 		List<BattleUnit> playerBattleUnits,
 		List<BattleUnit> monsterBattleUnits,
@@ -101,20 +94,19 @@ public class BattleLifecycleManager
 		sys.battleState = BattleState.Start;
 	}
 
-	/// <summary>
-	/// Checks if all monsters or all players are dead. Triggers win/lose if so.
-	/// </summary>
 	public bool CheckBattleEndCondition(List<BattleUnit> playerBattleUnits, List<BattleUnit> monsterBattleUnits)
 	{
 		bool allMonsterDefeated = !monsterBattleUnits.Exists(u => u != null && u.character != null && u.IsAlive());
 		bool allAllyDefeated = !playerBattleUnits.Exists(u => u != null && u.character != null && u.IsAlive());
+
+		// Check if the custom created character is defeated
+		bool createdCharacterDefeated = playerBattleUnits.Exists(u => u != null && u.character is PlayerCharacter pc && pc.IsCreatedCharacter && !u.IsAlive());
 
 		// Tutorial: prevent game over, run tutorial completion on monster defeat
 		if (sys.currentBattleType == BattleType.Tutorial)
 		{
 			if (allAllyDefeated)
 			{
-				// Safety net: don't end the battle, tutorial death prevention should handle this
 				return false;
 			}
 			if (allMonsterDefeated)
@@ -127,7 +119,7 @@ public class BattleLifecycleManager
 			return false;
 		}
 
-		if (allAllyDefeated)
+		if (allAllyDefeated || createdCharacterDefeated)
 		{
 			sys.battleOver = true;
 			sys.uiController.battleDialogBox.EnableDialogText(false);
@@ -143,12 +135,9 @@ public class BattleLifecycleManager
 		}
 		return false;
 	}
-
-	/// <summary>
-	/// Resets effects on all entities, cleans up, and sends the lose message.
-	/// </summary>
 	public void HandlePlayerLose(List<EntityBase> allEntities = null)
 	{
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleLose));
 		if (allEntities == null || allEntities.Count == 0)
 		{
 			allEntities = new List<EntityBase>();
@@ -161,12 +150,9 @@ public class BattleLifecycleManager
 		CleanupBattle();
 		MessageManager.Instance.SendMessage(new Message(MessageType.OnGameLose, new object[] { sys.currentMonsterInteractable }));
 	}
-
-	/// <summary>
-	/// Calculates and distributes EXP to surviving party members.
-	/// </summary>
 	public void HandlePlayerWin(List<EntityBase> allEntities = null)
 	{
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleWin));
 		if (allEntities == null || allEntities.Count == 0)
 		{
 			allEntities = new List<EntityBase>();
@@ -250,11 +236,26 @@ public class BattleLifecycleManager
 			BattleItemUseCount = Mathf.Max(0, sys.BattleItemEffectUseCount),
 			BattleMonsters = defeatedMonsters != null ? new System.Collections.Generic.List<MonsterCharacter>(defeatedMonsters) : null
 		});
+
+		// Apply permanent death to dead recruited party members
+		if (sys.currentBattleType != BattleType.Tutorial)
+		{
+			List<PlayerCharacter> deadCharacters = sys.playerParty.partySlots
+				.Where(s => s.entity is PlayerCharacter pc && pc.GetCurrentHP() <= 0)
+				.Select(s => s.entity as PlayerCharacter)
+				.ToList();
+
+			foreach (var deadChar in deadCharacters)
+			{
+				if (!deadChar.IsCreatedCharacter)
+				{
+					sys.playerParty.RemovePartyMember(deadChar);
+					Debug.Log($"[Permadeath] {deadChar.entityData.EntityName} has died permanently and was removed from the party.");
+				}
+			}
+		}
 	}
 
-	/// <summary>
-	/// Called after win/lose UI is done. Marks interactable as defeated and cleans up.
-	/// </summary>
 	public void HandleAfterMatch()
 	{
 		if (sys.currentBattleType == BattleType.RoamingMoster)
@@ -264,9 +265,6 @@ public class BattleLifecycleManager
 		CleanupBattle();
 	}
 
-	/// <summary>
-	/// Full teardown: stops coroutines, resets effects, clears state, hides UI.
-	/// </summary>
 	public void CleanupBattle(List<EntityBase> allEntities = null)
 	{
 		Debug.Log("[BattleSystem] CleanupBattle called");
@@ -321,9 +319,7 @@ public class BattleLifecycleManager
 		}
 	}
 
-	/// <summary>
-	/// Tutorial-specific end: skip EXP/loot, reset effects, run completion flow.
-	/// </summary>
+	/// Tutorial-specific: skip EXP/loot, reset effects, run completion flow.
 	private void HandleTutorialComplete()
 	{
 		// Reset effects on all entities

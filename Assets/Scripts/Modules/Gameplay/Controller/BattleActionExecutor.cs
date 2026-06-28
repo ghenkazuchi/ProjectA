@@ -116,7 +116,7 @@ public class BattleActionExecutor : MonoBehaviour
                         
                         yield return HandleEntityTakeDamage(target, damage, sourceEntity, skillToUse.SkillData.skillDefinition, skillName: skillToUse.SkillData.skillName, element: skillToUse.element);
 
-                        // Track who actually received the damage (may differ from original target due to ProtectAlly redirect)
+                        // Track who actually received the damage
                         var actualReceiver = _ctx.Target;
                         if (!actualHitTargets.Contains(actualReceiver))
                             actualHitTargets.Add(actualReceiver);
@@ -378,7 +378,7 @@ public class BattleActionExecutor : MonoBehaviour
         // Play physical cast sound for basic attack
         AudioManager.Instance.PlayDefaultCastSFX(sys.basicAttack.SkillData.skillDefinition, sys.basicAttack.element);
 
-        yield return new WaitForSeconds(0.4f); // Short delay to match swing visual
+        yield return new WaitForSeconds(0.4f);
         
         Sprite[] frames = null;
         float fps = 0f;

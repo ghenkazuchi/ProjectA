@@ -1,17 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using HaKien;
 using UnityEngine;
 
-/// <summary>
-/// Bridges the Main Menu scene and the InGame scene for tutorial battles.
-/// Set PendingScenario from the menu, then load InGame. This script's Start()
-/// will detect the pending scenario and set up a fixed tutorial battle.
-/// </summary>
 public class TutorialBattleBootstrapper : MonoBehaviour
 {
-	/// <summary>
-	/// Set this from the Main Menu before loading the InGame scene.
-	/// </summary>
 	public static TutorialScenarioData PendingScenario;
 
 	[SerializeField] private BattleSystem battleSystem;
@@ -26,7 +19,6 @@ public class TutorialBattleBootstrapper : MonoBehaviour
 
 	private IEnumerator SetupTutorialBattle()
 	{
-		// Wait a couple frames so all Awake/Start methods finish
 		yield return null;
 		yield return null;
 
@@ -35,11 +27,9 @@ public class TutorialBattleBootstrapper : MonoBehaviour
 
 		Debug.Log($"[TutorialBootstrapper] Setting up tutorial: {scenario.scenarioTitle}");
 
-		// --- Set up parties ---
 		var playerParty = battleSystem.playerParty;
 		var monsterParty = battleSystem.monsterParty;
 
-		// Clear existing parties
 		playerParty.partySlots.Clear();
 		monsterParty.partySlots.Clear();
 
@@ -113,22 +103,19 @@ public class TutorialBattleBootstrapper : MonoBehaviour
 			}
 		}
 
-		// --- Start the tutorial runner ---
+		// Start the tutorial runner
 		if (TutorialSequenceRunner.Instance != null)
 		{
 			TutorialSequenceRunner.Instance.Begin(scenario);
 		}
 		else
 		{
-			Debug.LogError("[TutorialBootstrapper] TutorialSequenceRunner not found in scene!");
+			Debug.LogError("TutorialSequenceRunner not found in scene!");
 		}
 
-		// --- Start the battle ---
+		//Start the battle
 		battleSystem.playerParty = playerParty;
-		battleSystem.monsterParty = monsterParty;
-		battleSystem.currentMonsterInteractable = null;
-
-		GameController.Instance.currentState = GameState.Battle;
-		battleSystem.StartBattle(BattleType.Tutorial);
+		var context = new BattleContext(monsterParty, BattleType.Tutorial);
+		MessageManager.Instance.SendMessage(new Message(MessageType.OnBattleStart, new object[] { context, null }));
 	}
 }

@@ -16,13 +16,13 @@ MonoBehaviour:
   - day: 0
     timeOfDay: 0
     monsters:
-    - monsterData: {fileID: 11400000, guid: fa7771b1959e0164a8c47a34207102db, type: 2}
-      rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
-      raceData: {fileID: 11400000, guid: bf0c51f884772ec4d8cdc0ef3f58b47e, type: 2}
-      level: 1
     - monsterData: {fileID: 11400000, guid: d9a5654d4685dc44ca792b71ac374418, type: 2}
       rankData: {fileID: 11400000, guid: 253000e508fce2f4b93f8a24a068c906, type: 2}
       raceData: {fileID: 11400000, guid: 943e76a3722a7cc40a51d93c4c146a13, type: 2}
+      level: 1
+    - monsterData: {fileID: 11400000, guid: 3d1d9644f9eed9f47850acf0314e9bcd, type: 2}
+      rankData: {fileID: 11400000, guid: 45483a5a7f2fc79448b6cae45022296d, type: 2}
+      raceData: {fileID: 11400000, guid: 00734c8972325b348b71de97a3f8fbd3, type: 2}
       level: 1
   - day: 0
     timeOfDay: 1

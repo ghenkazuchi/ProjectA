@@ -11,7 +11,6 @@ public class TutorialMonsterEntry
 	public GridPosition position;
 
 	[Header("Unit State Overrides")]
-	[Tooltip("If > 0, set HP to this percentage of MaxHP (e.g. 50 = half health). 0 = full HP.")]
 	[Range(0, 100)]
 	public int startingHPPercent = 0;
 

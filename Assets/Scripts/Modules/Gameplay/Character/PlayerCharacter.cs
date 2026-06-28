@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerCharacter : EntityBase
 {
+	public bool IsCreatedCharacter { get; set; } = false;
 	public int currentExp = 0;
 	[SerializeField] private ClassData classData;
 	[SerializeField] private CharacterRaceData raceData;

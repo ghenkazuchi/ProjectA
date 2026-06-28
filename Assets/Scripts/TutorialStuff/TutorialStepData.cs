@@ -8,55 +8,54 @@ public class TutorialStepData
 	[Header("Timing")]
 	public TutorialStepTiming timing;
 
-	[Tooltip("Target area or object to point at.")]
+	[Tooltip("Target area or object to point at")]
 	public TutorialPointerTarget pointerTarget;
 
-	[Tooltip("Direction the finger should point from.")]
+	[Tooltip("Direction the finger should point from")]
 	public PointerDirection pointerDirection;
 
-	[Tooltip("Distance between the finger and the target. Adjust this if the finger is overlapping the target.")]
+	[Tooltip("Distance between the finger and the target")]
 	public float pointerOffset = 60f;
 
-	[Tooltip("Shape of the highlight frame (Square, Circle, Triangle). The UI script must have these sprites assigned!")]
+	[Tooltip("Shape of the highlight frame (Square, Circle, Triangle)")]
 	public HighlightShape frameShape = HighlightShape.Square;
 
-	[Tooltip("If greater than 0, forces the Highlight Frame to this exact width and height. If 0, it auto-sizes based on the target.")]
+	[Tooltip("If greater than 0, forces the Highlight Frame to this exact width and height")]
 	public Vector2 customFrameSize = Vector2.zero;
 
-	[Tooltip("Shifts the Highlight Frame by this many pixels (X, Y). Useful if the target is against the screen edge and the frame gets cut off.")]
+	[Tooltip("Shifts the Highlight Frame by this many pixels (X, Y)")]
 	public Vector2 customFrameOffset = Vector2.zero;
 
-	[Tooltip("Extra padding to add to the highlight frame around the target (only used if customFrameSize is 0).")]
+	[Tooltip("Extra padding to add to the highlight frame around the target")]
 	public Vector2 highlightPadding = new Vector2(20f, 20f);
 
-	[Tooltip("If greater than 0, forces the Finger Icon to this exact width and height. If 0, uses the default size.")]
+	[Tooltip("If greater than 0, forces the Finger Icon to this exact width and height")]
 	public Vector2 customFingerSize = Vector2.zero;
 
 	[Header("Text Panel Customization")]
-	[Tooltip("If true, completely hides the text panel and guidance text for this step.")]
 	public bool hideTextPanel = false;
 
-	[Tooltip("If not (0,0), forces the Text Panel to this specific anchored position on the Canvas.")]
+	[Tooltip("If not (0,0), forces the Text Panel to this specific anchored position on the Canvas")]
 	public Vector2 customTextPosition = Vector2.zero;
 
-	[Tooltip("If not (0,0), forces the Text Panel to this exact width and height. Text will resize to fit if using Stretch anchors.")]
+	[Tooltip("If not (0,0), forces the Text Panel to this exact width and height. Text will resize to fit if using Stretch anchors")]
 	public Vector2 customTextPanelSize = Vector2.zero;
 
-	[Tooltip("If greater than 0, forces the Guidance Text to this specific font size. If 0, uses the default size set in the Inspector.")]
+	[Tooltip("If greater than 0, forces the Guidance Text to this specific font size. If 0, uses the default size set in the Inspector")]
 	public float customFontSize = 0f;
 
 	[Header("Player Interaction")]
 	public TutorialInteractionMode interactionMode;
 
 	[Header("Input Requirements (used together in WaitForCorrectAction)")]
-	[Tooltip("The main action the player must select (e.g., Skill, Attack)")]
+	[Tooltip("The main action the player must select")]
 	public BattleAction requiredActionType;
 
-	[Tooltip("Check this to force the player to pick a specific skill from the list")]
+	[Tooltip("Check to force the player to pick a specific skill from the list")]
 	public bool requireSpecificSkill;
 	public int requiredSkillIndex;
 
-	[Tooltip("Check this to force the player to pick a specific target")]
+	[Tooltip("Check to force the player to pick a specific target")]
 	public bool requireSpecificTarget;
 	public int requiredTargetIndex;
 

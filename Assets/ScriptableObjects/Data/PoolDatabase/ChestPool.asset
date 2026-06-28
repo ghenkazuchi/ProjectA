@@ -15,20 +15,6 @@ MonoBehaviour:
   poolId: ChestPool
   sourceKind: 1
   baseContents:
-  - {fileID: 11400000, guid: 1c24f7e2a6d8c3f42b28ef7757e3342a, type: 2}
-  - {fileID: 11400000, guid: 12ef31a97449a7a4b906807c26d57b3c, type: 2}
-  - {fileID: 11400000, guid: 7576f306d7fa883479d58e14334960fb, type: 2}
-  - {fileID: 11400000, guid: cfc5cf206e04b0f47912bb6f4cd53fdb, type: 2}
-  - {fileID: 11400000, guid: 34db641a823427d47989e71310c2e772, type: 2}
-  - {fileID: 11400000, guid: 4a8e596febb8b2f4eb75c0a717449f61, type: 2}
-  - {fileID: 11400000, guid: cfc1b3865c8d1db48a154d79568920c7, type: 2}
-  - {fileID: 11400000, guid: 0143991bb31f56d48a115bd33432df63, type: 2}
   - {fileID: 11400000, guid: e12b4839e80a259419ea78ba792fda63, type: 2}
-  - {fileID: 11400000, guid: 641c2288f433dd849b3ba00141cd2cd3, type: 2}
-  - {fileID: 11400000, guid: 12f9f1174676d854587cbc2d78671e4d, type: 2}
-  - {fileID: 11400000, guid: 2ab0e88c1f82e29418ac47e9c40c0ce4, type: 2}
   - {fileID: 11400000, guid: 65b30bee5a8fc344b9740cdc83cf1e8f, type: 2}
-  - {fileID: 11400000, guid: 7c95c0641a58b174ab14000a159d59b1, type: 2}
-  - {fileID: 11400000, guid: 12ef31a97449a7a4b906807c26d57b3c, type: 2}
-  - {fileID: 11400000, guid: 40cfca2e7fc68c944a5fd7fbf1018daf, type: 2}
   - {fileID: 11400000, guid: 3dbbe7addda0fc34daf1242e199f5a06, type: 2}

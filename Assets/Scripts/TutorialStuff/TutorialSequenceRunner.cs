@@ -2,18 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-/// <summary>
-/// Core tutorial brain. Drives the step sequence, restricts input, and scripts monster AI.
-/// Lives on a GameObject in the InGame scene alongside the BattleSystem.
-/// 
-/// KEY DESIGN: The player controls the game with keyboard (Arrow keys + Z confirm + X cancel).
-/// Tutorial steps that require a specific action (WaitForCorrectAction) do NOT block the
-/// coroutine. Instead, they show the overlay and set restriction state, then RETURN so
-/// HandlePlayerTurnPublic() can give the player keyboard control. The guard clauses in
-/// BattleInputHandler enforce the restrictions. When the correct action completes, the
-/// overlay auto-hides.
-/// </summary>
 public class TutorialSequenceRunner : MonoBehaviour
 {
 	public static TutorialSequenceRunner Instance { get; private set; }
@@ -23,7 +11,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 	private int stepIndex;
 	private int turnNumber;
 
-	// Active restriction state (set by WaitForCorrectAction steps)
 	private TutorialStepData activeRestriction;
 	private bool hasActiveRestriction;
 
@@ -41,7 +28,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 		Instance = this;
 	}
 
-	// ─── Lifecycle ──────────────────────────────────────────────────
 
 	public void Begin(TutorialScenarioData data)
 	{
@@ -64,16 +50,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 		waitingForUnitClick = false;
 		waitingForEffectListClose = false;
 	}
-
-	// ─── Called by BattleLoopState at each phase ────────────────────
-
-	/// <summary>
-	/// Runs all consecutive steps that match the given timing phase.
-	/// 
-	/// TapToContinue steps: block here, wait for player to press Z, then continue.
-	/// WaitForCorrectAction steps: show overlay + set restrictions, then RETURN
-	///   immediately so the battle flow can give the player keyboard control.
-	/// </summary>
 	public IEnumerator RunStepsForPhase(TutorialStepTiming phase)
 	{
 		if (scenario == null) yield break;
@@ -92,7 +68,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 
 			if (step.interactionMode == TutorialInteractionMode.TapToContinue)
 			{
-				// BLOCKING: Show text, wait for Z press, dismiss, advance
+				// Blocking
 				yield return overlay.ShowStep(step);
 				stepIndex++;
 			}
@@ -109,7 +85,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 				waitingForUnitClick = true;
 				requiredUnitSide = step.targetUnitSide;
 				requiredUnitSlotIndex = step.targetUnitSlotIndex;
-				activeRestriction = step; // Store to know the phase
+				activeRestriction = step; 
 				yield return overlay.ShowStep(step);
 				stepIndex++;
 				yield break;
@@ -117,28 +93,17 @@ public class TutorialSequenceRunner : MonoBehaviour
 			else if (step.interactionMode == TutorialInteractionMode.WaitForCloseEffectList)
 			{
 				waitingForEffectListClose = true;
-				activeRestriction = step; // Store to know the phase
+				activeRestriction = step; 
 				yield return overlay.ShowStep(step);
 				stepIndex++;
 				yield break;
 			}
 		}
 	}
-
-	// ─── Called when the player successfully performs an action ──────
-
 	public bool HasActiveRestriction => hasActiveRestriction;
 
-	/// <summary>
-	/// True while the tutorial is transitioning between steps (fading out → fading in).
-	/// All battle inputs should be blocked during this window.
-	/// </summary>
 	public bool IsTransitioning { get; private set; }
 
-	/// <summary>
-	/// True if the tutorial overlay is currently active and animating or waiting for tap.
-	/// Under these conditions, all standard game inputs should be disabled.
-	/// </summary>
 	public bool IsInputBlocked
 	{
 		get
@@ -158,12 +123,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 			return false;
 		}
 	}
-
-	/// <summary>
-	/// Called when the player successfully passes a restricted menu (e.g. Action or Skill confirm).
-	/// This immediately hides the current restriction overlay and advances to the next step,
-	/// allowing for seamless multi-step menus.
-	/// </summary>
 	public void AdvanceIfRestrictionMet()
 	{
 		if (!hasActiveRestriction) return;
@@ -222,7 +181,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 
 	private IEnumerator AdvanceCoroutine(TutorialStepTiming phase)
 	{	
-		// Wait for the current overlay to finish fading out BEFORE running the next step
 		if (TutorialOverlayUI.Instance != null)
 			yield return StartCoroutine(TutorialOverlayUI.Instance.HideOverlay());
 
@@ -230,10 +188,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 		IsTransitioning = false;
 	}
 
-	/// <summary>
-	/// Called by BattleStateMachine after HandlePlayerTurnPublic completes.
-	/// If there was an active restriction overlay, hide it now.
-	/// </summary>
 	public void OnPlayerActionCompleted()
 	{
 		if (hasActiveRestriction)
@@ -247,29 +201,17 @@ public class TutorialSequenceRunner : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// Called when a turn ends and the next entity is about to act.
-	/// </summary>
 	public void OnTurnAdvanced()
 	{
 		turnNumber++;
 	}
 
-	// ─── Input Restriction Queries (called by BattleInputHandler) ───
-
-	/// <summary>
-	/// Is the player allowed to confirm this action?
-	/// Only restricts when a WaitForCorrectAction step is active.
-	/// </summary>
 	public bool IsActionAllowed(BattleAction action)
 	{
 		if (!hasActiveRestriction) return true;
 		return action == activeRestriction.requiredActionType;
 	}
 
-	/// <summary>
-	/// Is the player allowed to confirm this skill index?
-	/// </summary>
 	public bool IsSkillAllowed(int skillIndex)
 	{
 		if (!hasActiveRestriction) return true;
@@ -277,20 +219,12 @@ public class TutorialSequenceRunner : MonoBehaviour
 		return skillIndex == activeRestriction.requiredSkillIndex;
 	}
 
-	/// <summary>
-	/// Is the player allowed to select this target index?
-	/// </summary>
 	public bool IsTargetAllowed(int targetIndex)
 	{
 		if (!hasActiveRestriction) return true;
 		if (!activeRestriction.requireSpecificTarget) return true;
 		return targetIndex == activeRestriction.requiredTargetIndex;
 	}
-
-	/// <summary>
-	/// Should player characters be prevented from dying?
-	/// Checks both the active restriction step and the current step.
-	/// </summary>
 	public bool ShouldPreventDeath()
 	{
 		if (!IsTutorialActive) return false;
@@ -299,12 +233,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 		return false;
 	}
 
-	// ─── Monster AI Scripting ───────────────────────────────────────
-
-	/// <summary>
-	/// Returns a scripted AI decision if a directive exists for this turn + monster,
-	/// otherwise falls back to normal AI.
-	/// </summary>
+	//Monster AI
 	public AIDecision GetScriptedMonsterDecision(EntityBase monster, BattleSystem sys)
 	{
 		int slotIndex = GetMonsterSlotIndex(monster, sys);
@@ -315,7 +244,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 		if (directive == null)
 			return BattleAIController.ChooseAction(monster, sys);
 
-		// Build forced decision — use specified skill or fallback to first usable skill
+		// Build forced decision
 		ActiveSkill skill = (directive.forcedSkillIndex >= 0 && directive.forcedSkillIndex < monster.usableSkills.Count)
 			? monster.usableSkills[directive.forcedSkillIndex]
 			: (monster.usableSkills.Count > 0 ? monster.usableSkills[0] : null);
@@ -329,7 +258,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 				targets.Add(targetEntity);
 		}
 
-		// Fallback if no valid target from directive
+		// Fallback
 		if (targets.Count == 0)
 			targets = BattleAIController.GetAITargetsForSkill(monster, skill, sys.playerParty, sys.monsterParty);
 
@@ -345,8 +274,6 @@ public class TutorialSequenceRunner : MonoBehaviour
 		}
 		return -1;
 	}
-
-	// ─── Tutorial Completion ────────────────────────────────────────
 
 	public IEnumerator RunCompletionFlow()
 	{
@@ -364,6 +291,7 @@ public class TutorialSequenceRunner : MonoBehaviour
 		}
 
 		End();
+		GameOverUIController.CleanupPersistentObjects();
 		SceneManager.LoadScene("MenuScene");
 	}
 }

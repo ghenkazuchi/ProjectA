@@ -15,13 +15,15 @@ MonoBehaviour:
   skillName: Fire Whip
   skillDescription: 'Deal moderate fire damage to one selected row of enemies '
   skillType: 0
+  customCastSFX: {fileID: 0}
   skillDefinition: 0
   targetType: 1
   skillRange: 4
   baseSpCost: 0
   baseMpCost: 10
-  baseSkillDamage: 15
+  baseSkillDamage: 50
   baseHitChance: 1
+  hitCount: 1
   skillElement: 1
   activeSkillType: 0
   scalingStatAndMutiply:
@@ -51,4 +53,9 @@ MonoBehaviour:
     _keys: 04000000
     _values:
     - 1.15
-  effectsToApply: []
+  effectsToApply:
+  - effectData: {fileID: 11400000, guid: f8c856ad75d0fe943a2e43677bf9f641, type: 2}
+    procChance: 1
+    turnDuration: 3
+    activeTiming: 0
+  modifiers: []

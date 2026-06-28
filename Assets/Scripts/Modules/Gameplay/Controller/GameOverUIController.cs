@@ -147,7 +147,7 @@ public class GameOverUIController : MonoBehaviour
 	/// Destroys all DontDestroyOnLoad singleton objects so the next scene
 	/// starts from a clean slate without stale references.
 	/// </summary>
-	private static void CleanupPersistentObjects()
+	public static void CleanupPersistentObjects()
 	{
 		// Destroy the Player object (PlayerParty uses its own DontDestroyOnLoad)
 		if (PlayerParty.Instance != null)
